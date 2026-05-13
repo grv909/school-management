@@ -1,0 +1,61 @@
+<app-page-header title="Subjects" subtitle="Define subjects offered across classes.">
+  <button type="button" class="btn btn--primary" (click)="toggleForm()">
+    {{ formOpen() ? 'Cancel' : 'Add subject' }}
+  </button>
+</app-page-header>
+
+@if (formOpen()) {
+  <div class="card">
+    <form (ngSubmit)="submit()">
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-field__label" for="sn">Name</label>
+          <input class="form-field__control" id="sn" name="sn" required
+                 [ngModel]="form().name" (ngModelChange)="patch('name', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="sc">Code</label>
+          <input class="form-field__control" id="sc" name="sc" required maxlength="32"
+                 [ngModel]="form().code" (ngModelChange)="patch('code', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="sm">Max marks</label>
+          <input class="form-field__control" id="sm" name="sm" type="number" min="1" max="1000"
+                 [ngModel]="form().maxMarks" (ngModelChange)="patch('maxMarks', $event)">
+        </div>
+      </div>
+      <button type="submit" class="btn btn--primary"
+              [disabled]="!form().name.trim() || !form().code.trim()">Save subject</button>
+    </form>
+  </div>
+}
+
+@if (loading()) {
+  <div class="empty-state">Loading subjects…</div>
+} @else if (subjects().length === 0) {
+  <div class="empty-state">
+    <div class="empty-state__title">No subjects yet</div>
+    <div class="empty-state__hint">Add a subject to enable marks entry.</div>
+  </div>
+} @else {
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Code</th>
+          <th class="num">Max marks</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (s of subjects(); track s.id) {
+          <tr>
+            <td>{{ s.name }}</td>
+            <td>{{ s.code }}</td>
+            <td class="num">{{ s.maxMarks }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

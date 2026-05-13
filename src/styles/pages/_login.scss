@@ -1,0 +1,37 @@
+@use '../abstracts' as *;
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-5;
+  background-color: $color-bg;
+}
+
+.login-card {
+  @include card;
+  width: 100%;
+  max-width: 380px;
+  padding: $space-6 $space-5;
+}
+
+.login-card__brand {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-accent;
+  margin-bottom: $space-1;
+}
+
+.login-card__subtitle {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  margin-bottom: $space-5;
+}
+
+.login-card__footer {
+  margin-top: $space-4;
+  font-size: $font-size-xs;
+  color: $color-text-faint;
+  text-align: center;
+}

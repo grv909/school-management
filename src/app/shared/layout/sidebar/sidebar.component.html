@@ -1,0 +1,21 @@
+<aside class="sidebar">
+  <div class="sidebar__brand">
+    <span class="sidebar__brand-name">{{ schoolName }}</span>
+    <span class="sidebar__brand-sub">School ERP</span>
+  </div>
+
+  @for (group of nav(); track group.label) {
+    <div class="sidebar__group-label">{{ group.label }}</div>
+    <nav class="sidebar__nav">
+      @for (item of group.items; track item.path) {
+        <a
+          class="sidebar__link"
+          [routerLink]="item.path"
+          [routerLinkActiveOptions]="{ exact: item.path === '/admin' || item.path === '/teacher' }"
+          routerLinkActive="active">
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+  }
+</aside>

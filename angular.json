@@ -8,7 +8,12 @@
   "projects": {
     "ERP-frontend": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss",
+          "changeDetection": "OnPush"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -25,8 +30,11 @@
               }
             ],
             "styles": [
-              "src/styles.css"
-            ]
+              "src/styles.scss"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/styles"]
+            }
           },
           "configurations": {
             "production": {
@@ -38,8 +46,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "8kB",
+                  "maximumError": "16kB"
                 }
               ],
               "outputHashing": "all"

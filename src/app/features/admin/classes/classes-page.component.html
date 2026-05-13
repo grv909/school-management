@@ -1,0 +1,55 @@
+<app-page-header title="Classes" subtitle="Organise grade levels offered by the school.">
+  <button type="button" class="btn btn--primary" (click)="toggleForm()">
+    {{ formOpen() ? 'Cancel' : 'Add class' }}
+  </button>
+</app-page-header>
+
+@if (formOpen()) {
+  <div class="card">
+    <form (ngSubmit)="submit()">
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-field__label" for="name">Class name</label>
+          <input class="form-field__control" id="name" name="name" type="text"
+                 placeholder="e.g. Class 9"
+                 [ngModel]="newName()" (ngModelChange)="newName.set($event)" required>
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="order">Display order</label>
+          <input class="form-field__control" id="order" name="order" type="number" min="0" max="1000"
+                 placeholder="0"
+                 [ngModel]="newOrder()" (ngModelChange)="newOrder.set($event)">
+        </div>
+      </div>
+      <button type="submit" class="btn btn--primary" [disabled]="!newName().trim()">Save class</button>
+    </form>
+  </div>
+}
+
+@if (loading()) {
+  <div class="empty-state">Loading classes…</div>
+} @else if (classes().length === 0) {
+  <div class="empty-state">
+    <div class="empty-state__title">No classes yet</div>
+    <div class="empty-state__hint">Add the first class to get started.</div>
+  </div>
+} @else {
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th class="num">Order</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of classes(); track c.id) {
+          <tr>
+            <td>{{ c.name }}</td>
+            <td class="num">{{ c.displayOrder }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

@@ -1,0 +1,113 @@
+<app-page-header
+  title="Attendance"
+  subtitle="Mark daily attendance for the sections you are the class teacher of.">
+</app-page-header>
+
+<div class="card filters">
+  <div class="form-field">
+    <label class="form-field__label">Class</label>
+    <select class="form-field__control"
+            [ngModel]="selectedClassId()"
+            (ngModelChange)="onClassChange($event)">
+      <option [ngValue]="null">Select class</option>
+      @for (c of classes(); track c.id) {
+        <option [ngValue]="c.id">{{ c.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-field">
+    <label class="form-field__label">Section</label>
+    <select class="form-field__control"
+            [ngModel]="selectedSectionId()"
+            (ngModelChange)="onSectionChange($event)"
+            [disabled]="!sections().length">
+      <option [ngValue]="null">Select section</option>
+      @for (s of sections(); track s.id) {
+        <option [ngValue]="s.id">Section {{ s.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-field">
+    <label class="form-field__label">Date</label>
+    <input class="form-field__control" type="date" [ngModel]="date()" (ngModelChange)="date.set($event)">
+  </div>
+
+  <div class="filters__action">
+    <button type="button" class="btn btn--primary" (click)="load()"
+            [disabled]="!selectedSectionId()">Load roster</button>
+  </div>
+</div>
+
+@if (rows().length > 0) {
+  <div class="card">
+    <div class="card__title">
+      Roster — {{ rows().length }} students
+      <span class="card__title-meta">
+        Present: <strong>{{ summary().present }}</strong> &middot;
+        Absent: <strong>{{ summary().absent }}</strong> &middot;
+        Late: <strong>{{ summary().late }}</strong>
+      </span>
+    </div>
+
+    @if (!canMark()) {
+      <div class="banner banner--warn">
+        You are not the class teacher of this section, so attendance is read-only.
+      </div>
+    } @else {
+      <div class="bulk-actions">
+        <button type="button" class="btn btn--secondary btn--sm" (click)="markAll('PRESENT')">Mark all present</button>
+        <button type="button" class="btn btn--secondary btn--sm" (click)="markAll('ABSENT')">Mark all absent</button>
+      </div>
+    }
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 64px;">Roll</th>
+          <th>Student</th>
+          <th style="width: 280px;">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of rows(); track r.studentId) {
+          <tr>
+            <td>{{ r.rollNo }}</td>
+            <td>{{ r.firstName }} {{ r.lastName }}</td>
+            <td>
+              <div class="status-pills">
+                <button type="button"
+                        class="pill"
+                        [class.pill--present]="r.status === 'PRESENT'"
+                        [disabled]="!canMark()"
+                        (click)="setStatus(r.studentId, 'PRESENT')">Present</button>
+                <button type="button"
+                        class="pill"
+                        [class.pill--absent]="r.status === 'ABSENT'"
+                        [disabled]="!canMark()"
+                        (click)="setStatus(r.studentId, 'ABSENT')">Absent</button>
+                <button type="button"
+                        class="pill"
+                        [class.pill--late]="r.status === 'LATE'"
+                        [disabled]="!canMark()"
+                        (click)="setStatus(r.studentId, 'LATE')">Late</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (canMark()) {
+      <div class="form-actions">
+        <button type="button"
+                class="btn btn--primary"
+                [disabled]="saving()"
+                (click)="save()">
+          {{ saving() ? 'Saving…' : 'Save attendance' }}
+        </button>
+      </div>
+    }
+  </div>
+}

@@ -1,0 +1,24 @@
+@use '../abstracts' as *;
+
+// CSS custom properties so consuming code (templates, third-party widgets) can pick up tokens
+// without having to import SCSS.
+:root {
+  --color-bg: #{$color-bg};
+  --color-surface: #{$color-surface};
+  --color-border: #{$color-border};
+  --color-text: #{$color-text};
+  --color-text-muted: #{$color-text-muted};
+  --color-accent: #{$color-accent};
+  --color-accent-hover: #{$color-accent-hover};
+  --color-danger: #{$color-danger};
+  --color-success: #{$color-success};
+  --color-warning: #{$color-warning};
+
+  --space-2: #{$space-2};
+  --space-3: #{$space-3};
+  --space-4: #{$space-4};
+  --space-5: #{$space-5};
+  --space-6: #{$space-6};
+
+  --radius-md: #{$radius-md};
+}

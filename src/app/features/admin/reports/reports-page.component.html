@@ -1,0 +1,49 @@
+<app-page-header title="Report Cards" subtitle="Select a student and exam to open the printable report card.">
+</app-page-header>
+
+<div class="card">
+  <div class="form-row">
+    <div class="form-field">
+      <label class="form-field__label" for="rc-class">Class</label>
+      <select class="form-field__control" id="rc-class"
+              [ngModel]="selectedClassId()" (ngModelChange)="onClassChange($event)">
+        <option [ngValue]="null">Select</option>
+        @for (c of classes(); track c.id) { <option [ngValue]="c.id">{{ c.name }}</option> }
+      </select>
+    </div>
+    <div class="form-field">
+      <label class="form-field__label" for="rc-sec">Section</label>
+      <select class="form-field__control" id="rc-sec"
+              [ngModel]="selectedSectionId()" (ngModelChange)="onSectionChange($event)"
+              [disabled]="!selectedClassId()">
+        <option [ngValue]="null">Select</option>
+        @for (s of sections(); track s.id) { <option [ngValue]="s.id">Section {{ s.name }}</option> }
+      </select>
+    </div>
+    <div class="form-field">
+      <label class="form-field__label" for="rc-stu">Student</label>
+      <select class="form-field__control" id="rc-stu"
+              [ngModel]="selectedStudentId()" (ngModelChange)="selectedStudentId.set($event)"
+              [disabled]="!selectedSectionId()">
+        <option [ngValue]="null">Select</option>
+        @for (s of students(); track s.id) {
+          <option [ngValue]="s.id">{{ s.rollNo ?? '—' }} · {{ s.firstName }} {{ s.lastName }}</option>
+        }
+      </select>
+    </div>
+    <div class="form-field">
+      <label class="form-field__label" for="rc-exam">Exam</label>
+      <select class="form-field__control" id="rc-exam"
+              [ngModel]="selectedExamId()" (ngModelChange)="selectedExamId.set($event)">
+        <option [ngValue]="null">Select</option>
+        @for (e of exams(); track e.id) { <option [ngValue]="e.id">{{ e.name }}</option> }
+      </select>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn--primary"
+          (click)="generate()"
+          [disabled]="!selectedStudentId() || !selectedExamId()">
+    Open report card
+  </button>
+</div>

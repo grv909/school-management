@@ -1,0 +1,76 @@
+<app-page-header title="Teachers" subtitle="Onboard teachers with login access.">
+  <button type="button" class="btn btn--primary" (click)="toggleForm()">
+    {{ formOpen() ? 'Cancel' : 'Add teacher' }}
+  </button>
+</app-page-header>
+
+@if (formOpen()) {
+  <div class="card">
+    <div class="card__title">New teacher</div>
+    <form (ngSubmit)="submit()" autocomplete="off">
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-field__label" for="fn">First name</label>
+          <input class="form-field__control" id="fn" name="fn" required
+                 [ngModel]="form().firstName" (ngModelChange)="patch('firstName', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="ln">Last name</label>
+          <input class="form-field__control" id="ln" name="ln" required
+                 [ngModel]="form().lastName" (ngModelChange)="patch('lastName', $event)">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-field__label" for="emp">Employee no.</label>
+          <input class="form-field__control" id="emp" name="emp"
+                 [ngModel]="form().employeeNo" (ngModelChange)="patch('employeeNo', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="usr">Username</label>
+          <input class="form-field__control" id="usr" name="usr" required
+                 [ngModel]="form().username" (ngModelChange)="patch('username', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="pwd">Password</label>
+          <input class="form-field__control" id="pwd" name="pwd" type="password" required
+                 [ngModel]="form().password" (ngModelChange)="patch('password', $event)">
+        </div>
+      </div>
+      <button type="submit" class="btn btn--primary"
+              [disabled]="!form().firstName.trim() || !form().lastName.trim() || !form().username.trim() || !form().password">
+        Save teacher
+      </button>
+    </form>
+  </div>
+}
+
+@if (loading()) {
+  <div class="empty-state">Loading teachers…</div>
+} @else if (teachers().length === 0) {
+  <div class="empty-state">
+    <div class="empty-state__title">No teachers yet</div>
+    <div class="empty-state__hint">Add the first one to grant access.</div>
+  </div>
+} @else {
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Employee no.</th>
+          <th>Username</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (t of teachers(); track t.id) {
+          <tr>
+            <td>{{ t.firstName }} {{ t.lastName }}</td>
+            <td>{{ t.employeeNo ?? '—' }}</td>
+            <td>{{ t.username ?? '—' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

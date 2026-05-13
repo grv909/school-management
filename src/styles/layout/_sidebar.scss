@@ -1,0 +1,74 @@
+@use '../abstracts' as *;
+
+.sidebar {
+  background-color: $color-surface;
+  border-right: 1px solid $color-border;
+  display: flex;
+  flex-direction: column;
+  padding: $space-4 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: $z-sidebar;
+}
+
+.sidebar__brand {
+  padding: 0 $space-5;
+  margin-bottom: $space-5;
+
+  &-name {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text;
+  }
+
+  &-sub {
+    display: block;
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+    margin-top: 2px;
+  }
+}
+
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 $space-2;
+}
+
+.sidebar__group-label {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: $color-text-faint;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: $space-4 $space-3 $space-1;
+}
+
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: background-color $transition-fast, color $transition-fast;
+
+  &:hover {
+    background-color: $color-bg;
+    color: $color-text;
+  }
+
+  &.active {
+    background-color: $color-accent-soft;
+    color: $color-accent;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}

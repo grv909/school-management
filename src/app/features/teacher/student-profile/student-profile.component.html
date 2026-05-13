@@ -1,0 +1,102 @@
+<app-page-header
+  [title]="student() ? (student()!.firstName + ' ' + student()!.lastName) : 'Student profile'"
+  [subtitle]="student() ? ('Admission #' + student()!.admissionNo + ' · Roll ' + (student()!.rollNo ?? '—')) : 'Loading…'">
+  <button type="button" class="btn btn--ghost" (click)="back()">← Back</button>
+</app-page-header>
+
+@if (loading()) {
+  <div class="card empty-state">Loading analytics…</div>
+} @else if (!student() || !analytics()) {
+  <div class="card empty-state">Student not found.</div>
+} @else {
+  <!-- KPI strip -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-card__label">Overall %</div>
+      <div class="kpi-card__value">{{ analytics()!.overallPercentage }}%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__label">Attendance</div>
+      <div class="kpi-card__value">{{ analytics()!.attendancePercentage }}%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__label">Rank in section</div>
+      <div class="kpi-card__value">{{ analytics()!.rankInSection }} <span class="kpi-card__suffix">/ {{ analytics()!.sectionSize }}</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__label">Subjects tracked</div>
+      <div class="kpi-card__value">{{ analytics()!.bySubject.length }}</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="analytics-grid">
+    <div class="card">
+      <div class="card__title">Subject performance</div>
+      <div class="card__subtitle">Average % across all exams</div>
+      <app-bar-chart
+        [data]="subjectChartData()"
+        [maxValue]="100"
+        ariaLabel="Subject-wise performance">
+      </app-bar-chart>
+    </div>
+
+    <div class="card">
+      <div class="card__title">Exam-wise total</div>
+      <div class="card__subtitle">Percentage by exam</div>
+      <app-bar-chart
+        [data]="examChartData()"
+        [maxValue]="100"
+        ariaLabel="Exam-wise total">
+      </app-bar-chart>
+    </div>
+
+    <div class="card analytics-grid__wide">
+      <div class="card__title">Attendance trend</div>
+      <div class="card__subtitle">Monthly attendance % — last 6 months</div>
+      <app-line-chart
+        [data]="attendanceChartData()"
+        [maxValue]="100"
+        [minValue]="60"
+        ariaLabel="Attendance trend">
+      </app-line-chart>
+    </div>
+  </div>
+
+  <!-- Subject roll-up table -->
+  <div class="card">
+    <div class="card__title">Subject roll-up</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th style="width: 140px;">Average %</th>
+          <th style="width: 100px;">Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (s of analytics()!.bySubject; track s.subjectId) {
+          <tr>
+            <td>{{ s.subjectName }}</td>
+            <td>{{ s.percentage }}%</td>
+            <td><span class="grade grade--{{ s.grade.toLowerCase().replace('+','plus') }}">{{ s.grade }}</span></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Report cards -->
+  <div class="card">
+    <div class="card__title">Report cards</div>
+    <div class="card__subtitle">Generated from current marks &amp; attendance.</div>
+    <div class="report-card-list">
+      @for (e of exams(); track e.id) {
+        <button type="button" class="report-card-pill" (click)="openReportCard(e.id)">
+          <span class="report-card-pill__label">{{ e.name }}</span>
+          <span class="report-card-pill__cta">View report card →</span>
+        </button>
+      }
+    </div>
+  </div>
+}

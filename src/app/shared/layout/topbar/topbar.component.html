@@ -1,0 +1,8 @@
+<header class="topbar">
+  <div class="topbar__title">Welcome back</div>
+  <div class="topbar__user">
+    <span>{{ username() }}</span>
+    <span class="badge">{{ role() }}</span>
+    <button type="button" class="topbar__logout" (click)="logout()">Sign out</button>
+  </div>
+</header>

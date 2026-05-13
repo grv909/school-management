@@ -1,0 +1,160 @@
+@use '../abstracts' as *;
+
+.report-card {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $space-6;
+  max-width: 860px;
+  margin: 0 auto;
+  box-shadow: $shadow-sm;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: $space-4;
+    border-bottom: 2px solid $color-accent;
+    margin-bottom: $space-5;
+  }
+
+  &__school {
+    margin: 0;
+    font-size: 24px;
+    color: $color-text;
+    font-weight: $font-weight-bold;
+    letter-spacing: 0.3px;
+  }
+
+  &__sub {
+    color: $color-text-muted;
+    font-size: $font-size-sm;
+    margin-top: $space-1;
+  }
+
+  &__badge {
+    background: $color-accent;
+    color: $color-surface;
+    padding: $space-2 $space-3;
+    border-radius: $radius-sm;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    letter-spacing: 1.2px;
+  }
+
+  &__student {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: $space-4;
+    padding: $space-4;
+    background: $color-bg;
+    border-radius: $radius-md;
+    margin-bottom: $space-5;
+  }
+
+  &__label {
+    font-size: $font-size-xs;
+    text-transform: uppercase;
+    color: $color-text-muted;
+    letter-spacing: 0.6px;
+  }
+
+  &__value {
+    font-size: $font-size-md;
+    color: $color-text;
+    font-weight: $font-weight-medium;
+    margin-top: 2px;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: $space-5;
+
+    th, td {
+      padding: $space-2 $space-3;
+      border-bottom: 1px solid $color-border;
+      font-size: $font-size-sm;
+      text-align: left;
+    }
+
+    th {
+      background: $color-bg;
+      color: $color-text;
+      font-weight: $font-weight-semibold;
+    }
+
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+    tfoot th {
+      background: $color-accent-soft;
+      color: $color-accent;
+      border-top: 2px solid $color-accent;
+    }
+  }
+
+  &__summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    gap: $space-4;
+    padding: $space-4;
+    background: $color-bg;
+    border-radius: $radius-md;
+    margin-bottom: $space-6;
+  }
+
+  &__remarks .report-card__value {
+    font-style: italic;
+    line-height: $line-height-base;
+  }
+
+  &__footer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-5;
+    margin-top: $space-7;
+  }
+
+  &__sign {
+    text-align: center;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+
+  &__sign-line {
+    height: 1px;
+    background: $color-border-strong;
+    margin: 0 $space-4 $space-2;
+  }
+}
+
+// Print styles — strip chrome so report card fills a page cleanly.
+@media print {
+  .no-print,
+  .app-shell__sidebar,
+  .app-shell__topbar,
+  app-toast-host {
+    display: none !important;
+  }
+
+  .app-shell__main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .content-container {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .report-card {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    max-width: none;
+  }
+
+  body {
+    background: white !important;
+  }
+}
