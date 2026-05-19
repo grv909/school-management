@@ -1,0 +1,68 @@
+@use '../abstracts' as *;
+
+.marks-entry__filters {
+  display: flex;
+  gap: $space-3;
+  flex-wrap: wrap;
+  margin-bottom: $space-4;
+}
+
+.marks-entry__filter {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+
+  label {
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+  }
+
+  select {
+    height: 32px;
+    min-width: 180px;
+    padding: 0 $space-3;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-md;
+    background-color: $color-surface;
+    font-size: $font-size-sm;
+  }
+}
+
+.marks-grid {
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    padding: $space-2 $space-3;
+    border-bottom: 1px solid $color-border;
+    font-size: $font-size-sm;
+  }
+
+  th {
+    background-color: $color-bg;
+    color: $color-text-muted;
+    text-transform: uppercase;
+    font-size: $font-size-xs;
+    letter-spacing: 0.4px;
+    text-align: left;
+  }
+
+  td.num { text-align: right; }
+
+  input[type="number"] {
+    width: 90px;
+    height: 28px;
+    padding: 0 $space-2;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-md;
+    text-align: right;
+    font-size: $font-size-sm;
+    font-variant-numeric: tabular-nums;
+
+    &:focus {
+      outline: none;
+      border-color: $color-accent;
+      box-shadow: 0 0 0 3px rgba(45, 95, 139, 0.12);
+    }
+  }
+}

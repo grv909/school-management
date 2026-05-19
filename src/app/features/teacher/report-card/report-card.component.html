@@ -1,0 +1,104 @@
+<app-page-header
+  [title]="card() ? 'Report Card · ' + card()!.exam.name : 'Report Card'"
+  [subtitle]="card() ? (card()!.student.firstName + ' ' + card()!.student.lastName + ' · ' + card()!.className + '-' + card()!.sectionName) : ''"
+  class="no-print">
+  <button type="button" class="btn btn--ghost" (click)="back()">← Back</button>
+  <button type="button" class="btn btn--primary" (click)="print()" [disabled]="!card()">Print</button>
+</app-page-header>
+
+@if (loading()) {
+  <div class="card empty-state">Generating report card…</div>
+} @else if (!card()) {
+  <div class="card empty-state">Could not generate report card.</div>
+} @else {
+  <article class="report-card">
+    <header class="report-card__header">
+      <div>
+        <h1 class="report-card__school">{{ card()!.schoolName }}</h1>
+        <div class="report-card__sub">Academic Year {{ card()!.academicYear }} · {{ card()!.exam.name }}</div>
+      </div>
+      <div class="report-card__badge">REPORT CARD</div>
+    </header>
+
+    <section class="report-card__student">
+      <div>
+        <div class="report-card__label">Student</div>
+        <div class="report-card__value">{{ card()!.student.firstName }} {{ card()!.student.lastName }}</div>
+      </div>
+      <div>
+        <div class="report-card__label">Admission #</div>
+        <div class="report-card__value mono">{{ card()!.student.admissionNo }}</div>
+      </div>
+      <div>
+        <div class="report-card__label">Class · Section</div>
+        <div class="report-card__value">{{ card()!.className }} · {{ card()!.sectionName }}</div>
+      </div>
+      <div>
+        <div class="report-card__label">Roll No.</div>
+        <div class="report-card__value">{{ card()!.student.rollNo ?? '—' }}</div>
+      </div>
+    </section>
+
+    <table class="report-card__table">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th class="num">Max</th>
+          <th class="num">Obtained</th>
+          <th class="num">%</th>
+          <th>Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of card()!.rows; track r.subjectId) {
+          <tr>
+            <td>{{ r.subjectName }}</td>
+            <td class="num">{{ r.maxMarks }}</td>
+            <td class="num">{{ r.marksObtained ?? '—' }}</td>
+            <td class="num">{{ r.marksObtained != null ? (((r.marksObtained / r.maxMarks) * 100) | number:'1.0-1') : '—' }}</td>
+            <td><span class="grade grade--{{ r.grade.toLowerCase().replace('+','plus') }}">{{ r.grade }}</span></td>
+          </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          <th>Total</th>
+          <th class="num">{{ card()!.totalMaxMarks }}</th>
+          <th class="num">{{ card()!.totalMarks }}</th>
+          <th class="num">{{ card()!.percentage }}%</th>
+          <th><span class="grade grade--{{ card()!.overallGrade.toLowerCase().replace('+','plus') }}">{{ card()!.overallGrade }}</span></th>
+        </tr>
+      </tfoot>
+    </table>
+
+    <section class="report-card__summary">
+      <div>
+        <div class="report-card__label">Attendance</div>
+        <div class="report-card__value">{{ card()!.attendancePercentage }}%</div>
+      </div>
+      <div>
+        <div class="report-card__label">Rank</div>
+        <div class="report-card__value">{{ card()!.rankInSection }} of {{ card()!.sectionSize }}</div>
+      </div>
+      <div class="report-card__remarks">
+        <div class="report-card__label">Remarks</div>
+        <div class="report-card__value">{{ card()!.remarks }}</div>
+      </div>
+    </section>
+
+    <footer class="report-card__footer">
+      <div class="report-card__sign">
+        <div class="report-card__sign-line"></div>
+        <div>Class Teacher</div>
+      </div>
+      <div class="report-card__sign">
+        <div class="report-card__sign-line"></div>
+        <div>Principal</div>
+      </div>
+      <div class="report-card__sign">
+        <div class="report-card__sign-line"></div>
+        <div>Parent / Guardian</div>
+      </div>
+    </footer>
+  </article>
+}

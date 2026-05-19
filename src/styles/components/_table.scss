@@ -1,0 +1,47 @@
+@use '../abstracts' as *;
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: $color-surface;
+  font-size: $font-size-sm;
+
+  th, td {
+    padding: $space-3 $space-4;
+    border-bottom: 1px solid $color-border;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  thead th {
+    background-color: $color-bg;
+    color: $color-text-muted;
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  tbody tr:hover {
+    background-color: rgba(45, 95, 139, 0.04);
+  }
+
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .actions {
+    text-align: right;
+    white-space: nowrap;
+  }
+}
+
+.table-container {
+  @include card;
+  overflow: hidden;
+  margin-bottom: $space-5;
+}

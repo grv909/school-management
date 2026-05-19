@@ -1,0 +1,75 @@
+<app-page-header title="Exams" subtitle="Schedule exams in the current academic year.">
+  <button type="button" class="btn btn--primary" (click)="toggleForm()">
+    {{ formOpen() ? 'Cancel' : 'New exam' }}
+  </button>
+</app-page-header>
+
+@if (formOpen()) {
+  <div class="card">
+    <form (ngSubmit)="submit()">
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-field__label" for="en">Name</label>
+          <input class="form-field__control" id="en" name="en" required placeholder="e.g. Unit Test 1"
+                 [ngModel]="form().name" (ngModelChange)="patch('name', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="ey">Academic year</label>
+          <select class="form-field__control" id="ey" name="ey"
+                  [ngModel]="form().academicYearId" (ngModelChange)="patch('academicYearId', $event)">
+            @for (y of years(); track y.id) {
+              <option [ngValue]="y.id">{{ y.name }}{{ y.current ? ' (current)' : '' }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-field__label" for="sd">Start date</label>
+          <input class="form-field__control" id="sd" name="sd" type="date"
+                 [ngModel]="form().startDate" (ngModelChange)="patch('startDate', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="ed">End date</label>
+          <input class="form-field__control" id="ed" name="ed" type="date"
+                 [ngModel]="form().endDate" (ngModelChange)="patch('endDate', $event)">
+        </div>
+      </div>
+      <button type="submit" class="btn btn--primary" [disabled]="!form().name.trim() || !form().academicYearId">
+        Save exam
+      </button>
+    </form>
+  </div>
+}
+
+@if (loading()) {
+  <div class="empty-state">Loading exams…</div>
+} @else if (exams().length === 0) {
+  <div class="empty-state">
+    <div class="empty-state__title">No exams yet</div>
+    <div class="empty-state__hint">Create the first exam to start marks entry.</div>
+  </div>
+} @else {
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Academic year</th>
+          <th>Start</th>
+          <th>End</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (e of exams(); track e.id) {
+          <tr>
+            <td>{{ e.name }}</td>
+            <td>{{ yearName(e.academicYearId) }}</td>
+            <td>{{ e.startDate ?? '—' }}</td>
+            <td>{{ e.endDate ?? '—' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

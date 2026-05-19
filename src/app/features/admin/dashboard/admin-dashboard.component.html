@@ -1,0 +1,56 @@
+<app-page-header title="Dashboard" subtitle="At a glance — manage your school's records and reports."></app-page-header>
+
+<div class="dashboard-grid">
+  <button type="button" class="card dashboard-card" (click)="go('/admin/classes')">
+    <div class="dashboard-card__label">Classes</div>
+    <div class="dashboard-card__value">{{ stats().classes }}</div>
+  </button>
+  <button type="button" class="card dashboard-card" (click)="go('/admin/students')">
+    <div class="dashboard-card__label">Students</div>
+    <div class="dashboard-card__value">{{ stats().students }}</div>
+  </button>
+  <button type="button" class="card dashboard-card" (click)="go('/admin/teachers')">
+    <div class="dashboard-card__label">Teachers</div>
+    <div class="dashboard-card__value">{{ stats().teachers }}</div>
+  </button>
+  <button type="button" class="card dashboard-card" (click)="go('/admin/subjects')">
+    <div class="dashboard-card__label">Subjects</div>
+    <div class="dashboard-card__value">{{ stats().subjects }}</div>
+  </button>
+  <button type="button" class="card dashboard-card" (click)="go('/admin/exams')">
+    <div class="dashboard-card__label">Exams</div>
+    <div class="dashboard-card__value">{{ stats().exams }}</div>
+  </button>
+  <button type="button" class="card dashboard-card" (click)="go('/admin/reports')">
+    <div class="dashboard-card__label">Reports</div>
+    <div class="dashboard-card__value">PDF</div>
+  </button>
+</div>
+
+@if (!loading()) {
+  <div class="analytics-grid">
+    <div class="card">
+      <div class="card__title">Enrolment by class</div>
+      <div class="card__subtitle">Number of students per class</div>
+      <app-bar-chart [data]="enrolmentByClass()" ariaLabel="Enrolment by class"></app-bar-chart>
+    </div>
+
+    <div class="card">
+      <div class="card__title">Average score by subject</div>
+      <div class="card__subtitle">School-wide % across all exams</div>
+      <app-bar-chart [data]="avgScoreBySubject()" [maxValue]="100" ariaLabel="Average score by subject"></app-bar-chart>
+    </div>
+
+    <div class="card">
+      <div class="card__title">Attendance trend</div>
+      <div class="card__subtitle">School-wide monthly attendance %</div>
+      <app-line-chart [data]="attendanceTrend()" [maxValue]="100" [minValue]="70" ariaLabel="Attendance trend"></app-line-chart>
+    </div>
+
+    <div class="card">
+      <div class="card__title">Gender distribution</div>
+      <div class="card__subtitle">Current student body</div>
+      <app-donut-chart [data]="genderDistribution()" caption="Students" ariaLabel="Gender distribution"></app-donut-chart>
+    </div>
+  </div>
+}

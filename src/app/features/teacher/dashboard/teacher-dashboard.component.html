@@ -1,0 +1,87 @@
+<app-page-header
+  [title]="'Welcome, ' + username"
+  subtitle="Your daily teaching cockpit. Mark attendance, enter marks, and review your students.">
+  <button type="button" class="btn btn--secondary" (click)="goAttendance()">Mark attendance</button>
+  <button type="button" class="btn btn--primary" (click)="goMarks()">Enter marks</button>
+</app-page-header>
+
+@if (loading()) {
+  <div class="card empty-state">Loading your sections…</div>
+} @else if (tiles().length === 0) {
+  <div class="card empty-state">
+    <div class="empty-state__title">No sections assigned yet</div>
+    <div class="empty-state__hint">Ask an admin to assign you to a class on the Teachers page.</div>
+  </div>
+} @else {
+  <!-- KPI tiles -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-card__label">Sections</div>
+      <div class="kpi-card__value">{{ tiles().length }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__label">Class-teacher of</div>
+      <div class="kpi-card__value">{{ classTeacherSections().length }}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__label">Total students</div>
+      <div class="kpi-card__value">{{ totalStudents() }}</div>
+    </div>
+    <button type="button" class="kpi-card kpi-card--action" (click)="goStudents()">
+      <div class="kpi-card__label">Students directory</div>
+      <div class="kpi-card__value">Open →</div>
+    </button>
+  </div>
+
+  <div class="analytics-grid">
+    <div class="card">
+      <div class="card__title">Students per section</div>
+      <div class="card__subtitle">Across your assigned sections</div>
+      <app-bar-chart
+        [data]="tileChartData()"
+        ariaLabel="Students per section">
+      </app-bar-chart>
+    </div>
+
+    @if (attendanceTrend().length > 0) {
+      <div class="card">
+        <div class="card__title">Attendance trend</div>
+        <div class="card__subtitle">Daily attendance % — last 14 days (class-teacher section)</div>
+        <app-line-chart
+          [data]="attendanceTrend()"
+          [maxValue]="100"
+          [minValue]="70"
+          ariaLabel="Attendance trend">
+        </app-line-chart>
+      </div>
+    }
+  </div>
+
+  <div class="card">
+    <div class="card__title">Your sections</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Section</th>
+          <th style="width: 140px;">Students</th>
+          <th style="width: 160px;">Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (t of tiles(); track t.sectionId) {
+          <tr>
+            <td>{{ t.label }}</td>
+            <td>{{ t.studentCount }}</td>
+            <td>
+              @if (t.isClassTeacher) {
+                <span class="badge badge--accent">Class Teacher</span>
+              } @else {
+                <span class="badge">Subject Teacher</span>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

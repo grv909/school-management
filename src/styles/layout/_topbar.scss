@@ -1,0 +1,37 @@
+@use '../abstracts' as *;
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 $space-5;
+  background-color: $color-surface;
+  border-bottom: 1px solid $color-border;
+  height: $topbar-height;
+  position: sticky;
+  top: 0;
+  z-index: $z-topbar;
+}
+
+.topbar__title {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text;
+}
+
+.topbar__user {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+}
+
+.topbar__logout {
+  @include button-reset;
+  color: $color-accent;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-sm;
+
+  &:hover { color: $color-accent-hover; }
+}

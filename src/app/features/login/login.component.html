@@ -1,0 +1,45 @@
+<div class="login-page">
+  <form class="login-card" (ngSubmit)="submit()" autocomplete="off">
+    <div class="login-card__brand">Sunrise Public School</div>
+    <div class="login-card__subtitle">School ERP — sign in</div>
+
+    <div class="form-field">
+      <label class="form-field__label" for="username">Username</label>
+      <input class="form-field__control"
+             id="username"
+             name="username"
+             type="text"
+             autocomplete="username"
+             [ngModel]="username()"
+             (ngModelChange)="username.set($event)"
+             placeholder="admin or teacher1"
+             required>
+    </div>
+
+    <div class="form-field">
+      <label class="form-field__label" for="password">Password</label>
+      <input class="form-field__control"
+             id="password"
+             name="password"
+             type="password"
+             autocomplete="current-password"
+             [ngModel]="password()"
+             (ngModelChange)="password.set($event)"
+             required>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="form-field__error" role="alert">{{ errorMessage() }}</div>
+    }
+
+    <button type="submit"
+            class="btn btn--primary login-card__submit"
+            [disabled]="submitting() || !username() || !password()">
+      {{ submitting() ? 'Signing in…' : 'Sign in' }}
+    </button>
+
+    <div class="login-card__footer">
+      Demo accounts: <strong>admin</strong> / <strong>teacher1</strong> &middot; any non-empty password.
+    </div>
+  </form>
+</div>

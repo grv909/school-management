@@ -1,0 +1,83 @@
+@use 'sass:color';
+@use '../abstracts' as *;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  height: 36px;
+  padding: 0 $space-4;
+  border-radius: $radius-md;
+  border: 1px solid transparent;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: background-color $transition-fast, border-color $transition-fast, color $transition-fast;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.btn--primary {
+  background-color: $color-accent;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background-color: $color-accent-hover;
+  }
+}
+
+.btn--secondary {
+  background-color: $color-surface;
+  border-color: $color-border-strong;
+  color: $color-text;
+
+  &:hover:not(:disabled) {
+    background-color: $color-bg;
+  }
+}
+
+.btn--tertiary {
+  background: none;
+  color: $color-accent;
+
+  &:hover:not(:disabled) {
+    background-color: $color-accent-soft;
+  }
+}
+
+.btn--danger {
+  background-color: $color-danger;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background-color: color.adjust($color-danger, $lightness: -8%);
+  }
+}
+
+.btn--sm {
+  height: 28px;
+  padding: 0 $space-3;
+  font-size: $font-size-xs;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: $color-text-muted;
+  border-color: transparent;
+
+  &:hover:not(:disabled) {
+    background-color: $color-bg;
+    color: $color-text;
+  }
+}
+
+// Allow inline spacing when buttons sit next to each other in table cells.
+.data-table .btn + .btn { margin-left: $space-1; }

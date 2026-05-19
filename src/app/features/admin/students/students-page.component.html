@@ -1,0 +1,118 @@
+<app-page-header title="Students" subtitle="Add and manage students by class and section.">
+  <button type="button" class="btn btn--primary" (click)="toggleForm()"
+          [disabled]="!canShowStudents()">
+    {{ formOpen() ? 'Cancel' : 'Add student' }}
+  </button>
+</app-page-header>
+
+<div class="card">
+  <div class="form-row">
+    <div class="form-field">
+      <label class="form-field__label" for="cls">Class</label>
+      <select class="form-field__control" id="cls"
+              [ngModel]="selectedClassId()"
+              (ngModelChange)="onClassChange($event)">
+        <option [ngValue]="null">Select class</option>
+        @for (c of classes(); track c.id) {
+          <option [ngValue]="c.id">{{ c.name }}</option>
+        }
+      </select>
+    </div>
+    <div class="form-field">
+      <label class="form-field__label" for="sec">Section</label>
+      <select class="form-field__control" id="sec"
+              [ngModel]="selectedSectionId()"
+              (ngModelChange)="onSectionChange($event)"
+              [disabled]="!selectedClassId()">
+        <option [ngValue]="null">Select section</option>
+        @for (s of sections(); track s.id) {
+          <option [ngValue]="s.id">Section {{ s.name }}</option>
+        }
+      </select>
+    </div>
+  </div>
+</div>
+
+@if (formOpen()) {
+  <div class="card">
+    <div class="card__title">New student</div>
+    <form (ngSubmit)="submit()">
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-field__label" for="adm">Admission no.</label>
+          <input class="form-field__control" id="adm" name="adm" required
+                 [ngModel]="form().admissionNo" (ngModelChange)="patch('admissionNo', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="roll">Roll no.</label>
+          <input class="form-field__control" id="roll" name="roll" type="number" min="0"
+                 [ngModel]="form().rollNo" (ngModelChange)="patch('rollNo', $event)">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-field__label" for="fn">First name</label>
+          <input class="form-field__control" id="fn" name="fn" required
+                 [ngModel]="form().firstName" (ngModelChange)="patch('firstName', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="ln">Last name</label>
+          <input class="form-field__control" id="ln" name="ln" required
+                 [ngModel]="form().lastName" (ngModelChange)="patch('lastName', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="gen">Gender</label>
+          <select class="form-field__control" id="gen" name="gen"
+                  [ngModel]="form().gender" (ngModelChange)="patch('gender', $event)">
+            <option value="">—</option>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn--primary"
+              [disabled]="!form().admissionNo.trim() || !form().firstName.trim() || !form().lastName.trim()">
+        Save student
+      </button>
+    </form>
+  </div>
+}
+
+@if (!canShowStudents()) {
+  <div class="empty-state">
+    <div class="empty-state__title">Pick a class and section</div>
+    <div class="empty-state__hint">Choose above to view the roster.</div>
+  </div>
+} @else if (students().length === 0) {
+  <div class="empty-state">
+    <div class="empty-state__title">No students in this section</div>
+    <div class="empty-state__hint">Click "Add student" to enrol the first one.</div>
+  </div>
+} @else {
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th class="num">Roll</th>
+          <th>Name</th>
+          <th>Admission no.</th>
+          <th>Gender</th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (s of students(); track s.id) {
+          <tr>
+            <td class="num">{{ s.rollNo ?? '—' }}</td>
+            <td>{{ s.firstName }} {{ s.lastName }}</td>
+            <td>{{ s.admissionNo }}</td>
+            <td>{{ s.gender ?? '—' }}</td>
+            <td class="actions">
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="remove(s)">Remove</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

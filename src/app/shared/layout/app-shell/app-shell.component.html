@@ -1,0 +1,14 @@
+<div class="app-shell">
+  <div class="app-shell__sidebar">
+    <app-sidebar></app-sidebar>
+  </div>
+  <div class="app-shell__topbar">
+    <app-topbar></app-topbar>
+  </div>
+  <main class="app-shell__main">
+    <div class="content-container">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>
+<app-toast-host></app-toast-host>

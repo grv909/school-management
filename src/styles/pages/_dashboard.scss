@@ -1,0 +1,38 @@
+@use '../abstracts' as *;
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: $space-4;
+}
+
+.dashboard-card {
+  @include button-reset;
+  @include card;
+  padding: $space-5;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color $transition-fast, box-shadow $transition-fast, transform $transition-fast;
+
+  &:hover {
+    border-color: $color-accent;
+    box-shadow: $shadow-md;
+  }
+
+  &:focus-visible { @include focus-ring; }
+
+  &__label {
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: $space-2;
+  }
+
+  &__value {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $color-text;
+    font-variant-numeric: tabular-nums;
+  }
+}

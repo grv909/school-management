@@ -1,0 +1,3 @@
+// Barrel for abstracts. Components do `@use 'abstracts' as *;` from src/styles.
+@forward 'variables';
+@forward 'mixins';

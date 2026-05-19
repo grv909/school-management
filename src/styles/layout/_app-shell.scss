@@ -1,0 +1,46 @@
+@use '../abstracts' as *;
+
+.app-shell {
+  display: grid;
+  grid-template-columns: $sidebar-width 1fr;
+  grid-template-rows: $topbar-height 1fr;
+  grid-template-areas:
+    "sidebar topbar"
+    "sidebar main";
+  min-height: 100vh;
+}
+
+.app-shell__sidebar { grid-area: sidebar; }
+.app-shell__topbar  { grid-area: topbar; }
+.app-shell__main    {
+  grid-area: main;
+  padding: $space-5 $space-6;
+  overflow-x: hidden;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $space-5;
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    margin-top: $space-1;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $space-3;
+  }
+}
+
+.content-container {
+  max-width: $content-max-width;
+}

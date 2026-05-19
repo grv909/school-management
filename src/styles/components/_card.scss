@@ -1,0 +1,38 @@
+@use '../abstracts' as *;
+
+.card {
+  @include card;
+  padding: $space-5;
+  margin-bottom: $space-5;
+}
+
+.card__title {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $space-3;
+}
+
+.card__subtitle {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  margin-bottom: $space-4;
+}
+
+.empty-state {
+  @include card;
+  padding: $space-7 $space-5;
+  text-align: center;
+  color: $color-text-muted;
+
+  &__title {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text;
+    margin-bottom: $space-2;
+  }
+
+  &__hint {
+    font-size: $font-size-sm;
+    margin-bottom: $space-4;
+  }
+}

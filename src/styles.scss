@@ -1,0 +1,25 @@
+// Single global entrypoint. Only this file is referenced from angular.json.
+// Order matters: abstracts first (variables/mixins), then base resets, then components, layout, pages.
+
+@use 'styles/abstracts';
+@use 'styles/base/reset';
+@use 'styles/base/typography';
+@use 'styles/base/root';
+
+@use 'styles/components/button';
+@use 'styles/components/form';
+@use 'styles/components/table';
+@use 'styles/components/card';
+@use 'styles/components/badge';
+@use 'styles/components/toast';
+@use 'styles/components/modal';
+@use 'styles/components/analytics';
+
+@use 'styles/layout/app-shell';
+@use 'styles/layout/sidebar';
+@use 'styles/layout/topbar';
+
+@use 'styles/pages/login';
+@use 'styles/pages/marks-entry';
+@use 'styles/pages/dashboard';
+@use 'styles/pages/report-card';
