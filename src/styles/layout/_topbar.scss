@@ -4,19 +4,76 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 $space-5;
+  gap: $space-3;
+  padding: 0 $space-4;
   background-color: $color-surface;
   border-bottom: 1px solid $color-border;
   height: $topbar-height;
   position: sticky;
   top: 0;
   z-index: $z-topbar;
+
+  @include media-up($bp-sm) {
+    padding: 0 $space-5;
+  }
+}
+
+.topbar__left {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  min-width: 0;
+}
+
+// Hamburger — only meaningful while the sidebar is off-canvas (< $bp-md).
+.topbar__nav-toggle {
+  @include button-reset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-left: -$space-2;
+  border-radius: $radius-md;
+  color: $color-text;
+  flex: none;
+
+  &:hover { background-color: $color-bg; }
+  &:focus-visible { @include focus-ring; }
+
+  @include media-up($bp-md) {
+    display: none;
+  }
+}
+
+// Drawn as a 3-line glyph using the element + pseudo-elements.
+.topbar__nav-icon {
+  position: relative;
+  width: 18px;
+  height: 2px;
+  background-color: currentColor;
+  border-radius: 2px;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 18px;
+    height: 2px;
+    background-color: currentColor;
+    border-radius: 2px;
+  }
+
+  &::before { top: -6px; }
+  &::after  { top: 6px; }
 }
 
 .topbar__title {
   font-size: $font-size-md;
   font-weight: $font-weight-semibold;
   color: $color-text;
+  @include truncate;
 }
 
 .topbar__user {
@@ -25,6 +82,18 @@
   gap: $space-3;
   font-size: $font-size-sm;
   color: $color-text-muted;
+  min-width: 0;
+}
+
+// Username is the first thing to drop on cramped phones.
+.topbar__username {
+  @include truncate;
+  max-width: 30vw;
+  display: none;
+
+  @include media-up($bp-sm) {
+    display: inline;
+  }
 }
 
 .topbar__logout {
@@ -32,6 +101,7 @@
   color: $color-accent;
   font-weight: $font-weight-medium;
   font-size: $font-size-sm;
+  flex: none;
 
   &:hover { color: $color-accent-hover; }
 }

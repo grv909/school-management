@@ -4,26 +4,47 @@
   background: $color-surface;
   border: 1px solid $color-border;
   border-radius: $radius-md;
-  padding: $space-6;
+  padding: $space-4;
   max-width: 860px;
   margin: 0 auto;
   box-shadow: $shadow-sm;
 
+  @include media-up($bp-sm) {
+    padding: $space-6;
+  }
+
   &__header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: $space-3;
     align-items: flex-start;
     padding-bottom: $space-4;
     border-bottom: 2px solid $color-accent;
+    margin-bottom: $space-5;
+
+    @include media-up($bp-sm) {
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 0;
+    }
+  }
+
+  &__table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     margin-bottom: $space-5;
   }
 
   &__school {
     margin: 0;
-    font-size: 24px;
+    font-size: 20px;
     color: $color-text;
     font-weight: $font-weight-bold;
     letter-spacing: 0.3px;
+
+    @include media-up($bp-sm) {
+      font-size: 24px;
+    }
   }
 
   &__sub {
@@ -44,7 +65,7 @@
 
   &__student {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
     gap: $space-4;
     padding: $space-4;
     background: $color-bg;
@@ -68,8 +89,9 @@
 
   &__table {
     width: 100%;
+    min-width: 440px;
     border-collapse: collapse;
-    margin-bottom: $space-5;
+    margin-bottom: 0;
 
     th, td {
       padding: $space-2 $space-3;
@@ -95,12 +117,25 @@
 
   &__summary {
     display: grid;
-    grid-template-columns: 1fr 1fr 2fr;
+    grid-template-columns: 1fr 1fr;
     gap: $space-4;
     padding: $space-4;
     background: $color-bg;
     border-radius: $radius-md;
     margin-bottom: $space-6;
+
+    @include media-up($bp-sm) {
+      grid-template-columns: 1fr 1fr 2fr;
+    }
+  }
+
+  // Remarks span the full width on mobile's two-column grid.
+  &__remarks {
+    grid-column: 1 / -1;
+
+    @include media-up($bp-sm) {
+      grid-column: auto;
+    }
   }
 
   &__remarks .report-card__value {
@@ -111,8 +146,13 @@
   &__footer {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: $space-5;
-    margin-top: $space-7;
+    gap: $space-2;
+    margin-top: $space-6;
+
+    @include media-up($bp-sm) {
+      gap: $space-5;
+      margin-top: $space-7;
+    }
   }
 
   &__sign {

@@ -1,4 +1,4 @@
-<aside class="sidebar">
+<aside class="sidebar" id="app-sidebar">
   <div class="sidebar__brand">
     <span class="sidebar__brand-name">{{ schoolName }}</span>
     <span class="sidebar__brand-sub">School ERP</span>
@@ -12,7 +12,8 @@
           class="sidebar__link"
           [routerLink]="item.path"
           [routerLinkActiveOptions]="{ exact: item.path === '/admin' || item.path === '/teacher' }"
-          routerLinkActive="active">
+          routerLinkActive="active"
+          (click)="onNavigate()">
           {{ item.label }}
         </a>
       }

@@ -1,27 +1,64 @@
 @use '../abstracts' as *;
 
+// Mobile-first: single column, topbar on top, sidebar lives off-canvas as a
+// drawer (positioned by the sidebar partial). At >= $bp-md the classic
+// two-column ERP layout takes over.
 .app-shell {
   display: grid;
-  grid-template-columns: $sidebar-width 1fr;
+  grid-template-columns: 1fr;
   grid-template-rows: $topbar-height 1fr;
   grid-template-areas:
-    "sidebar topbar"
-    "sidebar main";
+    "topbar"
+    "main";
   min-height: 100vh;
+
+  @include media-up($bp-md) {
+    grid-template-columns: $sidebar-width 1fr;
+    grid-template-rows: $topbar-height 1fr;
+    grid-template-areas:
+      "sidebar topbar"
+      "sidebar main";
+  }
 }
 
 .app-shell__sidebar { grid-area: sidebar; }
 .app-shell__topbar  { grid-area: topbar; }
 .app-shell__main    {
   grid-area: main;
-  padding: $space-5 $space-6;
+  padding: $space-4;
   overflow-x: hidden;
+
+  @include media-up($bp-sm) {
+    padding: $space-5 $space-6;
+  }
+}
+
+// Dim backdrop shown behind the mobile drawer. Hidden on desktop and whenever
+// the drawer is closed.
+.app-shell__backdrop {
+  @include button-reset;
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.45);
+  z-index: $z-sidebar - 1;
+  cursor: pointer;
+}
+
+.app-shell--nav-open .app-shell__backdrop {
+  display: block;
+
+  @include media-up($bp-md) {
+    display: none;
+  }
 }
 
 .page-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: $space-3;
+  flex-wrap: wrap;
   margin-bottom: $space-5;
 
   &__title {
@@ -38,6 +75,7 @@
   &__actions {
     display: flex;
     gap: $space-3;
+    flex-wrap: wrap;
   }
 }
 
