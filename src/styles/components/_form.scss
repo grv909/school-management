@@ -20,8 +20,14 @@
   border-radius: $radius-md;
   background-color: $color-surface;
   color: $color-text;
-  font-size: $font-size-sm;
+  // 16px on phones stops iOS Safari from auto-zooming on focus; the smaller
+  // desktop size is restored above $bp-sm.
+  font-size: $font-size-md;
   transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  @include media-up($bp-sm) {
+    font-size: $font-size-sm;
+  }
 
   &:focus {
     outline: none;
@@ -53,9 +59,16 @@
 
 .form-row {
   display: flex;
-  gap: $space-4;
+  flex-direction: column;
+  gap: 0;
 
   > .form-field {
     flex: 1;
+  }
+
+  // Side-by-side only once there's horizontal room.
+  @include media-up($bp-sm) {
+    flex-direction: row;
+    gap: $space-4;
   }
 }

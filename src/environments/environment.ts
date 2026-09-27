@@ -2,6 +2,6 @@
 export const environment = {
   production: false,
   apiBaseUrl: 'http://localhost:8081',
-  useMocks: true,
+  useMocks: false,
   logLevel: 'debug' as 'debug' | 'info' | 'warn' | 'error' | 'silent'
 };
