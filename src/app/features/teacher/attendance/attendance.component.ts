@@ -47,10 +47,22 @@ export class AttendanceComponent {
   readonly saving = signal(false);
   readonly loadedKey = signal<string>('');
 
-  readonly canMark = computed(() => {
+  // Attendance can only be marked/changed for today or yesterday — mirrors the backend restriction
+  // in AttendanceService.bulkUpsert. Exposed as ISO date strings for the date input's min/max.
+  readonly minDate = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  readonly maxDate = new Date().toISOString().slice(0, 10);
+
+  readonly isDateEditable = computed(() => {
+    const d = this.date();
+    return d >= this.minDate && d <= this.maxDate;
+  });
+
+  readonly isClassTeacher = computed(() => {
     const sec = this.selectedSectionId();
     return sec !== null && this.scope.isClassTeacherOf(sec);
   });
+
+  readonly canMark = computed(() => this.isClassTeacher() && this.isDateEditable());
 
   readonly summary = computed(() => {
     const rs = this.rows();

@@ -1,8 +1,20 @@
-<app-page-header title="Exams" subtitle="Schedule exams in the current academic year.">
+<app-page-header title="Exams" subtitle="Schedule exams for a class in the current academic year.">
   <button type="button" class="btn btn--primary" (click)="toggleForm()">
     {{ formOpen() ? 'Cancel' : 'New exam' }}
   </button>
 </app-page-header>
+
+<div class="form-row">
+  <div class="form-field">
+    <label class="form-field__label" for="classFilter">Class</label>
+    <select class="form-field__control" id="classFilter" name="classFilter"
+            [ngModel]="selectedClassId()" (ngModelChange)="onClassChange($event)">
+      @for (c of classes(); track c.id) {
+        <option [ngValue]="c.id">{{ c.name }}</option>
+      }
+    </select>
+  </div>
+</div>
 
 @if (formOpen()) {
   <div class="card">
@@ -12,6 +24,15 @@
           <label class="form-field__label" for="en">Name</label>
           <input class="form-field__control" id="en" name="en" required placeholder="e.g. Unit Test 1"
                  [ngModel]="form().name" (ngModelChange)="patch('name', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="ec">Class</label>
+          <select class="form-field__control" id="ec" name="ec"
+                  [ngModel]="form().classId" (ngModelChange)="patch('classId', $event)">
+            @for (c of classes(); track c.id) {
+              <option [ngValue]="c.id">{{ c.name }}</option>
+            }
+          </select>
         </div>
         <div class="form-field">
           <label class="form-field__label" for="ey">Academic year</label>
@@ -25,6 +46,11 @@
       </div>
       <div class="form-row">
         <div class="form-field">
+          <label class="form-field__label" for="mm">Max marks</label>
+          <input class="form-field__control" id="mm" name="mm" type="number" min="1" max="1000"
+                 [ngModel]="form().maxMarks" (ngModelChange)="patch('maxMarks', $event)">
+        </div>
+        <div class="form-field">
           <label class="form-field__label" for="sd">Start date</label>
           <input class="form-field__control" id="sd" name="sd" type="date"
                  [ngModel]="form().startDate" (ngModelChange)="patch('startDate', $event)">
@@ -35,7 +61,8 @@
                  [ngModel]="form().endDate" (ngModelChange)="patch('endDate', $event)">
         </div>
       </div>
-      <button type="submit" class="btn btn--primary" [disabled]="!form().name.trim() || !form().academicYearId">
+      <button type="submit" class="btn btn--primary"
+              [disabled]="!form().name.trim() || !form().academicYearId || !form().classId || !form().maxMarks">
         Save exam
       </button>
     </form>
@@ -46,7 +73,7 @@
   <div class="empty-state">Loading exams…</div>
 } @else if (exams().length === 0) {
   <div class="empty-state">
-    <div class="empty-state__title">No exams yet</div>
+    <div class="empty-state__title">No exams yet for this class</div>
     <div class="empty-state__hint">Create the first exam to start marks entry.</div>
   </div>
 } @else {
@@ -55,7 +82,9 @@
       <thead>
         <tr>
           <th>Name</th>
+          <th>Class</th>
           <th>Academic year</th>
+          <th class="num">Max marks</th>
           <th>Start</th>
           <th>End</th>
         </tr>
@@ -64,7 +93,9 @@
         @for (e of exams(); track e.id) {
           <tr>
             <td>{{ e.name }}</td>
+            <td>{{ className(e.classId) }}</td>
             <td>{{ yearName(e.academicYearId) }}</td>
+            <td class="num">{{ e.maxMarks }}</td>
             <td>{{ e.startDate ?? '—' }}</td>
             <td>{{ e.endDate ?? '—' }}</td>
           </tr>

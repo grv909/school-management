@@ -17,10 +17,14 @@ export const MOCK_ACADEMIC_YEARS: AcademicYear[] = [
 ];
 
 export const MOCK_CLASSES: SchoolClass[] = [
-  { id: 1, name: 'Class 6', displayOrder: 6 },
-  { id: 2, name: 'Class 7', displayOrder: 7 },
-  { id: 3, name: 'Class 8', displayOrder: 8 }
+  { id: 1, name: 'Class 6', classTeacherName: null, studentCount: 0 },
+  { id: 2, name: 'Class 7', classTeacherName: null, studentCount: 0 },
+  { id: 3, name: 'Class 8', classTeacherName: 'Meera Sharma', studentCount: 10 }
 ];
+
+// class_subject join table mock — every class currently teaches every subject.
+export const MOCK_CLASS_SUBJECTS: Array<{ classId: number; subjectId: number }> =
+  [1, 2, 3].flatMap(classId => [1, 2, 3, 4, 5, 6].map(subjectId => ({ classId, subjectId })));
 
 export const MOCK_SECTIONS: Section[] = [
   { id: 1, classId: 1, academicYearId: 1, name: 'A' },
@@ -60,8 +64,8 @@ export const MOCK_STUDENTS: Student[] = [
 ];
 
 export const MOCK_EXAMS: Exam[] = [
-  { id: 1, name: 'Unit Test 1',  academicYearId: 1, startDate: '2026-07-15', endDate: '2026-07-22' },
-  { id: 2, name: 'Half-Yearly',  academicYearId: 1, startDate: '2026-09-20', endDate: '2026-09-30' }
+  { id: 1, name: 'Unit Test 1',  academicYearId: 1, classId: 3, maxMarks: 100, startDate: '2026-07-15', endDate: '2026-07-22' },
+  { id: 2, name: 'Half-Yearly',  academicYearId: 1, classId: 3, maxMarks: 100, startDate: '2026-09-20', endDate: '2026-09-30' }
 ];
 
 /**

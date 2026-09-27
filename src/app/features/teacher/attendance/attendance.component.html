@@ -31,7 +31,8 @@
 
   <div class="form-field">
     <label class="form-field__label">Date</label>
-    <input class="form-field__control" type="date" [ngModel]="date()" (ngModelChange)="date.set($event)">
+    <input class="form-field__control" type="date" [ngModel]="date()" (ngModelChange)="date.set($event)"
+           [min]="minDate" [max]="maxDate">
   </div>
 
   <div class="filters__action">
@@ -51,9 +52,13 @@
       </span>
     </div>
 
-    @if (!canMark()) {
+    @if (!isClassTeacher()) {
       <div class="banner banner--warn">
         You are not the class teacher of this section, so attendance is read-only.
+      </div>
+    } @else if (!isDateEditable()) {
+      <div class="banner banner--warn">
+        Attendance can only be marked or changed for today or yesterday, so this date is read-only.
       </div>
     } @else {
       <div class="bulk-actions">

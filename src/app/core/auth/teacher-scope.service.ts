@@ -52,6 +52,10 @@ export class TeacherScopeService {
           subscriber.next([]); subscriber.complete(); return;
         }
         let remaining = allClasses.length;
+        // Keep the server's own ordering (GET /api/classes is already sorted by displayOrder) —
+        // record each class's original index so results stay in that order despite resolving
+        // section membership out of order below.
+        const indexById = new Map(allClasses.map((c, i) => [c.id, i]));
         const out: SchoolClass[] = [];
         if (remaining === 0) { subscriber.next([]); subscriber.complete(); return; }
         allClasses.forEach(c => {
@@ -61,7 +65,7 @@ export class TeacherScopeService {
             }
             remaining -= 1;
             if (remaining === 0) {
-              out.sort((a, b) => a.displayOrder - b.displayOrder);
+              out.sort((a, b) => (indexById.get(a.id) ?? 0) - (indexById.get(b.id) ?? 0));
               subscriber.next(out);
               subscriber.complete();
             }

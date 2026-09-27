@@ -38,15 +38,17 @@
     <table class="data-table">
       <thead>
         <tr>
-          <th>Name</th>
-          <th class="num">Order</th>
+          <th>Class</th>
+          <th>Class teacher</th>
+          <th class="num">Total students</th>
         </tr>
       </thead>
       <tbody>
         @for (c of classes(); track c.id) {
           <tr>
             <td>{{ c.name }}</td>
-            <td class="num">{{ c.displayOrder }}</td>
+            <td>{{ c.classTeacherName ?? '—' }}</td>
+            <td class="num">{{ c.studentCount }}</td>
           </tr>
         }
       </tbody>

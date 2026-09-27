@@ -4,6 +4,18 @@
   </button>
 </app-page-header>
 
+<div class="form-row">
+  <div class="form-field">
+    <label class="form-field__label" for="classFilter">Class</label>
+    <select class="form-field__control" id="classFilter" name="classFilter"
+            [ngModel]="selectedClassId()" (ngModelChange)="onClassChange($event)">
+      @for (c of classes(); track c.id) {
+        <option [ngValue]="c.id">{{ c.name }}</option>
+      }
+    </select>
+  </div>
+</div>
+
 @if (formOpen()) {
   <div class="card">
     <form (ngSubmit)="submit()">
@@ -34,8 +46,8 @@
   <div class="empty-state">Loading subjects…</div>
 } @else if (subjects().length === 0) {
   <div class="empty-state">
-    <div class="empty-state__title">No subjects yet</div>
-    <div class="empty-state__hint">Add a subject to enable marks entry.</div>
+    <div class="empty-state__title">No subjects assigned to this class yet</div>
+    <div class="empty-state__hint">Add a subject, then assign it to this class from the Classes page.</div>
   </div>
 } @else {
   <div class="table-container">

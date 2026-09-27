@@ -11,7 +11,8 @@ export interface CurrentUser {
 export interface SchoolClass {
   id: number;
   name: string;
-  displayOrder: number;
+  classTeacherName: string | null;
+  studentCount: number;
 }
 
 export interface Section {
@@ -59,6 +60,8 @@ export interface Exam {
   id: number;
   name: string;
   academicYearId: number;
+  classId: number;
+  maxMarks: number;
   startDate: string | null;
   endDate: string | null;
 }

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { ACADEMIC_YEAR_API, EXAM_API } from '../../../core/api/api.tokens';
-import { AcademicYear, Exam } from '../../../core/models';
+import { ACADEMIC_YEAR_API, CLASS_API, EXAM_API } from '../../../core/api/api.tokens';
+import { AcademicYear, Exam, SchoolClass } from '../../../core/models';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { ToastService } from '../../../core/ui/toast.service';
 import { LoggerService } from '../../../core/logging/logger.service';
@@ -17,15 +17,21 @@ import { LoggerService } from '../../../core/logging/logger.service';
 export class ExamsPageComponent {
   private readonly examApi = inject(EXAM_API);
   private readonly yearApi = inject(ACADEMIC_YEAR_API);
+  private readonly classApi = inject(CLASS_API);
   private readonly toast = inject(ToastService);
   private readonly logger = inject(LoggerService);
 
   readonly exams = signal<Exam[]>([]);
   readonly years = signal<AcademicYear[]>([]);
+  readonly classes = signal<SchoolClass[]>([]);
   readonly loading = signal(true);
+
+  // Which class's exams the table is currently showing.
+  readonly selectedClassId = signal<number | null>(null);
+
   readonly formOpen = signal(false);
-  readonly form = signal<{ name: string; academicYearId: number | null; startDate: string; endDate: string }>({
-    name: '', academicYearId: null, startDate: '', endDate: ''
+  readonly form = signal<{ name: string; academicYearId: number | null; classId: number | null; maxMarks: number | null; startDate: string; endDate: string }>({
+    name: '', academicYearId: null, classId: null, maxMarks: 100, startDate: '', endDate: ''
   });
 
   constructor() {
@@ -34,11 +40,32 @@ export class ExamsPageComponent {
       const current = rows.find(y => y.current) ?? rows[0];
       if (current) this.form.update(f => ({ ...f, academicYearId: current.id }));
     });
-    this.examApi.list().subscribe({
+    this.classApi.list().subscribe(rows => {
+      this.classes.set(rows);
+      const first = rows[0] ?? null;
+      if (first) {
+        this.selectedClassId.set(first.id);
+        this.form.update(f => ({ ...f, classId: first.id }));
+      }
+      this.loadExams();
+    });
+  }
+
+  onClassChange(classId: number): void {
+    this.selectedClassId.set(classId);
+    this.loadExams();
+  }
+
+  private loadExams(): void {
+    const classId = this.selectedClassId();
+    if (classId == null) { this.exams.set([]); this.loading.set(false); return; }
+    this.loading.set(true);
+    this.examApi.list(classId).subscribe({
       next: rows => { this.exams.set(rows); this.loading.set(false); },
       error: err => {
         this.loading.set(false);
         this.logger.error('Failed to load exams', { error: String(err) });
+        this.toast.error('Failed to load exams');
       }
     });
   }
@@ -46,7 +73,7 @@ export class ExamsPageComponent {
   toggleForm() {
     this.formOpen.update(o => !o);
     const yearId = this.years().find(y => y.current)?.id ?? this.years()[0]?.id ?? null;
-    this.form.set({ name: '', academicYearId: yearId, startDate: '', endDate: '' });
+    this.form.set({ name: '', academicYearId: yearId, classId: this.selectedClassId(), maxMarks: 100, startDate: '', endDate: '' });
   }
 
   patch<K extends keyof ReturnType<typeof this.form>>(key: K, value: ReturnType<typeof this.form>[K]) {
@@ -55,15 +82,19 @@ export class ExamsPageComponent {
 
   submit() {
     const f = this.form();
-    if (!f.name.trim() || !f.academicYearId) return;
+    if (!f.name.trim() || !f.academicYearId || !f.classId || !f.maxMarks) return;
     this.examApi.create({
       name: f.name.trim(),
       academicYearId: f.academicYearId,
+      classId: f.classId,
+      maxMarks: f.maxMarks,
       startDate: f.startDate || null,
       endDate: f.endDate || null
     }).subscribe({
       next: (created) => {
-        this.exams.update(arr => [created, ...arr]);
+        if (created.classId === this.selectedClassId()) {
+          this.exams.update(arr => [created, ...arr]);
+        }
         this.toast.success(`Created exam "${created.name}"`);
         this.toggleForm();
       },
@@ -76,5 +107,9 @@ export class ExamsPageComponent {
 
   yearName(id: number): string {
     return this.years().find(y => y.id === id)?.name ?? '—';
+  }
+
+  className(id: number): string {
+    return this.classes().find(c => c.id === id)?.name ?? '—';
   }
 }
