@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { SUBJECT_API } from '../../../core/api/api.tokens';
-import { Subject } from '../../../core/models';
+import { CLASS_API, SUBJECT_API } from '../../../core/api/api.tokens';
+import { SchoolClass, Subject } from '../../../core/models';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { ToastService } from '../../../core/ui/toast.service';
 import { LoggerService } from '../../../core/logging/logger.service';
@@ -16,20 +16,43 @@ import { LoggerService } from '../../../core/logging/logger.service';
 })
 export class SubjectsPageComponent {
   private readonly api = inject(SUBJECT_API);
+  private readonly classApi = inject(CLASS_API);
   private readonly toast = inject(ToastService);
   private readonly logger = inject(LoggerService);
 
   readonly subjects = signal<Subject[]>([]);
+  readonly classes = signal<SchoolClass[]>([]);
   readonly loading = signal(true);
   readonly formOpen = signal(false);
   readonly form = signal({ name: '', code: '', maxMarks: 100 });
 
+  // Which class's subjects the table is currently showing.
+  readonly selectedClassId = signal<number | null>(null);
+
   constructor() {
-    this.api.list().subscribe({
+    this.classApi.list().subscribe(rows => {
+      this.classes.set(rows);
+      const first = rows[0] ?? null;
+      if (first) this.selectedClassId.set(first.id);
+      this.loadSubjects();
+    });
+  }
+
+  onClassChange(classId: number): void {
+    this.selectedClassId.set(classId);
+    this.loadSubjects();
+  }
+
+  private loadSubjects(): void {
+    const classId = this.selectedClassId();
+    if (classId == null) { this.subjects.set([]); this.loading.set(false); return; }
+    this.loading.set(true);
+    this.api.list(classId).subscribe({
       next: rows => { this.subjects.set(rows); this.loading.set(false); },
       error: err => {
         this.loading.set(false);
         this.logger.error('Failed to load subjects', { error: String(err) });
+        this.toast.error('Failed to load subjects');
       }
     });
   }
@@ -49,8 +72,7 @@ export class SubjectsPageComponent {
     this.api.create({ name: f.name.trim(), code: f.code.trim().toUpperCase(), maxMarks: f.maxMarks })
       .subscribe({
         next: (created) => {
-          this.subjects.update(arr => [...arr, created]);
-          this.toast.success(`Added subject "${created.name}"`);
+          this.toast.success(`Added subject "${created.name}". Assign it to a class from the Classes page.`);
           this.toggleForm();
         },
         error: err => {

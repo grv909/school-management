@@ -54,7 +54,9 @@ export class ClassesPageComponent {
     if (!name) return;
     this.api.create({ name, displayOrder }).subscribe({
       next: (created) => {
-        this.classes.update(arr => [...arr, created].sort((a, b) => a.displayOrder - b.displayOrder));
+        // The server orders GET /api/classes by displayOrder; simplest to just refetch
+        // rather than guess where this new row belongs relative to existing ones.
+        this.load();
         this.toast.success(`Class "${created.name}" added`);
         this.toggleForm();
       },

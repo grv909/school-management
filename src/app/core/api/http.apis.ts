@@ -76,7 +76,9 @@ export class SectionHttpApi implements SectionApi {
 @Injectable({ providedIn: 'root' })
 export class SubjectHttpApi implements SubjectApi {
   private readonly http = inject(HttpClient);
-  list() { return this.http.get<Subject[]>(`${BASE()}/api/subjects`); }
+  list(classId?: number) {
+    return this.http.get<Subject[]>(`${BASE()}/api/subjects`, { params: classId != null ? { classId } : {} });
+  }
   create(input: { name: string; code: string; maxMarks: number }) {
     return this.http.post<Subject>(`${BASE()}/api/subjects`, input);
   }
@@ -118,12 +120,17 @@ export class TeacherHttpApi implements TeacherApi {
   create(input: { firstName: string; lastName: string; employeeNo: string; username: string; password: string }) {
     return this.http.post<Teacher>(`${BASE()}/api/teachers`, input);
   }
+  update(id: number, input: { firstName: string; lastName: string; employeeNo: string }) {
+    return this.http.put<Teacher>(`${BASE()}/api/teachers/${id}`, input);
+  }
 }
 
 @Injectable({ providedIn: 'root' })
 export class ExamHttpApi implements ExamApi {
   private readonly http = inject(HttpClient);
-  list() { return this.http.get<Exam[]>(`${BASE()}/api/exams`); }
+  list(classId?: number) {
+    return this.http.get<Exam[]>(`${BASE()}/api/exams`, { params: classId != null ? { classId } : {} });
+  }
   create(input: Omit<Exam, 'id'>) {
     return this.http.post<Exam>(`${BASE()}/api/exams`, input);
   }

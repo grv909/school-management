@@ -60,15 +60,51 @@
           <th>Name</th>
           <th>Employee no.</th>
           <th>Username</th>
+          <th class="actions"></th>
         </tr>
       </thead>
       <tbody>
         @for (t of teachers(); track t.id) {
-          <tr>
-            <td>{{ t.firstName }} {{ t.lastName }}</td>
-            <td>{{ t.employeeNo ?? '—' }}</td>
-            <td>{{ t.username ?? '—' }}</td>
-          </tr>
+          @if (editingId() === t.id) {
+            <tr>
+              <td colspan="4">
+                <form class="form-row" (ngSubmit)="saveEdit(t.id)">
+                  <div class="form-field">
+                    <label class="form-field__label" for="efn-{{ t.id }}">First name</label>
+                    <input class="form-field__control" id="efn-{{ t.id }}" name="efn-{{ t.id }}" required
+                           [ngModel]="editForm().firstName" (ngModelChange)="patchEdit('firstName', $event)">
+                  </div>
+                  <div class="form-field">
+                    <label class="form-field__label" for="eln-{{ t.id }}">Last name</label>
+                    <input class="form-field__control" id="eln-{{ t.id }}" name="eln-{{ t.id }}" required
+                           [ngModel]="editForm().lastName" (ngModelChange)="patchEdit('lastName', $event)">
+                  </div>
+                  <div class="form-field">
+                    <label class="form-field__label" for="eemp-{{ t.id }}">Employee no.</label>
+                    <input class="form-field__control" id="eemp-{{ t.id }}" name="eemp-{{ t.id }}"
+                           [ngModel]="editForm().employeeNo" (ngModelChange)="patchEdit('employeeNo', $event)">
+                  </div>
+                  <div class="form-field">
+                    <label class="form-field__label">&nbsp;</label>
+                    <div>
+                      <button type="submit" class="btn btn--primary"
+                              [disabled]="!editForm().firstName.trim() || !editForm().lastName.trim()">Save</button>
+                      <button type="button" class="btn btn--tertiary" (click)="cancelEdit()">Cancel</button>
+                    </div>
+                  </div>
+                </form>
+              </td>
+            </tr>
+          } @else {
+            <tr>
+              <td>{{ t.firstName }} {{ t.lastName }}</td>
+              <td>{{ t.employeeNo ?? '—' }}</td>
+              <td>{{ t.username ?? '—' }}</td>
+              <td class="actions">
+                <button type="button" class="btn btn--tertiary btn--sm" (click)="startEdit(t)">Edit</button>
+              </td>
+            </tr>
+          }
         }
       </tbody>
     </table>

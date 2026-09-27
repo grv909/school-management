@@ -38,6 +38,7 @@ import {
 import {
   MOCK_ACADEMIC_YEARS,
   MOCK_CLASSES,
+  MOCK_CLASS_SUBJECTS,
   MOCK_EXAMS,
   MOCK_SCHOOL,
   MOCK_SECTIONS,
@@ -92,10 +93,15 @@ export class AuthMockApi implements AuthApi {
 @Injectable({ providedIn: 'root' })
 export class ClassMockApi implements ClassApi {
   private readonly data = signal<SchoolClass[]>([...MOCK_CLASSES]);
-  list() { return wrap([...this.data()]); }
+  private readonly order = new Map<number, number>(MOCK_CLASSES.map((c, i) => [c.id, (i + 1) * 10]));
+  list() {
+    return wrap([...this.data()].sort((a, b) => (this.order.get(a.id) ?? 0) - (this.order.get(b.id) ?? 0)));
+  }
   create(input: { name: string; displayOrder: number }) {
-    const next: SchoolClass = { id: this.nextId(), ...input };
-    this.data.update(arr => [...arr, next].sort((a, b) => a.displayOrder - b.displayOrder));
+    const id = this.nextId();
+    this.order.set(id, input.displayOrder);
+    const next: SchoolClass = { id, name: input.name, classTeacherName: null, studentCount: 0 };
+    this.data.update(arr => [...arr, next]);
     return wrap(next);
   }
   private nextId() { return Math.max(0, ...this.data().map(c => c.id)) + 1; }
@@ -118,7 +124,11 @@ export class SectionMockApi implements SectionApi {
 @Injectable({ providedIn: 'root' })
 export class SubjectMockApi implements SubjectApi {
   private readonly data = signal<Subject[]>([...MOCK_SUBJECTS]);
-  list() { return wrap([...this.data()]); }
+  list(classId?: number) {
+    if (classId == null) return wrap([...this.data()]);
+    const idsForClass = new Set(MOCK_CLASS_SUBJECTS.filter(cs => cs.classId === classId).map(cs => cs.subjectId));
+    return wrap(this.data().filter(s => idsForClass.has(s.id)));
+  }
   create(input: { name: string; code: string; maxMarks: number }) {
     const next: Subject = { id: this.nextId(), ...input };
     this.data.update(arr => [...arr, next]);
@@ -186,13 +196,23 @@ export class TeacherMockApi implements TeacherApi {
     this.data.update(arr => [...arr, next]);
     return wrap(next);
   }
+  update(id: number, input: { firstName: string; lastName: string; employeeNo: string }) {
+    const idx = this.data().findIndex(t => t.id === id);
+    if (idx < 0) return throwError(() => new Error('Teacher not found'));
+    const updated: Teacher = { ...this.data()[idx], ...input };
+    this.data.update(arr => { const c = [...arr]; c[idx] = updated; return c; });
+    return wrap(updated);
+  }
   private nextId() { return Math.max(0, ...this.data().map(t => t.id)) + 1; }
 }
 
 @Injectable({ providedIn: 'root' })
 export class ExamMockApi implements ExamApi {
   private readonly data = signal<Exam[]>([...MOCK_EXAMS]);
-  list() { return wrap([...this.data()]); }
+  list(classId?: number) {
+    const all = this.data();
+    return wrap(classId == null ? [...all] : all.filter(e => e.classId === classId));
+  }
   create(input: Omit<Exam, 'id'>) {
     const next: Exam = { id: this.nextId(), ...input };
     this.data.update(arr => [...arr, next]);
@@ -347,6 +367,11 @@ export class AttendanceMockApi implements AttendanceApi {
   }
 
   bulkSave(req: BulkAttendanceRequest): Observable<{ upserted: number }> {
+    const today = new Date().toISOString().slice(0, 10);
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    if (req.date !== today && req.date !== yesterday) {
+      return throwError(() => new Error('Attendance can only be marked or changed for today or yesterday'));
+    }
     this.entries.update(curr => {
       const next = { ...curr };
       for (const e of req.entries) {

@@ -25,6 +25,10 @@ export class TeachersPageComponent {
   readonly formOpen = signal(false);
   readonly form = signal({ firstName: '', lastName: '', employeeNo: '', username: '', password: '' });
 
+  // Teacher currently being edited, if any — drives the inline edit form below its row.
+  readonly editingId = signal<number | null>(null);
+  readonly editForm = signal({ firstName: '', lastName: '', employeeNo: '' });
+
   constructor() { this.load(); }
 
   load(): void {
@@ -66,6 +70,39 @@ export class TeachersPageComponent {
       error: err => {
         this.logger.error('Failed to create teacher', { error: String(err) });
         this.toast.error('Failed to add teacher');
+      }
+    });
+  }
+
+  startEdit(t: Teacher): void {
+    this.editingId.set(t.id);
+    this.editForm.set({ firstName: t.firstName, lastName: t.lastName, employeeNo: t.employeeNo ?? '' });
+  }
+
+  cancelEdit(): void {
+    this.editingId.set(null);
+  }
+
+  patchEdit<K extends keyof ReturnType<typeof this.editForm>>(key: K, value: ReturnType<typeof this.editForm>[K]) {
+    this.editForm.update(f => ({ ...f, [key]: value }));
+  }
+
+  saveEdit(id: number): void {
+    const f = this.editForm();
+    if (!f.firstName.trim() || !f.lastName.trim()) return;
+    this.api.update(id, {
+      firstName: f.firstName.trim(),
+      lastName: f.lastName.trim(),
+      employeeNo: f.employeeNo.trim()
+    }).subscribe({
+      next: (updated) => {
+        this.teachers.update(arr => arr.map(t => t.id === id ? updated : t));
+        this.toast.success(`Updated ${updated.firstName} ${updated.lastName}`);
+        this.editingId.set(null);
+      },
+      error: err => {
+        this.logger.error('Failed to update teacher', { error: String(err) });
+        this.toast.error('Failed to update teacher');
       }
     });
   }

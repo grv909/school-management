@@ -43,7 +43,7 @@ export interface SectionApi {
 }
 
 export interface SubjectApi {
-  list(): Observable<Subject[]>;
+  list(classId?: number): Observable<Subject[]>;
   create(input: { name: string; code: string; maxMarks: number }): Observable<Subject>;
 }
 
@@ -63,10 +63,11 @@ export interface StudentApi {
 export interface TeacherApi {
   list(): Observable<Teacher[]>;
   create(input: { firstName: string; lastName: string; employeeNo: string; username: string; password: string }): Observable<Teacher>;
+  update(id: number, input: { firstName: string; lastName: string; employeeNo: string }): Observable<Teacher>;
 }
 
 export interface ExamApi {
-  list(): Observable<Exam[]>;
+  list(classId?: number): Observable<Exam[]>;
   create(input: Omit<Exam, 'id'>): Observable<Exam>;
 }
 
