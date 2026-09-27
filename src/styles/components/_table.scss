@@ -42,6 +42,14 @@
 
 .table-container {
   @include card;
-  overflow: hidden;
+  // Let wide tables scroll horizontally instead of overflowing the viewport
+  // on small screens. -webkit-overflow-scrolling gives momentum on iOS.
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   margin-bottom: $space-5;
+
+  .data-table {
+    // Keep columns readable rather than crushing them when scrolling.
+    min-width: 540px;
+  }
 }

@@ -1,15 +1,39 @@
 @use '../abstracts' as *;
 
+// Mobile-first: the sidebar is an off-canvas drawer slid out of view to the
+// left. The shell adds .app-shell--nav-open to reveal it. At >= $bp-md it
+// becomes the familiar sticky column and the transform is reset.
 .sidebar {
   background-color: $color-surface;
   border-right: 1px solid $color-border;
   display: flex;
   flex-direction: column;
   padding: $space-4 0;
-  position: sticky;
+  position: fixed;
   top: 0;
-  height: 100vh;
+  left: 0;
+  bottom: 0;
+  width: $sidebar-width;
+  max-width: 85vw;
+  height: 100dvh;
+  overflow-y: auto;
   z-index: $z-sidebar;
+  transform: translateX(-100%);
+  transition: transform $transition-base;
+  box-shadow: $shadow-md;
+
+  .app-shell--nav-open & {
+    transform: translateX(0);
+  }
+
+  @include media-up($bp-md) {
+    position: sticky;
+    height: 100vh;
+    max-width: none;
+    transform: none;
+    box-shadow: none;
+    overflow-y: visible;
+  }
 }
 
 .sidebar__brand {

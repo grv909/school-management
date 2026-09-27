@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { MOCK_SCHOOL } from '../../../core/mocks/mock-data';
+import { LayoutService } from '../layout.service';
 
 interface NavItem {
   label: string;
@@ -27,6 +28,12 @@ export class SidebarComponent {
   readonly schoolName = MOCK_SCHOOL.name;
 
   private readonly auth = inject(AuthService);
+  private readonly layout = inject(LayoutService);
+
+  /** Dismiss the mobile drawer after the user picks a destination. */
+  onNavigate(): void {
+    this.layout.closeMobileNav();
+  }
 
   readonly nav = computed<NavGroup[]>(() => {
     if (this.auth.role() === 'ADMIN') {

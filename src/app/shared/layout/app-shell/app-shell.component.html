@@ -1,7 +1,13 @@
-<div class="app-shell">
+<div class="app-shell" [class.app-shell--nav-open]="mobileNavOpen()">
   <div class="app-shell__sidebar">
     <app-sidebar></app-sidebar>
   </div>
+  <!-- Backdrop sits behind the drawer on mobile; tap to dismiss. -->
+  <button
+    type="button"
+    class="app-shell__backdrop"
+    aria-label="Close navigation"
+    (click)="closeMobileNav()"></button>
   <div class="app-shell__topbar">
     <app-topbar></app-topbar>
   </div>

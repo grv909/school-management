@@ -21,23 +21,20 @@ import {
   TEACHER_ASSIGNMENT_API
 } from './core/api/api.tokens';
 import {
-  AcademicYearMockApi,
-  AnalyticsMockApi,
-  AttendanceMockApi,
-  AuthMockApi,
-  ClassMockApi,
-  ExamMockApi,
-  MarksMockApi,
-  ReportMockApi,
-  SectionMockApi,
-  StudentMockApi,
-  SubjectMockApi,
-  TeacherAssignmentMockApi,
-  TeacherMockApi
-} from './core/mocks/mock.apis';
-// FUTURE (real backend): swap the `useClass` below to *HttpApi.
-// import { AcademicYearHttpApi, AuthHttpApi, ClassHttpApi, ExamHttpApi, MarksHttpApi,
-//          ReportHttpApi, SectionHttpApi, StudentHttpApi, SubjectHttpApi, TeacherHttpApi } from './core/api/http.apis';
+  AcademicYearHttpApi,
+  AnalyticsHttpApi,
+  AttendanceHttpApi,
+  AuthHttpApi,
+  ClassHttpApi,
+  ExamHttpApi,
+  MarksHttpApi,
+  ReportHttpApi,
+  SectionHttpApi,
+  StudentHttpApi,
+  SubjectHttpApi,
+  TeacherAssignmentHttpApi,
+  TeacherHttpApi
+} from './core/api/http.apis';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -45,19 +42,18 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([jwtInterceptor])),
 
-    // FUTURE: replace *MockApi with *HttpApi when the backend (behind AWS API Gateway) is live.
-    { provide: AUTH_API,           useClass: AuthMockApi },
-    { provide: CLASS_API,          useClass: ClassMockApi },
-    { provide: SECTION_API,        useClass: SectionMockApi },
-    { provide: SUBJECT_API,        useClass: SubjectMockApi },
-    { provide: ACADEMIC_YEAR_API,  useClass: AcademicYearMockApi },
-    { provide: STUDENT_API,        useClass: StudentMockApi },
-    { provide: TEACHER_API,        useClass: TeacherMockApi },
-    { provide: EXAM_API,           useClass: ExamMockApi },
-    { provide: MARKS_API,          useClass: MarksMockApi },
-    { provide: REPORT_API,         useClass: ReportMockApi },
-    { provide: ATTENDANCE_API,     useClass: AttendanceMockApi },
-    { provide: TEACHER_ASSIGNMENT_API, useClass: TeacherAssignmentMockApi },
-    { provide: ANALYTICS_API,      useClass: AnalyticsMockApi }
+    { provide: AUTH_API,           useClass: AuthHttpApi },
+    { provide: CLASS_API,          useClass: ClassHttpApi },
+    { provide: SECTION_API,        useClass: SectionHttpApi },
+    { provide: SUBJECT_API,        useClass: SubjectHttpApi },
+    { provide: ACADEMIC_YEAR_API,  useClass: AcademicYearHttpApi },
+    { provide: STUDENT_API,        useClass: StudentHttpApi },
+    { provide: TEACHER_API,        useClass: TeacherHttpApi },
+    { provide: EXAM_API,           useClass: ExamHttpApi },
+    { provide: MARKS_API,          useClass: MarksHttpApi },
+    { provide: REPORT_API,         useClass: ReportHttpApi },
+    { provide: ATTENDANCE_API,     useClass: AttendanceHttpApi },
+    { provide: TEACHER_ASSIGNMENT_API, useClass: TeacherAssignmentHttpApi },
+    { provide: ANALYTICS_API,      useClass: AnalyticsHttpApi }
   ]
 };
