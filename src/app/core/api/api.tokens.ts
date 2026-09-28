@@ -34,7 +34,7 @@ export interface AuthApi {
 
 export interface ClassApi {
   list(): Observable<SchoolClass[]>;
-  create(input: { name: string; displayOrder: number }): Observable<SchoolClass>;
+  create(input: { name: string }): Observable<SchoolClass>;
 }
 
 export interface SectionApi {

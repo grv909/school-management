@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, shareReplay, tap } from 'rxjs';
 
 import { CLASS_API, SECTION_API, SUBJECT_API, TEACHER_ASSIGNMENT_API } from '../api/api.tokens';
 import { SchoolClass, Section, Subject, TeacherAssignment } from '../models';
@@ -31,14 +31,35 @@ export class TeacherScopeService {
     new Set(this._assignments().map(a => a.sectionId))
   );
 
+  // Cached per-session: every teacher page calls load() on init, but the assignment
+  // list rarely changes within a session, so share one in-flight/completed request
+  // instead of re-fetching /api/teacher-assignments on every navigation.
+  private loadRequest: Observable<TeacherAssignment[]> | null = null;
+
+  // Cached per-session for the same reason: allowedClasses()/allowedSectionsFor() both
+  // used to call sectionApi.listByClass() independently, fetching each class's sections
+  // twice on pages that need both (e.g. the teacher dashboard). This caches one
+  // classId -> sections request so both call sites share it.
+  private readonly sectionsByClassCache = new Map<number, Observable<Section[]>>();
+
   load(): Observable<TeacherAssignment[]> {
-    const username = this.auth.session()?.username ?? '';
-    return this.assignmentApi.listForTeacherUsername(username).pipe(
-      map(rows => {
-        this._assignments.set(rows);
-        return rows;
-      })
-    );
+    if (!this.loadRequest) {
+      const username = this.auth.session()?.username ?? '';
+      this.loadRequest = this.assignmentApi.listForTeacherUsername(username).pipe(
+        tap(rows => this._assignments.set(rows)),
+        shareReplay({ bufferSize: 1, refCount: false })
+      );
+    }
+    return this.loadRequest;
+  }
+
+  private sectionsForClass(classId: number): Observable<Section[]> {
+    let cached = this.sectionsByClassCache.get(classId);
+    if (!cached) {
+      cached = this.sectionApi.listByClass(classId).pipe(shareReplay({ bufferSize: 1, refCount: false }));
+      this.sectionsByClassCache.set(classId, cached);
+    }
+    return cached;
   }
 
   // Classes that contain at least one allowed section.
@@ -59,7 +80,7 @@ export class TeacherScopeService {
         const out: SchoolClass[] = [];
         if (remaining === 0) { subscriber.next([]); subscriber.complete(); return; }
         allClasses.forEach(c => {
-          this.sectionApi.listByClass(c.id).subscribe(sections => {
+          this.sectionsForClass(c.id).subscribe(sections => {
             if (sections.some(s => allowedSections.has(s.id))) {
               out.push(c);
             }
@@ -76,7 +97,7 @@ export class TeacherScopeService {
   }
 
   allowedSectionsFor(classId: number): Observable<Section[]> {
-    return this.sectionApi.listByClass(classId).pipe(
+    return this.sectionsForClass(classId).pipe(
       map(sections => sections.filter(s => this.allowedSectionIds().has(s.id)))
     );
   }

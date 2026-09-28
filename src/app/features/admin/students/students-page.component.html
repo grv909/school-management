@@ -102,15 +102,67 @@
       </thead>
       <tbody>
         @for (s of students(); track s.id) {
-          <tr>
-            <td class="num">{{ s.rollNo ?? '—' }}</td>
-            <td>{{ s.firstName }} {{ s.lastName }}</td>
-            <td>{{ s.admissionNo }}</td>
-            <td>{{ s.gender ?? '—' }}</td>
-            <td class="actions">
-              <button type="button" class="btn btn--tertiary btn--sm" (click)="remove(s)">Remove</button>
-            </td>
-          </tr>
+          @if (editingId() === s.id) {
+            <tr>
+              <td colspan="5">
+                <form class="form-row" (ngSubmit)="saveEdit(s)">
+                  <div class="form-field">
+                    <label class="form-field__label" for="eroll-{{ s.id }}">Roll no.</label>
+                    <input class="form-field__control" id="eroll-{{ s.id }}" name="eroll-{{ s.id }}" type="number" min="0"
+                           [ngModel]="editForm().rollNo" (ngModelChange)="patchEdit('rollNo', $event)">
+                  </div>
+                  <div class="form-field">
+                    <label class="form-field__label" for="eadm-{{ s.id }}">Admission no.</label>
+                    <input class="form-field__control" id="eadm-{{ s.id }}" name="eadm-{{ s.id }}" required
+                           [ngModel]="editForm().admissionNo" (ngModelChange)="patchEdit('admissionNo', $event)">
+                  </div>
+                  <div class="form-field">
+                    <label class="form-field__label" for="efn-{{ s.id }}">First name</label>
+                    <input class="form-field__control" id="efn-{{ s.id }}" name="efn-{{ s.id }}" required
+                           [ngModel]="editForm().firstName" (ngModelChange)="patchEdit('firstName', $event)">
+                  </div>
+                  <div class="form-field">
+                    <label class="form-field__label" for="eln-{{ s.id }}">Last name</label>
+                    <input class="form-field__control" id="eln-{{ s.id }}" name="eln-{{ s.id }}" required
+                           [ngModel]="editForm().lastName" (ngModelChange)="patchEdit('lastName', $event)">
+                  </div>
+                  <div class="form-field">
+                    <label class="form-field__label" for="egen-{{ s.id }}">Gender</label>
+                    <select class="form-field__control" id="egen-{{ s.id }}" name="egen-{{ s.id }}"
+                            [ngModel]="editForm().gender" (ngModelChange)="patchEdit('gender', $event)">
+                      <option value="">—</option>
+                      <option value="M">Male</option>
+                      <option value="F">Female</option>
+                    </select>
+                  </div>
+                  <div class="form-field">
+                    <label class="form-field__label" for="edob-{{ s.id }}">Date of birth</label>
+                    <input class="form-field__control" id="edob-{{ s.id }}" name="edob-{{ s.id }}" type="date"
+                           [ngModel]="editForm().dob" (ngModelChange)="patchEdit('dob', $event)">
+                  </div>
+                  <div class="form-field">
+                    <label class="form-field__label">&nbsp;</label>
+                    <div>
+                      <button type="submit" class="btn btn--primary"
+                              [disabled]="!editForm().admissionNo.trim() || !editForm().firstName.trim() || !editForm().lastName.trim()">Save</button>
+                      <button type="button" class="btn btn--tertiary" (click)="cancelEdit()">Cancel</button>
+                    </div>
+                  </div>
+                </form>
+              </td>
+            </tr>
+          } @else {
+            <tr>
+              <td class="num">{{ s.rollNo ?? '—' }}</td>
+              <td>{{ s.firstName }} {{ s.lastName }}</td>
+              <td>{{ s.admissionNo }}</td>
+              <td>{{ s.gender ?? '—' }}</td>
+              <td class="actions">
+                <button type="button" class="btn btn--tertiary btn--sm" (click)="startEdit(s)">Edit</button>
+                <button type="button" class="btn btn--tertiary btn--sm" (click)="remove(s)">Remove</button>
+              </td>
+            </tr>
+          }
         }
       </tbody>
     </table>

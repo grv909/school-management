@@ -13,6 +13,8 @@ interface StoredSession {
   role: Role;
   username: string;
   expiresAt: number;
+  userId: number;
+  schoolId: number;
 }
 
 /**
@@ -37,12 +39,10 @@ export class AuthService {
     const s = this._session();
     if (!s) return null;
     return {
-      // FUTURE: when real auth is wired, userId + schoolId come from /auth/me response.
-      // For mock mode we don't need them server-side; placeholders are safe.
-      userId: 0,
+      userId: s.userId,
       username: s.username,
       role: s.role,
-      schoolId: 1
+      schoolId: s.schoolId
     };
   });
 
@@ -50,17 +50,32 @@ export class AuthService {
     return new Observable<void>((subscriber) => {
       this.api.login(username, password).subscribe({
         next: (resp) => {
-          const session: StoredSession = {
+          // Stash the token first so the /auth/me call below goes out authenticated
+          // (the jwt interceptor reads it from this same session signal).
+          const partialSession: StoredSession = {
             accessToken: resp.accessToken,
             role: resp.role,
             username,
-            expiresAt: Date.now() + resp.expiresIn * 1000
+            expiresAt: Date.now() + resp.expiresIn * 1000,
+            userId: 0,
+            schoolId: 0
           };
-          this.writeToStorage(session);
-          this._session.set(session);
-          this.logger.info('Login succeeded', { username, role: resp.role });
-          subscriber.next();
-          subscriber.complete();
+          this._session.set(partialSession);
+          this.api.me().subscribe({
+            next: (me) => {
+              const session: StoredSession = { ...partialSession, userId: me.userId, schoolId: me.schoolId };
+              this.writeToStorage(session);
+              this._session.set(session);
+              this.logger.info('Login succeeded', { username, role: resp.role });
+              subscriber.next();
+              subscriber.complete();
+            },
+            error: (err) => {
+              this._session.set(null);
+              this.logger.warn('Failed to resolve current user after login', { username });
+              subscriber.error(err);
+            }
+          });
         },
         error: (err) => {
           this.logger.warn('Login failed', { username });
@@ -87,7 +102,8 @@ export class AuthService {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
       const parsed = JSON.parse(raw) as StoredSession;
-      if (parsed.expiresAt <= Date.now()) {
+      if (parsed.expiresAt <= Date.now() || typeof parsed.userId !== 'number' || typeof parsed.schoolId !== 'number') {
+        // Also drops sessions stored before userId/schoolId were added to the shape.
         localStorage.removeItem(STORAGE_KEY);
         return null;
       }

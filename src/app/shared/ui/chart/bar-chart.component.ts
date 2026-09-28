@@ -34,11 +34,11 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
   `,
   styles: [`
     .chart { width: 100%; height: auto; display: block; }
-    .chart__grid { stroke: #E1E4EA; stroke-width: 1; stroke-dasharray: 2 3; }
-    .chart__axis-text { fill: #5B6373; font-size: 10px; font-family: inherit; }
-    .chart__bar { fill: #2D5F8B; transition: fill 180ms ease; }
-    .chart__bar:hover { fill: #234B6E; }
-    .chart__bar-value { fill: #1F2430; font-size: 10px; font-weight: 600; font-family: inherit; }
+    .chart__grid { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 3; }
+    .chart__axis-text { fill: var(--muted-foreground); font-size: 10px; font-family: inherit; }
+    .chart__bar { fill: var(--accent); transition: fill 180ms ease; }
+    .chart__bar:hover { fill: var(--accent-hover); }
+    .chart__bar-value { fill: var(--foreground); font-size: 10px; font-weight: 600; font-family: inherit; }
   `]
 })
 export class BarChartComponent {

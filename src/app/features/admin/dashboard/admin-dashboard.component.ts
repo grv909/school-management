@@ -37,7 +37,7 @@ export class AdminDashboardComponent {
   readonly enrolmentByClass = signal<Array<{ label: string; value: number }>>([]);
   readonly avgScoreBySubject = signal<Array<{ label: string; value: number }>>([]);
   readonly attendanceTrend = signal<Array<{ label: string; value: number }>>([]);
-  readonly genderDistribution = signal<Array<{ label: string; value: number; color: string }>>([]);
+  readonly genderDistribution = signal<Array<{ label: string; value: number; color?: string }>>([]);
 
   constructor() {
     const studentRequests = MOCK_SECTIONS.map(s => this.studentApi.listBySection(s.id));
@@ -59,10 +59,13 @@ export class AdminDashboardComponent {
       this.enrolmentByClass.set(overview.enrolmentByClass.map(e => ({ label: e.className.replace('Class ', ''), value: e.count })));
       this.avgScoreBySubject.set(overview.avgScoreBySubject.map(s => ({ label: s.subjectName.slice(0, 4), value: s.avg })));
       this.attendanceTrend.set(overview.attendanceTrend.map(t => ({ label: t.month, value: t.presentPct })));
+      // No explicit `color` per segment — DonutChartComponent's own token-based
+      // default palette (var(--accent), etc.) applies, so this picks up theme
+      // changes automatically instead of duplicating hardcoded hex values here.
       this.genderDistribution.set([
-        { label: 'Male',   value: overview.genderDistribution.male,   color: '#2D5F8B' },
-        { label: 'Female', value: overview.genderDistribution.female, color: '#5C8FB5' },
-        { label: 'Other',  value: overview.genderDistribution.other,  color: '#9AB7CF' }
+        { label: 'Male',   value: overview.genderDistribution.male },
+        { label: 'Female', value: overview.genderDistribution.female },
+        { label: 'Other',  value: overview.genderDistribution.other }
       ]);
       this.loading.set(false);
     });

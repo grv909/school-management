@@ -15,7 +15,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
         @for (seg of segments(); track seg.label) {
           <path [attr.d]="seg.d" [attr.fill]="seg.color"></path>
         }
-        <circle cx="60" cy="60" r="32" fill="#FFFFFF"></circle>
+        <circle cx="60" cy="60" r="32" fill="var(--card)"></circle>
         <text x="60" y="58" text-anchor="middle" class="donut__total">{{ total() }}</text>
         <text x="60" y="72" text-anchor="middle" class="donut__caption">{{ caption() }}</text>
       </svg>
@@ -33,13 +33,13 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
   styles: [`
     .donut { display: flex; gap: 16px; align-items: center; }
     .donut__svg { width: 140px; height: 140px; flex-shrink: 0; }
-    .donut__total { font-size: 18px; font-weight: 700; fill: #1F2430; font-family: inherit; }
-    .donut__caption { font-size: 10px; fill: #5B6373; font-family: inherit; }
+    .donut__total { font-family: var(--font-display); font-size: 18px; font-weight: 400; fill: var(--foreground); }
+    .donut__caption { font-size: 10px; fill: var(--muted-foreground); font-family: inherit; }
     .donut__legend { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
     .donut__legend li { display: flex; align-items: center; gap: 8px; font-size: 13px; }
     .donut__swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-    .donut__legend-label { color: #1F2430; }
-    .donut__legend-value { margin-left: auto; color: #5B6373; font-variant-numeric: tabular-nums; }
+    .donut__legend-label { color: var(--foreground); }
+    .donut__legend-value { margin-left: auto; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
   `]
 })
 export class DonutChartComponent {
@@ -47,7 +47,10 @@ export class DonutChartComponent {
   readonly caption = input<string>('Total');
   readonly ariaLabel = input<string>('Donut chart');
 
-  private readonly defaultColors = ['#2D5F8B', '#5C8FB5', '#9AB7CF', '#C8CDD7'];
+  // Segments need distinct hues/tints to stay legible (a single accent color
+  // repeated wouldn't differentiate slices) — a step-down tint ramp off the
+  // brand accent, plus the neutral border color as a "muted/other" fallback.
+  private readonly defaultColors = ['var(--accent)', 'var(--accent-secondary)', '#93A9F5', 'var(--border-strong)'];
 
   readonly total = computed(() => this.data().reduce((a, b) => a + b.value, 0));
 

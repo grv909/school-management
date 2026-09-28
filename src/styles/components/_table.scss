@@ -3,30 +3,33 @@
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: $color-surface;
-  font-size: $font-size-sm;
+  background-color: var(--card);
+  // Dense-table scale (not the 16px base UI scale) — deliberately compact so
+  // rosters/attendance/marks grids stay scannable; never used for forms/prose.
+  font-size: $font-size-table-cell;
+  line-height: 1.5;
 
   th, td {
     padding: $space-3 $space-4;
-    border-bottom: 1px solid $color-border;
+    border-bottom: 1px solid var(--border);
     text-align: left;
     vertical-align: middle;
   }
 
   thead th {
-    background-color: $color-bg;
-    color: $color-text-muted;
+    background-color: var(--muted);
+    color: var(--muted-foreground);
     font-weight: $font-weight-semibold;
-    font-size: $font-size-xs;
+    font-size: $font-size-table-header;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.04em;
     position: sticky;
     top: 0;
     z-index: 1;
   }
 
   tbody tr:hover {
-    background-color: rgba(45, 95, 139, 0.04);
+    background-color: var(--accent-soft);
   }
 
   .num {

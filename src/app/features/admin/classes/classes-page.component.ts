@@ -24,7 +24,6 @@ export class ClassesPageComponent {
 
   readonly formOpen = signal(false);
   readonly newName = signal('');
-  readonly newOrder = signal<number | null>(null);
 
   constructor() {
     this.load();
@@ -45,14 +44,12 @@ export class ClassesPageComponent {
   toggleForm() {
     this.formOpen.update(o => !o);
     this.newName.set('');
-    this.newOrder.set(null);
   }
 
   submit(): void {
     const name = this.newName().trim();
-    const displayOrder = this.newOrder() ?? 0;
     if (!name) return;
-    this.api.create({ name, displayOrder }).subscribe({
+    this.api.create({ name }).subscribe({
       next: (created) => {
         // The server orders GET /api/classes by displayOrder; simplest to just refetch
         // rather than guess where this new row belongs relative to existing ones.

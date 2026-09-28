@@ -20,7 +20,7 @@
 
   label {
     font-size: $font-size-xs;
-    color: $color-text-muted;
+    color: var(--muted-foreground);
   }
 
   select,
@@ -33,18 +33,13 @@
   }
 
   select {
-    height: 36px;
+    height: 40px;
     min-width: 180px;
     padding: 0 $space-3;
-    border: 1px solid $color-border-strong;
-    border-radius: $radius-md;
-    background-color: $color-surface;
-    font-size: $font-size-md;
-
-    @include media-up($bp-sm) {
-      height: 32px;
-      font-size: $font-size-sm;
-    }
+    border: 1px solid var(--border-strong);
+    border-radius: $radius-sm;
+    background-color: var(--card);
+    font-size: $font-size-base;
   }
 }
 
@@ -55,16 +50,16 @@
 
   th, td {
     padding: $space-2 $space-3;
-    border-bottom: 1px solid $color-border;
-    font-size: $font-size-sm;
+    border-bottom: 1px solid var(--border);
+    font-size: $font-size-table-cell;
   }
 
   th {
-    background-color: $color-bg;
-    color: $color-text-muted;
+    background-color: var(--muted);
+    color: var(--muted-foreground);
     text-transform: uppercase;
-    font-size: $font-size-xs;
-    letter-spacing: 0.4px;
+    font-size: $font-size-table-header;
+    letter-spacing: 0.04em;
     text-align: left;
   }
 
@@ -72,23 +67,18 @@
 
   input[type="number"] {
     width: 90px;
-    height: 32px;
+    height: 36px;
     padding: 0 $space-2;
-    border: 1px solid $color-border-strong;
-    border-radius: $radius-md;
+    border: 1px solid var(--border-strong);
+    border-radius: $radius-sm;
     text-align: right;
-    font-size: $font-size-md;
+    font-size: $font-size-table-cell;
     font-variant-numeric: tabular-nums;
-
-    @include media-up($bp-sm) {
-      height: 28px;
-      font-size: $font-size-sm;
-    }
 
     &:focus {
       outline: none;
-      border-color: $color-accent;
-      box-shadow: 0 0 0 3px rgba(45, 95, 139, 0.12);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
     }
   }
 }

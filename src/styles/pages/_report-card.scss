@@ -1,13 +1,13 @@
 @use '../abstracts' as *;
 
 .report-card {
-  background: $color-surface;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: $radius-lg;
   padding: $space-4;
   max-width: 860px;
   margin: 0 auto;
-  box-shadow: $shadow-sm;
+  box-shadow: var(--shadow-sm);
 
   @include media-up($bp-sm) {
     padding: $space-6;
@@ -19,7 +19,7 @@
     gap: $space-3;
     align-items: flex-start;
     padding-bottom: $space-4;
-    border-bottom: 2px solid $color-accent;
+    border-bottom: 2px solid var(--accent);
     margin-bottom: $space-5;
 
     @include media-up($bp-sm) {
@@ -37,30 +37,30 @@
 
   &__school {
     margin: 0;
-    font-size: 20px;
-    color: $color-text;
-    font-weight: $font-weight-bold;
-    letter-spacing: 0.3px;
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--foreground);
+    font-weight: $font-weight-regular;
 
     @include media-up($bp-sm) {
-      font-size: 24px;
+      font-size: 26px;
     }
   }
 
   &__sub {
-    color: $color-text-muted;
+    color: var(--muted-foreground);
     font-size: $font-size-sm;
     margin-top: $space-1;
   }
 
   &__badge {
-    background: $color-accent;
-    color: $color-surface;
+    background: var(--gradient-accent);
+    color: var(--accent-foreground);
     padding: $space-2 $space-3;
     border-radius: $radius-sm;
     font-size: $font-size-xs;
     font-weight: $font-weight-bold;
-    letter-spacing: 1.2px;
+    letter-spacing: 0.08em;
   }
 
   &__student {
@@ -68,21 +68,22 @@
     grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
     gap: $space-4;
     padding: $space-4;
-    background: $color-bg;
+    background: var(--muted);
     border-radius: $radius-md;
     margin-bottom: $space-5;
   }
 
   &__label {
+    font-family: var(--font-mono);
     font-size: $font-size-xs;
     text-transform: uppercase;
-    color: $color-text-muted;
-    letter-spacing: 0.6px;
+    color: var(--muted-foreground);
+    letter-spacing: 0.1em;
   }
 
   &__value {
     font-size: $font-size-md;
-    color: $color-text;
+    color: var(--foreground);
     font-weight: $font-weight-medium;
     margin-top: 2px;
   }
@@ -95,23 +96,23 @@
 
     th, td {
       padding: $space-2 $space-3;
-      border-bottom: 1px solid $color-border;
-      font-size: $font-size-sm;
+      border-bottom: 1px solid var(--border);
+      font-size: $font-size-table-cell;
       text-align: left;
     }
 
     th {
-      background: $color-bg;
-      color: $color-text;
+      background: var(--muted);
+      color: var(--foreground);
       font-weight: $font-weight-semibold;
     }
 
     .num { text-align: right; font-variant-numeric: tabular-nums; }
 
     tfoot th {
-      background: $color-accent-soft;
-      color: $color-accent;
-      border-top: 2px solid $color-accent;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-top: 2px solid var(--accent);
     }
   }
 
@@ -120,7 +121,7 @@
     grid-template-columns: 1fr 1fr;
     gap: $space-4;
     padding: $space-4;
-    background: $color-bg;
+    background: var(--muted);
     border-radius: $radius-md;
     margin-bottom: $space-6;
 
@@ -158,12 +159,12 @@
   &__sign {
     text-align: center;
     font-size: $font-size-sm;
-    color: $color-text-muted;
+    color: var(--muted-foreground);
   }
 
   &__sign-line {
     height: 1px;
-    background: $color-border-strong;
+    background: var(--border-strong);
     margin: 0 $space-4 $space-2;
   }
 }
