@@ -1,7 +1,7 @@
 @use 'variables' as *;
 
 @mixin focus-ring {
-  outline: 2px solid $color-accent;
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 
@@ -12,10 +12,10 @@
 }
 
 @mixin card {
-  background-color: $color-surface;
-  border: 1px solid $color-border;
-  border-radius: $radius-md;
-  box-shadow: $shadow-sm;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: $radius-lg;
+  box-shadow: var(--shadow-sm);
 }
 
 @mixin button-reset {

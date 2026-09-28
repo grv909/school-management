@@ -33,11 +33,11 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
   `,
   styles: [`
     .chart { width: 100%; height: auto; display: block; }
-    .chart__grid { stroke: #E1E4EA; stroke-width: 1; stroke-dasharray: 2 3; }
-    .chart__axis-text { fill: #5B6373; font-size: 10px; font-family: inherit; }
-    .chart__line { fill: none; stroke: #2D5F8B; stroke-width: 2; }
-    .chart__area { fill: rgba(45, 95, 139, 0.10); stroke: none; }
-    .chart__point { fill: #FFFFFF; stroke: #2D5F8B; stroke-width: 2; }
+    .chart__grid { stroke: var(--border); stroke-width: 1; stroke-dasharray: 2 3; }
+    .chart__axis-text { fill: var(--muted-foreground); font-size: 10px; font-family: inherit; }
+    .chart__line { fill: none; stroke: var(--accent); stroke-width: 2; }
+    .chart__area { fill: var(--accent-soft); stroke: none; }
+    .chart__point { fill: var(--card); stroke: var(--accent); stroke-width: 2; }
   `]
 })
 export class LineChartComponent {

@@ -57,7 +57,7 @@ export class AuthHttpApi implements AuthApi {
 export class ClassHttpApi implements ClassApi {
   private readonly http = inject(HttpClient);
   list() { return this.http.get<SchoolClass[]>(`${BASE()}/api/classes`); }
-  create(input: { name: string; displayOrder: number }) {
+  create(input: { name: string }) {
     return this.http.post<SchoolClass>(`${BASE()}/api/classes`, input);
   }
 }

@@ -27,35 +27,39 @@
   padding: $space-5;
 
   &__label {
+    font-family: var(--font-mono);
     font-size: $font-size-xs;
-    color: $color-text-muted;
+    font-weight: $font-weight-medium;
+    color: var(--muted-foreground);
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.12em;
     margin-bottom: $space-2;
   }
 
   &__value {
+    font-family: var(--font-display);
     font-size: $font-size-xl;
-    font-weight: $font-weight-semibold;
-    color: $color-text;
+    font-weight: $font-weight-regular;
+    color: var(--foreground);
     font-variant-numeric: tabular-nums;
   }
 
   &__suffix {
     font-size: $font-size-md;
     font-weight: $font-weight-regular;
-    color: $color-text-muted;
+    color: var(--muted-foreground);
   }
 
   &--action {
     @include button-reset;
     text-align: left;
     cursor: pointer;
-    transition: border-color $transition-fast, box-shadow $transition-fast;
+    transition: border-color $transition-fast, box-shadow $transition-fast, transform $transition-fast;
 
     &:hover {
-      border-color: $color-accent;
-      box-shadow: $shadow-md;
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
     }
 
     &:focus-visible { @include focus-ring; }
@@ -69,17 +73,17 @@
 
   .pill {
     @include button-reset;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: $color-bg;
-    color: $color-text-muted;
+    padding: 4px 12px;
+    border-radius: $radius-full;
+    background: var(--muted);
+    color: var(--muted-foreground);
     font-size: $font-size-xs;
     font-weight: $font-weight-medium;
-    border: 1px solid $color-border;
+    border: 1px solid var(--border);
     transition: all $transition-fast;
 
     &:hover:not(:disabled) {
-      border-color: $color-border-strong;
+      border-color: var(--border-strong);
     }
 
     &:disabled {
@@ -88,21 +92,21 @@
     }
 
     &--present {
-      background: rgba(47, 143, 78, 0.10);
-      color: $color-success;
-      border-color: rgba(47, 143, 78, 0.35);
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: var(--success);
     }
 
     &--absent {
-      background: rgba(178, 58, 58, 0.10);
-      color: $color-danger;
-      border-color: rgba(178, 58, 58, 0.35);
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: var(--danger);
     }
 
     &--late {
-      background: rgba(181, 123, 23, 0.10);
-      color: $color-warning;
-      border-color: rgba(181, 123, 23, 0.35);
+      background: var(--warning-bg);
+      color: var(--warning);
+      border-color: var(--warning);
     }
   }
 }
@@ -116,17 +120,18 @@
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
   text-align: center;
-  background: $color-bg;
-  color: $color-text;
-  border: 1px solid $color-border;
+  font-variant-numeric: tabular-nums;
+  background: var(--muted);
+  color: var(--foreground);
+  border: 1px solid var(--border);
 
-  &--aplus { background: rgba(47, 143, 78, 0.15);  color: $color-success; border-color: rgba(47, 143, 78, 0.35); }
-  &--a     { background: rgba(47, 143, 78, 0.10);  color: $color-success; border-color: rgba(47, 143, 78, 0.30); }
-  &--b     { background: $color-accent-soft;       color: $color-accent;  border-color: rgba(45, 95, 139, 0.30); }
-  &--c     { background: rgba(181, 123, 23, 0.10); color: $color-warning; border-color: rgba(181, 123, 23, 0.30); }
-  &--d     { background: rgba(181, 123, 23, 0.15); color: $color-warning; border-color: rgba(181, 123, 23, 0.40); }
+  &--aplus { background: var(--success-bg); color: var(--success); border-color: var(--success); }
+  &--a     { background: var(--success-bg); color: var(--success); border-color: var(--success); }
+  &--b     { background: var(--accent-soft); color: var(--accent);  border-color: var(--accent); }
+  &--c     { background: var(--warning-bg); color: var(--warning); border-color: var(--warning); }
+  &--d     { background: var(--warning-bg); color: var(--warning); border-color: var(--warning); }
   &--e,
-  &--f     { background: rgba(178, 58, 58, 0.10);  color: $color-danger;  border-color: rgba(178, 58, 58, 0.30); }
+  &--f     { background: var(--danger-bg);  color: var(--danger);  border-color: var(--danger); }
 }
 
 // Search bar shared between students directory and other list pages.
@@ -142,7 +147,7 @@
   }
 
   &__meta {
-    color: $color-text-muted;
+    color: var(--muted-foreground);
     font-size: $font-size-sm;
     white-space: nowrap;
   }
@@ -151,20 +156,20 @@
 // Inline banner for teacher hints / read-only states.
 .banner {
   padding: $space-3 $space-4;
-  border-radius: $radius-md;
+  border-radius: $radius-sm;
   font-size: $font-size-sm;
   margin-bottom: $space-3;
 
   &--warn {
-    background: rgba(181, 123, 23, 0.08);
-    border: 1px solid rgba(181, 123, 23, 0.30);
-    color: $color-warning;
+    background: var(--warning-bg);
+    border: 1px solid var(--warning);
+    color: var(--warning);
   }
 
   &--info {
-    background: $color-accent-soft;
-    border: 1px solid rgba(45, 95, 139, 0.30);
-    color: $color-accent;
+    background: var(--info-bg);
+    border: 1px solid var(--accent);
+    color: var(--accent);
   }
 }
 
@@ -192,24 +197,6 @@
   }
 }
 
-// Empty state used across pages.
-.empty-state {
-  padding: $space-6;
-  text-align: center;
-  color: $color-text-muted;
-
-  &__title {
-    font-size: $font-size-md;
-    font-weight: $font-weight-semibold;
-    color: $color-text;
-    margin-bottom: $space-1;
-  }
-
-  &__hint {
-    font-size: $font-size-sm;
-  }
-}
-
 // Form actions row at the bottom of a card.
 .form-actions {
   display: flex;
@@ -217,13 +204,13 @@
   gap: $space-2;
   margin-top: $space-4;
   padding-top: $space-4;
-  border-top: 1px solid $color-border;
+  border-top: 1px solid var(--border);
 }
 
 // Subtle linkified button (used for clickable names in tables).
 .link-button {
   @include button-reset;
-  color: $color-accent;
+  color: var(--accent);
   font-weight: $font-weight-medium;
   text-decoration: none;
 
@@ -250,8 +237,8 @@
   transition: all $transition-fast;
 
   &:hover {
-    border-color: $color-accent;
-    box-shadow: $shadow-md;
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
   }
 
   &:focus-visible { @include focus-ring; }
@@ -259,36 +246,30 @@
   &__label {
     font-size: $font-size-md;
     font-weight: $font-weight-semibold;
-    color: $color-text;
+    color: var(--foreground);
   }
 
   &__cta {
     font-size: $font-size-sm;
-    color: $color-accent;
+    color: var(--accent);
   }
-}
-
-// Inline-monospace span used for IDs, admission numbers, etc.
-.mono {
-  font-family: $font-family-mono;
-  font-size: 0.92em;
 }
 
 // Compact form control variant for inline-edit table rows.
 .form-field__control--compact {
   padding: 4px 8px;
-  font-size: $font-size-sm;
-  height: 30px;
+  font-size: $font-size-table-cell;
+  height: 32px;
 }
 
 // Editing row highlight.
 .data-table__row--editing {
-  background: $color-accent-soft;
+  background: var(--accent-soft);
 }
 
 .card__title-meta {
   margin-left: $space-3;
   font-size: $font-size-sm;
   font-weight: $font-weight-regular;
-  color: $color-text-muted;
+  color: var(--muted-foreground);
 }

@@ -6,32 +6,46 @@
   align-items: center;
   justify-content: center;
   padding: $space-5;
-  background-color: $color-bg;
+  background-color: var(--background);
 }
 
 .login-card {
   @include card;
   width: 100%;
-  max-width: 380px;
-  padding: $space-6 $space-5;
+  max-width: 400px;
+  padding: $space-7 $space-5;
 }
 
 .login-card__brand {
+  font-family: var(--font-display);
   font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
-  color: $color-accent;
+  font-weight: $font-weight-regular;
   margin-bottom: $space-1;
+
+  // Signature gradient text — login is a marketing-adjacent surface, so the
+  // flourish belongs here even though data screens stay calm/flat.
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .login-card__subtitle {
   font-size: $font-size-sm;
-  color: $color-text-muted;
-  margin-bottom: $space-5;
+  color: var(--muted-foreground);
+  margin-bottom: $space-6;
 }
 
 .login-card__footer {
   margin-top: $space-4;
   font-size: $font-size-xs;
-  color: $color-text-faint;
+  color: var(--faint-foreground);
   text-align: center;
+
+  a {
+    color: var(--accent);
+    font-weight: $font-weight-medium;
+
+    &:hover { text-decoration: underline; }
+  }
 }

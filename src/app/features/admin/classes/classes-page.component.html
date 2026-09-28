@@ -14,12 +14,6 @@
                  placeholder="e.g. Class 9"
                  [ngModel]="newName()" (ngModelChange)="newName.set($event)" required>
         </div>
-        <div class="form-field">
-          <label class="form-field__label" for="order">Display order</label>
-          <input class="form-field__control" id="order" name="order" type="number" min="0" max="1000"
-                 placeholder="0"
-                 [ngModel]="newOrder()" (ngModelChange)="newOrder.set($event)">
-        </div>
       </div>
       <button type="submit" class="btn btn--primary" [disabled]="!newName().trim()">Save class</button>
     </form>

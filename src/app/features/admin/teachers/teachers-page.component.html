@@ -102,6 +102,78 @@
               <td>{{ t.username ?? '—' }}</td>
               <td class="actions">
                 <button type="button" class="btn btn--tertiary btn--sm" (click)="startEdit(t)">Edit</button>
+                <button type="button" class="btn btn--tertiary btn--sm" (click)="toggleAssignments(t)">
+                  {{ assigningId() === t.id ? 'Hide assignments' : 'Assignments' }}
+                </button>
+              </td>
+            </tr>
+          }
+          @if (assigningId() === t.id) {
+            <tr>
+              <td colspan="4">
+                <div class="card">
+                  <div class="card__title">{{ t.firstName }} {{ t.lastName }} — class/section assignments</div>
+
+                  @if (assignments().length === 0) {
+                    <div class="empty-state">No assignments yet.</div>
+                  } @else {
+                    <table class="data-table">
+                      <thead>
+                        <tr>
+                          <th>Section</th>
+                          <th>Role</th>
+                          <th class="actions"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (a of assignments(); track a.id) {
+                          <tr>
+                            <td>{{ sectionLabel(a.sectionId) }}</td>
+                            <td>{{ a.isClassTeacher ? 'Class teacher' : 'Subject teacher' }}</td>
+                            <td class="actions">
+                              <button type="button" class="btn btn--tertiary btn--sm" (click)="removeAssignment(a.id)">Remove</button>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  }
+
+                  <form class="form-row" (ngSubmit)="addAssignment(t.id)">
+                    <div class="form-field">
+                      <label class="form-field__label" for="ac-{{ t.id }}">Class</label>
+                      <select class="form-field__control" id="ac-{{ t.id }}" name="ac-{{ t.id }}"
+                              [ngModel]="assignForm().classId" (ngModelChange)="onAssignClassChange($event)">
+                        <option [ngValue]="null">Select class</option>
+                        @for (c of classes(); track c.id) {
+                          <option [ngValue]="c.id">{{ c.name }}</option>
+                        }
+                      </select>
+                    </div>
+                    <div class="form-field">
+                      <label class="form-field__label" for="as-{{ t.id }}">Section</label>
+                      <select class="form-field__control" id="as-{{ t.id }}" name="as-{{ t.id }}"
+                              [ngModel]="assignForm().sectionId" (ngModelChange)="patchAssignForm('sectionId', $event)"
+                              [disabled]="!assignForm().classId">
+                        <option [ngValue]="null">Select section</option>
+                        @for (s of sections(); track s.id) {
+                          <option [ngValue]="s.id">Section {{ s.name }}</option>
+                        }
+                      </select>
+                    </div>
+                    <div class="form-field">
+                      <label class="form-field__label" for="act-{{ t.id }}">
+                        <input id="act-{{ t.id }}" name="act-{{ t.id }}" type="checkbox"
+                               [ngModel]="assignForm().isClassTeacher" (ngModelChange)="patchAssignForm('isClassTeacher', $event)">
+                        Class teacher for this section
+                      </label>
+                    </div>
+                    <div class="form-field">
+                      <label class="form-field__label">&nbsp;</label>
+                      <button type="submit" class="btn btn--primary" [disabled]="!assignForm().sectionId">Add</button>
+                    </div>
+                  </form>
+                </div>
               </td>
             </tr>
           }

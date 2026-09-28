@@ -70,6 +70,10 @@ export class AuthMockApi implements AuthApi {
     { id: 3, username: 'teacher2', role: 'TEACHER', schoolId: 1 }
   ];
 
+  // Tracks whichever user most recently logged in, so me() (which — like the real
+  // backend's JWT-derived /auth/me — takes no arguments) can resolve the right identity.
+  private lastLoggedInUserId: number | null = null;
+
   login(username: string, password: string) {
     if (!username || !password) {
       return throwError(() => new Error('Username and password are required'));
@@ -78,6 +82,7 @@ export class AuthMockApi implements AuthApi {
     if (!user) {
       return throwError(() => new Error('Invalid credentials'));
     }
+    this.lastLoggedInUserId = user.id;
     // FUTURE: real JWT comes from backend. For now we mint a fake token marker — the
     // app never trusts the token contents, only its presence.
     const accessToken = `mock-token-${user.id}-${Date.now()}`;
@@ -85,8 +90,11 @@ export class AuthMockApi implements AuthApi {
   }
 
   me(): Observable<CurrentUser> {
-    // Resolved by the AuthService from localStorage; mock-only callers won't reach here.
-    return throwError(() => new Error('AuthMockApi.me is not used — AuthService resolves the current user locally'));
+    const user = AuthMockApi.USERS.find(u => u.id === this.lastLoggedInUserId);
+    if (!user) {
+      return throwError(() => new Error('No logged-in user'));
+    }
+    return wrap({ userId: user.id, username: user.username, role: user.role, schoolId: user.schoolId });
   }
 }
 
@@ -97,9 +105,11 @@ export class ClassMockApi implements ClassApi {
   list() {
     return wrap([...this.data()].sort((a, b) => (this.order.get(a.id) ?? 0) - (this.order.get(b.id) ?? 0)));
   }
-  create(input: { name: string; displayOrder: number }) {
+  create(input: { name: string }) {
     const id = this.nextId();
-    this.order.set(id, input.displayOrder);
+    // Mirrors the backend: new classes go to the end (max existing order + 10).
+    const nextOrder = Math.max(0, ...Array.from(this.order.values())) + 10;
+    this.order.set(id, nextOrder);
     const next: SchoolClass = { id, name: input.name, classTeacherName: null, studentCount: 0 };
     this.data.update(arr => [...arr, next]);
     return wrap(next);

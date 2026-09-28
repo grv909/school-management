@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { TEACHER_API } from '../../../core/api/api.tokens';
-import { Teacher } from '../../../core/models';
+import { CLASS_API, SECTION_API, TEACHER_API, TEACHER_ASSIGNMENT_API } from '../../../core/api/api.tokens';
+import { apiErrorMessage } from '../../../core/api/api-error';
+import { SchoolClass, Section, Teacher, TeacherAssignment } from '../../../core/models';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { ToastService } from '../../../core/ui/toast.service';
 import { LoggerService } from '../../../core/logging/logger.service';
@@ -16,6 +17,9 @@ import { LoggerService } from '../../../core/logging/logger.service';
 })
 export class TeachersPageComponent {
   private readonly api = inject(TEACHER_API);
+  private readonly classApi = inject(CLASS_API);
+  private readonly sectionApi = inject(SECTION_API);
+  private readonly assignmentApi = inject(TEACHER_ASSIGNMENT_API);
   private readonly toast = inject(ToastService);
   private readonly logger = inject(LoggerService);
 
@@ -29,7 +33,29 @@ export class TeachersPageComponent {
   readonly editingId = signal<number | null>(null);
   readonly editForm = signal({ firstName: '', lastName: '', employeeNo: '' });
 
-  constructor() { this.load(); }
+  // Teacher whose class/section assignments panel is currently open, if any.
+  readonly assigningId = signal<number | null>(null);
+  readonly assignments = signal<TeacherAssignment[]>([]);
+  readonly classes = signal<SchoolClass[]>([]);
+  readonly sections = signal<Section[]>([]);
+  // All sections across all classes, keyed for label lookups (see constructor).
+  private readonly allSections = signal<Section[]>([]);
+  readonly assignForm = signal<{ classId: number | null; sectionId: number | null; isClassTeacher: boolean }>({
+    classId: null, sectionId: null, isClassTeacher: false
+  });
+
+  constructor() {
+    this.load();
+    this.classApi.list().subscribe(rows => {
+      this.classes.set(rows);
+      // Load every class's sections up front so existing assignments can always be
+      // labelled (e.g. "Class 8 - A"), not just the ones for whatever class is
+      // currently picked in the add-assignment form.
+      rows.forEach(c => this.sectionApi.listByClass(c.id).subscribe(secs => {
+        this.allSections.update(arr => [...arr.filter(s => s.classId !== c.id), ...secs]);
+      }));
+    });
+  }
 
   load(): void {
     this.loading.set(true);
@@ -69,7 +95,7 @@ export class TeachersPageComponent {
       },
       error: err => {
         this.logger.error('Failed to create teacher', { error: String(err) });
-        this.toast.error('Failed to add teacher');
+        this.toast.error(apiErrorMessage(err, 'Failed to add teacher'));
       }
     });
   }
@@ -102,8 +128,86 @@ export class TeachersPageComponent {
       },
       error: err => {
         this.logger.error('Failed to update teacher', { error: String(err) });
-        this.toast.error('Failed to update teacher');
+        this.toast.error(apiErrorMessage(err, 'Failed to update teacher'));
       }
     });
+  }
+
+  toggleAssignments(t: Teacher): void {
+    if (this.assigningId() === t.id) {
+      this.assigningId.set(null);
+      return;
+    }
+    this.assigningId.set(t.id);
+    this.assignForm.set({ classId: null, sectionId: null, isClassTeacher: false });
+    this.sections.set([]);
+    this.loadAssignments(t.id);
+  }
+
+  private loadAssignments(teacherId: number): void {
+    this.assignmentApi.list().subscribe({
+      next: rows => this.assignments.set(rows.filter(a => a.teacherId === teacherId)),
+      error: err => {
+        this.logger.error('Failed to load teacher assignments', { error: String(err) });
+        this.toast.error('Failed to load assignments');
+      }
+    });
+  }
+
+  onAssignClassChange(classId: number): void {
+    this.assignForm.update(f => ({ ...f, classId, sectionId: null }));
+    if (classId) {
+      this.sectionApi.listByClass(classId).subscribe(rows => this.sections.set(rows));
+    } else {
+      this.sections.set([]);
+    }
+  }
+
+  patchAssignForm<K extends keyof ReturnType<typeof this.assignForm>>(key: K, value: ReturnType<typeof this.assignForm>[K]) {
+    this.assignForm.update(f => ({ ...f, [key]: value }));
+  }
+
+  addAssignment(teacherId: number): void {
+    const f = this.assignForm();
+    if (!f.sectionId) return;
+    this.assignmentApi.create({
+      teacherId,
+      sectionId: f.sectionId,
+      subjectId: null,
+      isClassTeacher: f.isClassTeacher
+    }).subscribe({
+      next: (created) => {
+        this.assignments.update(arr => [...arr, created]);
+        this.assignForm.set({ classId: null, sectionId: null, isClassTeacher: false });
+        this.sections.set([]);
+        this.toast.success('Assignment added');
+      },
+      error: err => {
+        this.logger.error('Failed to add teacher assignment', { error: String(err) });
+        this.toast.error(apiErrorMessage(err, 'Failed to add assignment'));
+      }
+    });
+  }
+
+  removeAssignment(assignmentId: number): void {
+    this.assignmentApi.remove(assignmentId).subscribe({
+      next: () => {
+        this.assignments.update(arr => arr.filter(a => a.id !== assignmentId));
+        this.toast.success('Assignment removed');
+      },
+      error: err => {
+        this.logger.error('Failed to remove teacher assignment', { error: String(err) });
+        this.toast.error('Failed to remove assignment');
+      }
+    });
+  }
+
+  className(id: number): string {
+    return this.classes().find(c => c.id === id)?.name ?? '—';
+  }
+
+  sectionLabel(sectionId: number): string {
+    const s = this.allSections().find(sec => sec.id === sectionId);
+    return s ? `${this.className(s.classId)} - ${s.name}` : `Section #${sectionId}`;
   }
 }

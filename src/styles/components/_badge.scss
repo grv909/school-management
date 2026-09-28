@@ -3,16 +3,16 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  height: 20px;
-  padding: 0 $space-2;
-  border-radius: $radius-sm;
+  height: 22px;
+  padding: 0 $space-3;
+  border-radius: $radius-full;
   font-size: $font-size-xs;
   font-weight: $font-weight-medium;
-  background-color: $color-accent-soft;
-  color: $color-accent;
+  background-color: var(--accent-soft);
+  color: var(--accent);
 
-  &--success { background-color: rgba(47, 143, 78, 0.10); color: $color-success; }
-  &--danger  { background-color: rgba(178, 58, 58, 0.10);  color: $color-danger; }
-  &--warning { background-color: rgba(181, 123, 23, 0.10); color: $color-warning; }
-  &--accent  { background-color: $color-accent; color: $color-surface; }
+  &--success { background-color: var(--success-bg); color: var(--success); }
+  &--danger  { background-color: var(--danger-bg);  color: var(--danger); }
+  &--warning { background-color: var(--warning-bg); color: var(--warning); }
+  &--accent  { background: var(--gradient-accent); color: var(--accent-foreground); }
 }

@@ -1,43 +1,66 @@
 // Design tokens. Edit here, propagate everywhere.
+// Every value here is also mirrored as a CSS custom property in base/_root.scss —
+// that mirror is the single source of truth for runtime (components read var(--*),
+// never a raw hex); these SCSS variables exist for compile-time SCSS consumers
+// (mixins, media queries, calc expressions) that can't use CSS custom properties.
 
-// Color palette — institutional, non-AI-looking.
-$color-bg:            #F7F8FA;
+// Color palette — Minimalist Modern: neutral surfaces, one electric-blue accent.
+$color-bg:            #FAFAFA;
 $color-surface:       #FFFFFF;
-$color-border:        #E1E4EA;
-$color-border-strong: #C8CDD7;
+$color-border:        #E2E8F0;
+$color-border-strong: #CBD5E1;
 
-$color-text:          #1F2430;
-$color-text-muted:    #5B6373;
-$color-text-faint:    #9AA0AC;
+$color-text:          #0F172A;
+$color-text-muted:    #475569;
+$color-text-faint:    #94A3B8;
 
-$color-accent:        #2D5F8B;
-$color-accent-hover:  #234B6E;
-$color-accent-soft:   #E8EEF5;
+$color-accent:          #0052FF;
+$color-accent-secondary:#4D7CFF;
+$color-accent-hover:    #0040CC;
+$color-accent-soft:     rgba(0, 82, 255, 0.08);
+$color-accent-foreground: #FFFFFF;
+$color-ring:             #0052FF;
 
-$color-success:       #2F8F4E;
-$color-danger:        #B23A3A;
-$color-warning:       #B57B17;
+$color-muted:         #F1F5F9;
+
+$color-success:       #15803D;
+$color-success-bg:    #DCFCE7;
+$color-danger:        #B91C1C;
+$color-danger-bg:     #FEE2E2;
+$color-warning:       #B45309;
+$color-warning-bg:    #FEF3C7;
+$color-info:          #0052FF;
+$color-info-bg:       rgba(0, 82, 255, 0.08);
+
+$gradient-accent: linear-gradient(135deg, #{$color-accent}, #{$color-accent-secondary});
 
 // Typography
-$font-family-body:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-$font-family-mono:    ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+$font-family-display: "Calistoga", Georgia, serif;
+$font-family-body:    "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+$font-family-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
 
+// Base UI/body scale (forms, nav, buttons, prose) — 16px minimum per design system.
 $font-size-xs:   12px;
-$font-size-sm:   13px;
-$font-size-base: 14px;
-$font-size-md:   16px;
-$font-size-lg:   20px;
+$font-size-sm:   14px;
+$font-size-base: 16px;
+$font-size-md:   18px;
+$font-size-lg:   22px;
 $font-size-xl:   28px;
 
-$line-height-base: 1.45;
+// Dense data-table scale — deliberately smaller than the base UI scale so
+// attendance/marks/roster tables stay compact; never used for forms or prose.
+$font-size-table-cell:   15px;
+$font-size-table-header: 13px;
+
+$line-height-base:  1.6;
 $line-height-tight: 1.25;
 
-$font-weight-regular: 400;
-$font-weight-medium:  500;
-$font-weight-semibold:600;
-$font-weight-bold:    700;
+$font-weight-regular:  400;
+$font-weight-medium:   500;
+$font-weight-semibold: 600;
+$font-weight-bold:     700;
 
-// Spacing — 4-based scale.
+// Spacing — 4px-based scale.
 $space-1:  4px;
 $space-2:  8px;
 $space-3:  12px;
@@ -48,18 +71,20 @@ $space-7:  48px;
 $space-8:  64px;
 
 // Radius
-$radius-sm: 3px;
-$radius-md: 4px;
-$radius-lg: 6px;
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-full: 9999px;
 
 // Elevation
 $shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
-$shadow-md: 0 2px 6px rgba(15, 23, 42, 0.06);
+$shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+$shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
 
 // Layout
 $sidebar-width: 240px;
 $topbar-height: 56px;
-$content-max-width: 1200px;
+$content-max-width: 1280px;
 
 // Z-index
 $z-sidebar: 50;

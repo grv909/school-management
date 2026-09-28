@@ -4,8 +4,8 @@
 // left. The shell adds .app-shell--nav-open to reveal it. At >= $bp-md it
 // becomes the familiar sticky column and the transform is reset.
 .sidebar {
-  background-color: $color-surface;
-  border-right: 1px solid $color-border;
+  background-color: var(--card);
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   padding: $space-4 0;
@@ -20,7 +20,7 @@
   z-index: $z-sidebar;
   transform: translateX(-100%);
   transition: transform $transition-base;
-  box-shadow: $shadow-md;
+  box-shadow: var(--shadow-md);
 
   .app-shell--nav-open & {
     transform: translateX(0);
@@ -41,15 +41,16 @@
   margin-bottom: $space-5;
 
   &-name {
+    font-family: var(--font-display);
     font-size: $font-size-md;
-    font-weight: $font-weight-semibold;
-    color: $color-text;
+    font-weight: $font-weight-regular;
+    color: var(--foreground);
   }
 
   &-sub {
     display: block;
     font-size: $font-size-xs;
-    color: $color-text-muted;
+    color: var(--muted-foreground);
     margin-top: 2px;
   }
 }
@@ -62,34 +63,49 @@
 }
 
 .sidebar__group-label {
+  font-family: var(--font-mono);
   font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
-  color: $color-text-faint;
+  font-weight: $font-weight-medium;
+  color: var(--faint-foreground);
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.12em;
   padding: $space-4 $space-3 $space-1;
 }
 
 .sidebar__link {
+  position: relative;
   display: flex;
   align-items: center;
   gap: $space-2;
   padding: $space-2 $space-3;
   border-radius: $radius-md;
-  color: $color-text-muted;
+  color: var(--muted-foreground);
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   cursor: pointer;
   transition: background-color $transition-fast, color $transition-fast;
 
   &:hover {
-    background-color: $color-bg;
-    color: $color-text;
+    background-color: var(--background);
+    color: var(--foreground);
   }
 
   &.active {
-    background-color: $color-accent-soft;
-    color: $color-accent;
+    background-color: var(--accent-soft);
+    color: var(--accent);
+    font-weight: $font-weight-semibold;
+
+    // Signature gradient active-nav indicator.
+    &::before {
+      content: "";
+      position: absolute;
+      left: -$space-2;
+      top: 4px;
+      bottom: 4px;
+      width: 3px;
+      border-radius: $radius-full;
+      background: var(--gradient-accent);
+    }
   }
 
   &:focus-visible {

@@ -15,9 +15,15 @@
   padding: $space-3 $space-4;
   min-width: 240px;
   font-size: $font-size-sm;
-  border-left: 3px solid $color-accent;
+  border-left: 3px solid var(--accent);
+  animation: toast-in $transition-base;
 
-  &--success { border-left-color: $color-success; }
-  &--danger  { border-left-color: $color-danger; }
-  &--warning { border-left-color: $color-warning; }
+  &--success { border-left-color: var(--success); }
+  &--danger  { border-left-color: var(--danger); }
+  &--warning { border-left-color: var(--warning); }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }

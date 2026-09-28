@@ -34,6 +34,12 @@ export class StudentsPageComponent {
     admissionNo: '', firstName: '', lastName: '', rollNo: null, gender: ''
   });
 
+  // Student currently being edited, if any — drives the inline edit row in place of its row.
+  readonly editingId = signal<number | null>(null);
+  readonly editForm = signal<{ admissionNo: string; firstName: string; lastName: string; rollNo: number | null; gender: string; dob: string }>({
+    admissionNo: '', firstName: '', lastName: '', rollNo: null, gender: '', dob: ''
+  });
+
   readonly canShowStudents = computed(() => this.selectedSectionId() !== null);
 
   constructor() {
@@ -108,6 +114,51 @@ export class StudentsPageComponent {
       error: err => {
         this.logger.error('Failed to delete student', { error: String(err) });
         this.toast.error('Failed to delete student');
+      }
+    });
+  }
+
+  startEdit(s: Student): void {
+    this.editingId.set(s.id);
+    this.editForm.set({
+      admissionNo: s.admissionNo,
+      firstName: s.firstName,
+      lastName: s.lastName,
+      rollNo: s.rollNo,
+      gender: s.gender ?? '',
+      dob: s.dob ?? ''
+    });
+  }
+
+  cancelEdit(): void {
+    this.editingId.set(null);
+  }
+
+  patchEdit<K extends keyof ReturnType<typeof this.editForm>>(key: K, value: ReturnType<typeof this.editForm>[K]) {
+    this.editForm.update(f => ({ ...f, [key]: value }));
+  }
+
+  saveEdit(original: Student): void {
+    const f = this.editForm();
+    if (!f.admissionNo.trim() || !f.firstName.trim() || !f.lastName.trim()) return;
+    this.studentApi.update(original.id, {
+      sectionId: original.sectionId,
+      admissionNo: f.admissionNo.trim(),
+      firstName: f.firstName.trim(),
+      lastName: f.lastName.trim(),
+      rollNo: f.rollNo,
+      gender: f.gender || null,
+      dob: f.dob || null
+    }).subscribe({
+      next: (updated) => {
+        this.students.update(arr => arr.map(s => s.id === updated.id ? updated : s)
+          .sort((a, b) => (a.rollNo ?? 999) - (b.rollNo ?? 999)));
+        this.toast.success(`Updated ${updated.firstName} ${updated.lastName}`);
+        this.editingId.set(null);
+      },
+      error: err => {
+        this.logger.error('Failed to update student', { error: String(err) });
+        this.toast.error('Failed to update student');
       }
     });
   }

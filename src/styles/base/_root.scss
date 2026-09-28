@@ -1,24 +1,55 @@
 @use '../abstracts' as *;
 
-// CSS custom properties so consuming code (templates, third-party widgets) can pick up tokens
-// without having to import SCSS.
+// CSS custom properties — the single source of truth at runtime. Components should
+// reference var(--*) directly (in .scss files) rather than the SCSS $variables where
+// possible, so a future dark-mode / multi-tenant-branding pass only has to redefine
+// these under [data-theme="dark"] or a per-school scope, with zero component changes.
 :root {
-  --color-bg: #{$color-bg};
-  --color-surface: #{$color-surface};
-  --color-border: #{$color-border};
-  --color-text: #{$color-text};
-  --color-text-muted: #{$color-text-muted};
-  --color-accent: #{$color-accent};
-  --color-accent-hover: #{$color-accent-hover};
-  --color-danger: #{$color-danger};
-  --color-success: #{$color-success};
-  --color-warning: #{$color-warning};
+  --background: #{$color-bg};
+  --foreground: #{$color-text};
+  --card: #{$color-surface};
+  --muted: #{$color-muted};
+  --muted-foreground: #{$color-text-muted};
+  --faint-foreground: #{$color-text-faint};
+  --border: #{$color-border};
+  --border-strong: #{$color-border-strong};
 
+  --accent: #{$color-accent};
+  --accent-secondary: #{$color-accent-secondary};
+  --accent-hover: #{$color-accent-hover};
+  --accent-soft: #{$color-accent-soft};
+  --accent-foreground: #{$color-accent-foreground};
+  --ring: #{$color-ring};
+  --gradient-accent: #{$gradient-accent};
+
+  --success: #{$color-success};
+  --success-bg: #{$color-success-bg};
+  --danger: #{$color-danger};
+  --danger-bg: #{$color-danger-bg};
+  --warning: #{$color-warning};
+  --warning-bg: #{$color-warning-bg};
+  --info: #{$color-info};
+  --info-bg: #{$color-info-bg};
+
+  --font-display: #{$font-family-display};
+  --font-body: #{$font-family-body};
+  --font-mono: #{$font-family-mono};
+
+  --space-1: #{$space-1};
   --space-2: #{$space-2};
   --space-3: #{$space-3};
   --space-4: #{$space-4};
   --space-5: #{$space-5};
   --space-6: #{$space-6};
+  --space-7: #{$space-7};
+  --space-8: #{$space-8};
 
+  --radius-sm: #{$radius-sm};
   --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
+  --radius-full: #{$radius-full};
+
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
 }

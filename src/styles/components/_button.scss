@@ -6,14 +6,14 @@
   align-items: center;
   justify-content: center;
   gap: $space-2;
-  height: 36px;
+  height: 40px;
   padding: 0 $space-4;
-  border-radius: $radius-md;
+  border-radius: $radius-sm;
   border: 1px solid transparent;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   cursor: pointer;
-  transition: background-color $transition-fast, border-color $transition-fast, color $transition-fast;
+  transition: background-color $transition-fast, border-color $transition-fast, color $transition-fast, transform $transition-fast;
 
   &:focus-visible {
     @include focus-ring;
@@ -26,36 +26,41 @@
 }
 
 .btn--primary {
-  background-color: $color-accent;
-  color: #fff;
+  background: var(--gradient-accent);
+  color: var(--accent-foreground);
+  border-color: transparent;
 
   &:hover:not(:disabled) {
-    background-color: $color-accent-hover;
+    filter: brightness(1.05);
+  }
+
+  &:active:not(:disabled) {
+    filter: brightness(0.97);
   }
 }
 
 .btn--secondary {
-  background-color: $color-surface;
-  border-color: $color-border-strong;
-  color: $color-text;
+  background-color: var(--card);
+  border-color: var(--border-strong);
+  color: var(--foreground);
 
   &:hover:not(:disabled) {
-    background-color: $color-bg;
+    background-color: var(--background);
   }
 }
 
 .btn--tertiary {
   background: none;
-  color: $color-accent;
+  color: var(--accent);
 
   &:hover:not(:disabled) {
-    background-color: $color-accent-soft;
+    background-color: var(--accent-soft);
   }
 }
 
 .btn--danger {
-  background-color: $color-danger;
-  color: #fff;
+  background-color: var(--danger);
+  color: var(--accent-foreground);
 
   &:hover:not(:disabled) {
     background-color: color.adjust($color-danger, $lightness: -8%);
@@ -63,19 +68,19 @@
 }
 
 .btn--sm {
-  height: 28px;
+  height: 32px;
   padding: 0 $space-3;
   font-size: $font-size-xs;
 }
 
 .btn--ghost {
   background: transparent;
-  color: $color-text-muted;
+  color: var(--muted-foreground);
   border-color: transparent;
 
   &:hover:not(:disabled) {
-    background-color: $color-bg;
-    color: $color-text;
+    background-color: var(--background);
+    color: var(--foreground);
   }
 }
 
