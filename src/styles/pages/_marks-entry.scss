@@ -63,7 +63,7 @@
     text-align: left;
   }
 
-  td.num { text-align: right; }
+  th.num, td.num { text-align: right; }
 
   input[type="number"] {
     width: 90px;
@@ -79,6 +79,12 @@
       outline: none;
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    // Visual cue for a mark entered/changed but not yet persisted via "Save all".
+    &.marks-grid__input--dirty {
+      border-color: var(--warning);
+      background-color: var(--warning-bg);
     }
   }
 }

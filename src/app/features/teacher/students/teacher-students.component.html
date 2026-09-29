@@ -22,77 +22,81 @@
   } @else if (filtered().length === 0) {
     <div class="empty-state">No students match “{{ query() }}”.</div>
   } @else {
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th style="width: 70px;">Roll</th>
-          <th>Admission #</th>
-          <th>First name</th>
-          <th>Last name</th>
-          <th>Gender</th>
-          <th>Date of birth</th>
-          <th style="width: 220px;">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (s of filtered(); track s.id) {
-          @if (editingId() === s.id) {
-            <tr class="data-table__row--editing">
-              <td>
-                <input class="form-field__control form-field__control--compact"
-                       type="number" [ngModel]="draft().rollNo"
-                       (ngModelChange)="patchDraft('rollNo', $event)">
-              </td>
-              <td>{{ s.admissionNo }}</td>
-              <td>
-                <input class="form-field__control form-field__control--compact"
-                       [ngModel]="draft().firstName"
-                       (ngModelChange)="patchDraft('firstName', $event)">
-              </td>
-              <td>
-                <input class="form-field__control form-field__control--compact"
-                       [ngModel]="draft().lastName"
-                       (ngModelChange)="patchDraft('lastName', $event)">
-              </td>
-              <td>
-                <select class="form-field__control form-field__control--compact"
-                        [ngModel]="draft().gender"
-                        (ngModelChange)="patchDraft('gender', $event)">
-                  <option value="">—</option>
-                  <option value="M">Male</option>
-                  <option value="F">Female</option>
-                  <option value="O">Other</option>
-                </select>
-              </td>
-              <td>
-                <input class="form-field__control form-field__control--compact"
-                       type="date"
-                       [ngModel]="draft().dob"
-                       (ngModelChange)="patchDraft('dob', $event)">
-              </td>
-              <td>
-                <button type="button" class="btn btn--primary btn--sm" (click)="saveEdit(s)">Save</button>
-                <button type="button" class="btn btn--ghost btn--sm" (click)="cancelEdit()">Cancel</button>
-              </td>
-            </tr>
-          } @else {
-            <tr>
-              <td>{{ s.rollNo }}</td>
-              <td><span class="mono">{{ s.admissionNo }}</span></td>
-              <td>
-                <button type="button" class="link-button" (click)="openProfile(s)">{{ s.firstName }}</button>
-              </td>
-              <td>{{ s.lastName }}</td>
-              <td>{{ s.gender || '—' }}</td>
-              <td>{{ s.dob || '—' }}</td>
-              <td>
-                <button type="button" class="btn btn--ghost btn--sm" (click)="openProfile(s)">Profile</button>
-                <button type="button" class="btn btn--secondary btn--sm" (click)="startEdit(s)">Edit</button>
-              </td>
-            </tr>
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="num" style="width: 70px;">Roll</th>
+            <th>Admission #</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Gender</th>
+            <th>Date of birth</th>
+            <th class="actions" style="width: 220px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of filtered(); track s.id) {
+            @if (editingId() === s.id) {
+              <tr class="data-table__row--editing">
+                <td class="num">
+                  <input class="form-field__control form-field__control--compact"
+                         type="number" [ngModel]="draft().rollNo"
+                         (ngModelChange)="patchDraft('rollNo', $event)">
+                </td>
+                <td>{{ s.admissionNo }}</td>
+                <td>
+                  <input class="form-field__control form-field__control--compact"
+                         [ngModel]="draft().firstName"
+                         (ngModelChange)="patchDraft('firstName', $event)">
+                </td>
+                <td>
+                  <input class="form-field__control form-field__control--compact"
+                         [ngModel]="draft().lastName"
+                         (ngModelChange)="patchDraft('lastName', $event)">
+                </td>
+                <td>
+                  <select class="form-field__control form-field__control--compact"
+                          [ngModel]="draft().gender"
+                          (ngModelChange)="patchDraft('gender', $event)">
+                    <option value="">—</option>
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                    <option value="O">Other</option>
+                  </select>
+                </td>
+                <td>
+                  <input class="form-field__control form-field__control--compact"
+                         type="date"
+                         [ngModel]="draft().dob"
+                         (ngModelChange)="patchDraft('dob', $event)">
+                </td>
+                <td class="actions">
+                  <button type="button" class="btn btn--primary btn--sm" (click)="saveEdit(s)">Save</button>
+                  <button type="button" class="btn btn--ghost btn--sm" (click)="cancelEdit()">Cancel</button>
+                </td>
+              </tr>
+            } @else {
+              <tr>
+                <td class="num">{{ s.rollNo }}</td>
+                <td><span class="mono">{{ s.admissionNo }}</span></td>
+                <td>
+                  <button type="button" class="link-button" (click)="openProfile(s)">{{ s.firstName }}</button>
+                </td>
+                <td>{{ s.lastName }}</td>
+                <td>{{ s.gender || '—' }}</td>
+                <td>{{ s.dob || '—' }}</td>
+                <td class="actions">
+                  <button type="button" class="btn btn--ghost btn--sm" (click)="openProfile(s)">Profile</button>
+                  @if (canEdit(s)) {
+                    <button type="button" class="btn btn--secondary btn--sm" (click)="startEdit(s)">Edit</button>
+                  }
+                </td>
+              </tr>
+            }
           }
-        }
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   }
 </div>

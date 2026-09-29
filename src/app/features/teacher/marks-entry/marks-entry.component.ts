@@ -49,6 +49,8 @@ export class MarksEntryComponent {
 
   readonly rows = signal<MarkRow[]>([]);
   readonly saving = signal(false);
+  // Student ids whose mark has been changed since the grid was loaded/last saved.
+  readonly dirtyStudentIds = signal<Set<number>>(new Set());
 
   readonly canLoad = computed(() =>
     !!this.selectedSectionId() && !!this.selectedSubjectId() && !!this.selectedExamId()
@@ -90,6 +92,7 @@ export class MarksEntryComponent {
       .subscribe({
         next: rows => {
           this.rows.set(rows);
+          this.dirtyStudentIds.set(new Set());
           this.logger.info('Loaded marks grid', {
             examId: this.selectedExamId(),
             sectionId: this.selectedSectionId(),
@@ -106,6 +109,7 @@ export class MarksEntryComponent {
 
   updateMark(studentId: number, value: number | null) {
     this.rows.update(arr => arr.map(r => r.studentId === studentId ? { ...r, marksObtained: value } : r));
+    this.dirtyStudentIds.update(ids => new Set(ids).add(studentId));
   }
 
   save() {
@@ -127,6 +131,7 @@ export class MarksEntryComponent {
     this.marksApi.bulkSave(req).subscribe({
       next: ({ upserted }) => {
         this.saving.set(false);
+        this.dirtyStudentIds.set(new Set());
         this.toast.success(`Saved ${upserted} entries`);
       },
       error: err => {

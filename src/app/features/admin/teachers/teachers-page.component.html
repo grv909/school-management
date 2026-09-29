@@ -121,6 +121,7 @@
                       <thead>
                         <tr>
                           <th>Section</th>
+                          <th>Subject</th>
                           <th>Role</th>
                           <th class="actions"></th>
                         </tr>
@@ -129,6 +130,7 @@
                         @for (a of assignments(); track a.id) {
                           <tr>
                             <td>{{ sectionLabel(a.sectionId) }}</td>
+                            <td>{{ subjectLabel(a.subjectId) }}</td>
                             <td>{{ a.isClassTeacher ? 'Class teacher' : 'Subject teacher' }}</td>
                             <td class="actions">
                               <button type="button" class="btn btn--tertiary btn--sm" (click)="removeAssignment(a.id)">Remove</button>
@@ -162,6 +164,17 @@
                       </select>
                     </div>
                     <div class="form-field">
+                      <label class="form-field__label" for="asub-{{ t.id }}">Subject</label>
+                      <select class="form-field__control" id="asub-{{ t.id }}" name="asub-{{ t.id }}"
+                              [ngModel]="assignForm().subjectId" (ngModelChange)="patchAssignForm('subjectId', $event)"
+                              [disabled]="!assignForm().classId || assignForm().isClassTeacher">
+                        <option [ngValue]="null">Select subject</option>
+                        @for (sub of subjects(); track sub.id) {
+                          <option [ngValue]="sub.id">{{ sub.name }}</option>
+                        }
+                      </select>
+                    </div>
+                    <div class="form-field">
                       <label class="form-field__label" for="act-{{ t.id }}">
                         <input id="act-{{ t.id }}" name="act-{{ t.id }}" type="checkbox"
                                [ngModel]="assignForm().isClassTeacher" (ngModelChange)="patchAssignForm('isClassTeacher', $event)">
@@ -170,7 +183,8 @@
                     </div>
                     <div class="form-field">
                       <label class="form-field__label">&nbsp;</label>
-                      <button type="submit" class="btn btn--primary" [disabled]="!assignForm().sectionId">Add</button>
+                      <button type="submit" class="btn btn--primary"
+                              [disabled]="!assignForm().sectionId || (!assignForm().isClassTeacher && !assignForm().subjectId)">Add</button>
                     </div>
                   </form>
                 </div>
