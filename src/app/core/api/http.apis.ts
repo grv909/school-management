@@ -13,6 +13,7 @@ import {
   MarkRow,
   ReportCard,
   Role,
+  School,
   SchoolClass,
   Section,
   Student,
@@ -30,6 +31,7 @@ import {
   ExamApi,
   MarksApi,
   ReportApi,
+  SchoolApi,
   SectionApi,
   StudentApi,
   SubjectApi,
@@ -59,6 +61,12 @@ export class ClassHttpApi implements ClassApi {
   list() { return this.http.get<SchoolClass[]>(`${BASE()}/api/classes`); }
   create(input: { name: string }) {
     return this.http.post<SchoolClass>(`${BASE()}/api/classes`, input);
+  }
+  update(id: number, input: { name: string }) {
+    return this.http.put<SchoolClass>(`${BASE()}/api/classes/${id}`, input);
+  }
+  assignSubjects(id: number, subjectIds: number[]) {
+    return this.http.post<void>(`${BASE()}/api/classes/${id}/subjects`, { subjectIds });
   }
 }
 
@@ -188,6 +196,15 @@ export class TeacherAssignmentHttpApi implements TeacherAssignmentApi {
   }
   remove(id: number) {
     return this.http.delete<void>(`${BASE()}/api/teacher-assignments/${id}`);
+  }
+}
+
+@Injectable({ providedIn: 'root' })
+export class SchoolHttpApi implements SchoolApi {
+  private readonly http = inject(HttpClient);
+  get() { return this.http.get<School>(`${BASE()}/api/school`); }
+  update(input: { name: string; address: string | null; phone: string | null; logoUrl: string | null; principalName: string | null }) {
+    return this.http.put<School>(`${BASE()}/api/school`, input);
   }
 }
 

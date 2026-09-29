@@ -53,6 +53,21 @@
   color: var(--danger);
 }
 
+// A wrapped list of checkbox options (e.g. "which subjects does this class take").
+.checkbox-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2 $space-4;
+  margin-bottom: $space-4;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: $space-1;
+    font-size: $font-size-sm;
+  }
+}
+
 .form-row {
   display: flex;
   flex-direction: column;
