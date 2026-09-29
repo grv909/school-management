@@ -10,6 +10,7 @@ import {
   MarkRow,
   ReportCard,
   Role,
+  School,
   SchoolClass,
   Section,
   Student,
@@ -35,6 +36,9 @@ export interface AuthApi {
 export interface ClassApi {
   list(): Observable<SchoolClass[]>;
   create(input: { name: string }): Observable<SchoolClass>;
+  update(id: number, input: { name: string }): Observable<SchoolClass>;
+  // Replaces the full set of subjects taught in this class. ADMIN only (enforced server-side).
+  assignSubjects(id: number, subjectIds: number[]): Observable<void>;
 }
 
 export interface SectionApi {
@@ -98,6 +102,13 @@ export interface TeacherAssignmentApi {
   remove(id: number): Observable<void>;
 }
 
+export interface SchoolApi {
+  // The caller's own school (tenant) — available to any authenticated user.
+  get(): Observable<School>;
+  // ADMIN only (enforced server-side); the school's unique code cannot be changed here.
+  update(input: { name: string; address: string | null; phone: string | null; logoUrl: string | null; principalName: string | null }): Observable<School>;
+}
+
 export interface AnalyticsApi {
   forStudent(studentId: number): Observable<StudentAnalytics>;
   schoolOverview(): Observable<{
@@ -121,3 +132,4 @@ export const REPORT_API = new InjectionToken<ReportApi>('REPORT_API');
 export const ATTENDANCE_API = new InjectionToken<AttendanceApi>('ATTENDANCE_API');
 export const TEACHER_ASSIGNMENT_API = new InjectionToken<TeacherAssignmentApi>('TEACHER_ASSIGNMENT_API');
 export const ANALYTICS_API = new InjectionToken<AnalyticsApi>('ANALYTICS_API');
+export const SCHOOL_API = new InjectionToken<SchoolApi>('SCHOOL_API');

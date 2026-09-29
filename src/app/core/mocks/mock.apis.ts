@@ -114,6 +114,14 @@ export class ClassMockApi implements ClassApi {
     this.data.update(arr => [...arr, next]);
     return wrap(next);
   }
+  update(id: number, input: { name: string }) {
+    this.data.update(arr => arr.map(c => c.id === id ? { ...c, name: input.name } : c));
+    const updated = this.data().find(c => c.id === id);
+    return updated ? wrap(updated) : throwError(() => new Error(`Class not found: ${id}`));
+  }
+  assignSubjects(_id: number, _subjectIds: number[]) {
+    return wrap(undefined as void);
+  }
   private nextId() { return Math.max(0, ...this.data().map(c => c.id)) + 1; }
 }
 

@@ -8,6 +8,16 @@ export interface CurrentUser {
   schoolId: number;
 }
 
+export interface School {
+  id: number;
+  name: string;
+  code: string;
+  address: string | null;
+  phone: string | null;
+  logoUrl: string | null;
+  principalName: string | null;
+}
+
 export interface SchoolClass {
   id: number;
   name: string;

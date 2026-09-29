@@ -14,6 +14,7 @@ import {
   EXAM_API,
   MARKS_API,
   REPORT_API,
+  SCHOOL_API,
   SECTION_API,
   STUDENT_API,
   SUBJECT_API,
@@ -29,6 +30,7 @@ import {
   ExamHttpApi,
   MarksHttpApi,
   ReportHttpApi,
+  SchoolHttpApi,
   SectionHttpApi,
   StudentHttpApi,
   SubjectHttpApi,
@@ -54,6 +56,7 @@ export const appConfig: ApplicationConfig = {
     { provide: REPORT_API,         useClass: ReportHttpApi },
     { provide: ATTENDANCE_API,     useClass: AttendanceHttpApi },
     { provide: TEACHER_ASSIGNMENT_API, useClass: TeacherAssignmentHttpApi },
-    { provide: ANALYTICS_API,      useClass: AnalyticsHttpApi }
+    { provide: ANALYTICS_API,      useClass: AnalyticsHttpApi },
+    { provide: SCHOOL_API,         useClass: SchoolHttpApi }
   ]
 };

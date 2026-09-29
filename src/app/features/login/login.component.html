@@ -1,7 +1,7 @@
 <div class="login-page">
   <form class="login-card" (ngSubmit)="submit()" autocomplete="off">
-    <div class="login-card__brand">Sunrise Public School</div>
-    <div class="login-card__subtitle">School ERP — sign in</div>
+    <div class="login-card__brand">School ERP</div>
+    <div class="login-card__subtitle">Sign in to continue</div>
 
     <div class="form-field">
       <label class="form-field__label" for="username">Username</label>
@@ -12,7 +12,7 @@
              autocomplete="username"
              [ngModel]="username()"
              (ngModelChange)="username.set($event)"
-             placeholder="admin or teacher1"
+             placeholder="Username"
              required>
     </div>
 
@@ -40,9 +40,6 @@
 
     <div class="login-card__footer">
       <a routerLink="/forgot-password">Forgot password?</a>
-    </div>
-    <div class="login-card__footer">
-      Demo accounts: <strong>admin</strong> / <strong>teacher1</strong> &middot; any non-empty password.
     </div>
   </form>
 </div>

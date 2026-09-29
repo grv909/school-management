@@ -1,0 +1,71 @@
+<app-page-header title="Academic Years" subtitle="Define the academic year(s) sections and attendance are tracked against.">
+  <button type="button" class="btn btn--primary" (click)="toggleForm()">
+    {{ formOpen() ? 'Cancel' : 'Add academic year' }}
+  </button>
+</app-page-header>
+
+@if (formOpen()) {
+  <div class="card">
+    <form (ngSubmit)="submit()">
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-field__label" for="ay-name">Name</label>
+          <input class="form-field__control" id="ay-name" name="ay-name" required
+                 placeholder="e.g. 2026-27"
+                 [ngModel]="form().name" (ngModelChange)="patch('name', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="ay-start">Start date</label>
+          <input class="form-field__control" id="ay-start" name="ay-start" type="date" required
+                 [ngModel]="form().startDate" (ngModelChange)="patch('startDate', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="ay-end">End date</label>
+          <input class="form-field__control" id="ay-end" name="ay-end" type="date" required
+                 [ngModel]="form().endDate" (ngModelChange)="patch('endDate', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="ay-current">
+            <input id="ay-current" name="ay-current" type="checkbox"
+                   [ngModel]="form().current" (ngModelChange)="patch('current', $event)">
+            Current year
+          </label>
+        </div>
+      </div>
+      <button type="submit" class="btn btn--primary"
+              [disabled]="!form().name.trim() || !form().startDate || !form().endDate">Save academic year</button>
+    </form>
+  </div>
+}
+
+@if (loading()) {
+  <div class="empty-state">Loading academic years…</div>
+} @else if (years().length === 0) {
+  <div class="empty-state">
+    <div class="empty-state__title">No academic years yet</div>
+    <div class="empty-state__hint">Add one before creating sections — every section belongs to an academic year.</div>
+  </div>
+} @else {
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Start date</th>
+          <th>End date</th>
+          <th>Current</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (y of years(); track y.id) {
+          <tr>
+            <td>{{ y.name }}</td>
+            <td>{{ y.startDate }}</td>
+            <td>{{ y.endDate }}</td>
+            <td>{{ y.current ? 'Yes' : '—' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

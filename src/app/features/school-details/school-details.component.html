@@ -1,0 +1,77 @@
+<app-page-header title="School Details" subtitle="Your school's profile shown across the app.">
+  @if (isAdmin && !loading() && school() && !editing()) {
+    <button type="button" class="btn btn--primary" (click)="startEdit()">Edit</button>
+  }
+</app-page-header>
+
+@if (loading()) {
+  <div class="empty-state">Loading school details…</div>
+} @else if (!school()) {
+  <div class="empty-state">
+    <div class="empty-state__title">School details unavailable</div>
+  </div>
+} @else if (editing()) {
+  <div class="card">
+    <div class="card__title">Edit school details</div>
+    <form (ngSubmit)="save()" autocomplete="off">
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-field__label" for="sd-name">School name</label>
+          <input class="form-field__control" id="sd-name" name="sd-name" required
+                 [ngModel]="form().name" (ngModelChange)="patch('name', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="sd-principal">Principal</label>
+          <input class="form-field__control" id="sd-principal" name="sd-principal"
+                 [ngModel]="form().principalName" (ngModelChange)="patch('principalName', $event)">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-field__label" for="sd-phone">Phone</label>
+          <input class="form-field__control" id="sd-phone" name="sd-phone"
+                 [ngModel]="form().phone" (ngModelChange)="patch('phone', $event)">
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="sd-logo">Logo URL</label>
+          <input class="form-field__control" id="sd-logo" name="sd-logo"
+                 [ngModel]="form().logoUrl" (ngModelChange)="patch('logoUrl', $event)">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-field__label" for="sd-address">Address</label>
+          <input class="form-field__control" id="sd-address" name="sd-address"
+                 [ngModel]="form().address" (ngModelChange)="patch('address', $event)">
+        </div>
+      </div>
+      <button type="submit" class="btn btn--primary" [disabled]="!form().name.trim() || saving()">
+        {{ saving() ? 'Saving…' : 'Save changes' }}
+      </button>
+      <button type="button" class="btn btn--tertiary" (click)="cancelEdit()" [disabled]="saving()">Cancel</button>
+    </form>
+  </div>
+} @else {
+  <div class="card">
+    <div class="card__title">{{ school()!.name }}</div>
+    <div class="card__subtitle">School code: {{ school()!.code }}</div>
+    <div class="table-container">
+      <table class="data-table">
+        <tbody>
+          <tr>
+            <td>Principal</td>
+            <td>{{ school()!.principalName || '—' }}</td>
+          </tr>
+          <tr>
+            <td>Phone</td>
+            <td>{{ school()!.phone || '—' }}</td>
+          </tr>
+          <tr>
+            <td>Address</td>
+            <td>{{ school()!.address || '—' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+}

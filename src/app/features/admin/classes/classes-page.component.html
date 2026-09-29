@@ -35,15 +35,132 @@
           <th>Class</th>
           <th>Class teacher</th>
           <th class="num">Total students</th>
+          <th class="actions"></th>
         </tr>
       </thead>
       <tbody>
         @for (c of classes(); track c.id) {
-          <tr>
-            <td>{{ c.name }}</td>
-            <td>{{ c.classTeacherName ?? '—' }}</td>
-            <td class="num">{{ c.studentCount }}</td>
-          </tr>
+          @if (editingId() === c.id) {
+            <tr>
+              <td colspan="4">
+                <form class="form-row" (ngSubmit)="saveEdit(c.id)">
+                  <div class="form-field">
+                    <label class="form-field__label" for="ecn-{{ c.id }}">Class name</label>
+                    <input class="form-field__control" id="ecn-{{ c.id }}" name="ecn-{{ c.id }}" required
+                           [ngModel]="editName()" (ngModelChange)="editName.set($event)">
+                  </div>
+                  <div class="form-field">
+                    <label class="form-field__label">&nbsp;</label>
+                    <div>
+                      <button type="submit" class="btn btn--primary" [disabled]="!editName().trim()">Save</button>
+                      <button type="button" class="btn btn--tertiary" (click)="cancelEdit()">Cancel</button>
+                    </div>
+                  </div>
+                </form>
+              </td>
+            </tr>
+          } @else {
+            <tr>
+              <td>{{ c.name }}</td>
+              <td>{{ c.classTeacherName ?? '—' }}</td>
+              <td class="num">{{ c.studentCount }}</td>
+              <td class="actions">
+                <button type="button" class="btn btn--tertiary btn--sm" (click)="startEdit(c)">Edit</button>
+                <button type="button" class="btn btn--tertiary btn--sm" (click)="toggleSubjects(c)">
+                  {{ subjectsClassId() === c.id ? 'Hide subjects' : 'Subjects' }}
+                </button>
+                <button type="button" class="btn btn--tertiary btn--sm" (click)="toggleSections(c)">
+                  {{ sectionsClassId() === c.id ? 'Hide sections' : 'Sections' }}
+                </button>
+              </td>
+            </tr>
+          }
+          @if (subjectsClassId() === c.id) {
+            <tr>
+              <td colspan="4">
+                <div class="card">
+                  <div class="card__title">{{ c.name }} — subjects taught</div>
+
+                  @if (allSubjects().length === 0) {
+                    <div class="empty-state__hint">No subjects exist yet — add some from the Subjects page first.</div>
+                  } @else {
+                    <div class="checkbox-list">
+                      @for (s of allSubjects(); track s.id) {
+                        <label class="checkbox-list__item">
+                          <input type="checkbox"
+                                 [checked]="selectedSubjectIds().has(s.id)"
+                                 (change)="toggleSubjectSelection(s.id, $any($event.target).checked)">
+                          {{ s.name }} ({{ s.code }})
+                        </label>
+                      }
+                    </div>
+                    <button type="button" class="btn btn--primary" [disabled]="savingSubjects()" (click)="saveSubjects(c.id)">
+                      {{ savingSubjects() ? 'Saving…' : 'Save subjects' }}
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+          @if (sectionsClassId() === c.id) {
+            <tr>
+              <td colspan="4">
+                <div class="card">
+                  <div class="card__title">{{ c.name }} — sections</div>
+
+                  @if (sections().length === 0) {
+                    <div class="empty-state">No sections yet.</div>
+                  } @else {
+                    <table class="data-table">
+                      <thead>
+                        <tr>
+                          <th>Section</th>
+                          <th>Academic year</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (s of sections(); track s.id) {
+                          <tr>
+                            <td>Section {{ s.name }}</td>
+                            <td>{{ academicYearLabel(s.academicYearId) }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  }
+
+                  @if (academicYears().length === 0) {
+                    <div class="empty-state__hint">
+                      Add an academic year first — every section belongs to one.
+                    </div>
+                  } @else {
+                    <form class="form-row" (ngSubmit)="addSection(c.id)">
+                      <div class="form-field">
+                        <label class="form-field__label" for="say-{{ c.id }}">Academic year</label>
+                        <select class="form-field__control" id="say-{{ c.id }}" name="say-{{ c.id }}"
+                                [ngModel]="sectionForm().academicYearId" (ngModelChange)="patchSectionForm('academicYearId', $event)">
+                          @for (y of academicYears(); track y.id) {
+                            <option [ngValue]="y.id">{{ y.name }}</option>
+                          }
+                        </select>
+                      </div>
+                      <div class="form-field">
+                        <label class="form-field__label" for="sname-{{ c.id }}">Section name</label>
+                        <input class="form-field__control" id="sname-{{ c.id }}" name="sname-{{ c.id }}"
+                               placeholder="e.g. A" required
+                               [ngModel]="sectionForm().name" (ngModelChange)="patchSectionForm('name', $event)">
+                      </div>
+                      <div class="form-field">
+                        <label class="form-field__label">&nbsp;</label>
+                        <button type="submit" class="btn btn--primary"
+                                [disabled]="!sectionForm().academicYearId || !sectionForm().name.trim()">Add</button>
+                      </div>
+                    </form>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
         }
       </tbody>
     </table>
