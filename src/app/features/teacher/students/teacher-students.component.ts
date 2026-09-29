@@ -126,4 +126,8 @@ export class TeacherStudentsComponent {
   openProfile(s: Student) {
     this.router.navigate(['/teacher/students', s.id]);
   }
+
+  canEdit(s: Student): boolean {
+    return this.scope.isClassTeacherOf(s.sectionId);
+  }
 }

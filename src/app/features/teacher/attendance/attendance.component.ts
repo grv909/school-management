@@ -14,6 +14,13 @@ import { TeacherScopeService } from '../../../core/auth/teacher-scope.service';
 import { ToastService } from '../../../core/ui/toast.service';
 import { LoggerService } from '../../../core/logging/logger.service';
 
+function toLocalIsoDate(d: Date): string {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 /**
  * Daily attendance marking grid for teachers.
  *
@@ -41,16 +48,17 @@ export class AttendanceComponent {
   readonly sections = signal<Section[]>([]);
   readonly selectedClassId = signal<number | null>(null);
   readonly selectedSectionId = signal<number | null>(null);
-  readonly date = signal<string>(new Date().toISOString().slice(0, 10));
+  readonly date = signal<string>(toLocalIsoDate(new Date()));
 
   readonly rows = signal<AttendanceRow[]>([]);
   readonly saving = signal(false);
   readonly loadedKey = signal<string>('');
 
   // Attendance can only be marked/changed for today or yesterday — mirrors the backend restriction
-  // in AttendanceService.bulkUpsert. Exposed as ISO date strings for the date input's min/max.
-  readonly minDate = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-  readonly maxDate = new Date().toISOString().slice(0, 10);
+  // in AttendanceService.bulkUpsert. Computed from local date parts (not toISOString, which is UTC
+  // and can roll over to the wrong day near midnight in timezones ahead of UTC).
+  readonly minDate = toLocalIsoDate(new Date(new Date().setDate(new Date().getDate() - 1)));
+  readonly maxDate = toLocalIsoDate(new Date());
 
   readonly isDateEditable = computed(() => {
     const d = this.date();

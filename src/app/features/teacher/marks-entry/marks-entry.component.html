@@ -69,6 +69,8 @@
             <td class="num">{{ r.maxMarks }}</td>
             <td class="num">
               <input type="number" min="0" [max]="maxMarks()" step="0.5"
+                     class="marks-grid__input"
+                     [class.marks-grid__input--dirty]="dirtyStudentIds().has(r.studentId)"
                      [ngModel]="r.marksObtained"
                      (ngModelChange)="updateMark(r.studentId, $event)">
             </td>

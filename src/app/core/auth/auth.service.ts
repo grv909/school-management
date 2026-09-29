@@ -1,10 +1,11 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, Injector, computed, inject, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { AUTH_API } from '../api/api.tokens';
 import { CurrentUser, Role } from '../models';
 import { LoggerService } from '../logging/logger.service';
+import { TeacherScopeService } from './teacher-scope.service';
 
 const STORAGE_KEY = 'erp.auth.session.v1';
 
@@ -26,6 +27,9 @@ export class AuthService {
   private readonly api = inject(AUTH_API);
   private readonly router = inject(Router);
   private readonly logger = inject(LoggerService);
+  // Resolved lazily (not injected in the constructor) — TeacherScopeService injects
+  // AuthService itself, so a direct constructor injection here would be circular.
+  private readonly injector = inject(Injector);
 
   private readonly _session = signal<StoredSession | null>(this.readFromStorage());
 
@@ -48,6 +52,9 @@ export class AuthService {
 
   login(username: string, password: string): Observable<void> {
     return new Observable<void>((subscriber) => {
+      // Drop any previous teacher's cached assignments/sections before this session's
+      // session signal is populated, so the new teacher never sees a stale scope.
+      this.injector.get(TeacherScopeService).reset();
       this.api.login(username, password).subscribe({
         next: (resp) => {
           // Stash the token first so the /auth/me call below goes out authenticated
@@ -89,6 +96,7 @@ export class AuthService {
     const username = this._session()?.username;
     this._session.set(null);
     localStorage.removeItem(STORAGE_KEY);
+    this.injector.get(TeacherScopeService).reset();
     this.logger.info('Logout', { username });
     this.router.navigate(['/login']);
   }

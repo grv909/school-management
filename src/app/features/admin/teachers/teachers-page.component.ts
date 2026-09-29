@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { CLASS_API, SECTION_API, TEACHER_API, TEACHER_ASSIGNMENT_API } from '../../../core/api/api.tokens';
+import { CLASS_API, SECTION_API, SUBJECT_API, TEACHER_API, TEACHER_ASSIGNMENT_API } from '../../../core/api/api.tokens';
 import { apiErrorMessage } from '../../../core/api/api-error';
-import { SchoolClass, Section, Teacher, TeacherAssignment } from '../../../core/models';
+import { SchoolClass, Section, Subject, Teacher, TeacherAssignment } from '../../../core/models';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { ToastService } from '../../../core/ui/toast.service';
 import { LoggerService } from '../../../core/logging/logger.service';
@@ -19,6 +19,7 @@ export class TeachersPageComponent {
   private readonly api = inject(TEACHER_API);
   private readonly classApi = inject(CLASS_API);
   private readonly sectionApi = inject(SECTION_API);
+  private readonly subjectApi = inject(SUBJECT_API);
   private readonly assignmentApi = inject(TEACHER_ASSIGNMENT_API);
   private readonly toast = inject(ToastService);
   private readonly logger = inject(LoggerService);
@@ -38,10 +39,13 @@ export class TeachersPageComponent {
   readonly assignments = signal<TeacherAssignment[]>([]);
   readonly classes = signal<SchoolClass[]>([]);
   readonly sections = signal<Section[]>([]);
+  readonly subjects = signal<Subject[]>([]);
   // All sections across all classes, keyed for label lookups (see constructor).
   private readonly allSections = signal<Section[]>([]);
-  readonly assignForm = signal<{ classId: number | null; sectionId: number | null; isClassTeacher: boolean }>({
-    classId: null, sectionId: null, isClassTeacher: false
+  // All subjects, keyed for label lookups (see constructor).
+  private readonly allSubjects = signal<Subject[]>([]);
+  readonly assignForm = signal<{ classId: number | null; sectionId: number | null; subjectId: number | null; isClassTeacher: boolean }>({
+    classId: null, sectionId: null, subjectId: null, isClassTeacher: false
   });
 
   constructor() {
@@ -55,6 +59,7 @@ export class TeachersPageComponent {
         this.allSections.update(arr => [...arr.filter(s => s.classId !== c.id), ...secs]);
       }));
     });
+    this.subjectApi.list().subscribe(rows => this.allSubjects.set(rows));
   }
 
   load(): void {
@@ -139,8 +144,9 @@ export class TeachersPageComponent {
       return;
     }
     this.assigningId.set(t.id);
-    this.assignForm.set({ classId: null, sectionId: null, isClassTeacher: false });
+    this.assignForm.set({ classId: null, sectionId: null, subjectId: null, isClassTeacher: false });
     this.sections.set([]);
+    this.subjects.set([]);
     this.loadAssignments(t.id);
   }
 
@@ -155,11 +161,13 @@ export class TeachersPageComponent {
   }
 
   onAssignClassChange(classId: number): void {
-    this.assignForm.update(f => ({ ...f, classId, sectionId: null }));
+    this.assignForm.update(f => ({ ...f, classId, sectionId: null, subjectId: null }));
     if (classId) {
       this.sectionApi.listByClass(classId).subscribe(rows => this.sections.set(rows));
+      this.subjectApi.list(classId).subscribe(rows => this.subjects.set(rows));
     } else {
       this.sections.set([]);
+      this.subjects.set([]);
     }
   }
 
@@ -170,16 +178,18 @@ export class TeachersPageComponent {
   addAssignment(teacherId: number): void {
     const f = this.assignForm();
     if (!f.sectionId) return;
+    if (!f.isClassTeacher && !f.subjectId) return;
     this.assignmentApi.create({
       teacherId,
       sectionId: f.sectionId,
-      subjectId: null,
+      subjectId: f.isClassTeacher ? null : f.subjectId,
       isClassTeacher: f.isClassTeacher
     }).subscribe({
       next: (created) => {
         this.assignments.update(arr => [...arr, created]);
-        this.assignForm.set({ classId: null, sectionId: null, isClassTeacher: false });
+        this.assignForm.set({ classId: null, sectionId: null, subjectId: null, isClassTeacher: false });
         this.sections.set([]);
+        this.subjects.set([]);
         this.toast.success('Assignment added');
       },
       error: err => {
@@ -209,5 +219,10 @@ export class TeachersPageComponent {
   sectionLabel(sectionId: number): string {
     const s = this.allSections().find(sec => sec.id === sectionId);
     return s ? `${this.className(s.classId)} - ${s.name}` : `Section #${sectionId}`;
+  }
+
+  subjectLabel(subjectId: number | null): string {
+    if (subjectId == null) return 'All subjects';
+    return this.allSubjects().find(sub => sub.id === subjectId)?.name ?? `Subject #${subjectId}`;
   }
 }

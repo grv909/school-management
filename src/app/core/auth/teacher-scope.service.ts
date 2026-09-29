@@ -119,4 +119,14 @@ export class TeacherScopeService {
   isClassTeacherOf(sectionId: number): boolean {
     return this._assignments().some(a => a.sectionId === sectionId && a.isClassTeacher);
   }
+
+  // Must be called on login/logout: this service is providedIn: 'root' and lives for the
+  // whole SPA session, so its per-teacher caches (assignments, resolved sections) would
+  // otherwise leak into the next teacher's session after a user switch without a full
+  // page reload.
+  reset(): void {
+    this.loadRequest = null;
+    this._assignments.set([]);
+    this.sectionsByClassCache.clear();
+  }
 }

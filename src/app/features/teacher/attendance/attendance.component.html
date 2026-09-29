@@ -31,8 +31,7 @@
 
   <div class="form-field">
     <label class="form-field__label">Date</label>
-    <input class="form-field__control" type="date" [ngModel]="date()" (ngModelChange)="date.set($event)"
-           [min]="minDate" [max]="maxDate">
+    <input class="form-field__control" type="date" [ngModel]="date()" (ngModelChange)="date.set($event)">
   </div>
 
   <div class="filters__action">
