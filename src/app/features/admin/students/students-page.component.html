@@ -9,39 +9,34 @@
   <div class="form-row">
     <div class="form-field">
       <label class="form-field__label" for="cls">Class</label>
-      <select class="form-field__control" id="cls"
+      <app-select id="cls"
+              [options]="classOptions()"
               [ngModel]="selectedClassId()"
-              (ngModelChange)="onClassChange($event)">
-        <option [ngValue]="null">Select class</option>
-        @for (c of classes(); track c.id) {
-          <option [ngValue]="c.id">{{ c.name }}</option>
-        }
-      </select>
+              (ngModelChange)="onClassChange($event)"></app-select>
     </div>
     <div class="form-field">
       <label class="form-field__label" for="sec">Section</label>
-      <select class="form-field__control" id="sec"
+      <app-select id="sec"
+              [options]="sectionOptions()"
               [ngModel]="selectedSectionId()"
               (ngModelChange)="onSectionChange($event)"
-              [disabled]="!selectedClassId()">
-        <option [ngValue]="null">Select section</option>
-        @for (s of sections(); track s.id) {
-          <option [ngValue]="s.id">Section {{ s.name }}</option>
-        }
-      </select>
+              [disabled]="!selectedClassId()"></app-select>
     </div>
   </div>
 </div>
 
 @if (formOpen()) {
-  <div class="card">
-    <div class="card__title">New student</div>
+  <app-modal [wide]="true" title="New student" (close)="toggleForm()">
     <form (ngSubmit)="submit()">
       <div class="form-row">
         <div class="form-field">
           <label class="form-field__label" for="adm">Admission no.</label>
           <input class="form-field__control" id="adm" name="adm" required
+                 [class.form-field__control--invalid]="submitted() && !form().admissionNo.trim()"
                  [ngModel]="form().admissionNo" (ngModelChange)="patch('admissionNo', $event)">
+          @if (submitted() && !form().admissionNo.trim()) {
+            <div class="form-field__error" role="alert">Admission no. is required.</div>
+          }
         </div>
         <div class="form-field">
           <label class="form-field__label" for="roll">Roll no.</label>
@@ -53,41 +48,49 @@
         <div class="form-field">
           <label class="form-field__label" for="fn">First name</label>
           <input class="form-field__control" id="fn" name="fn" required
+                 [class.form-field__control--invalid]="submitted() && !form().firstName.trim()"
                  [ngModel]="form().firstName" (ngModelChange)="patch('firstName', $event)">
+          @if (submitted() && !form().firstName.trim()) {
+            <div class="form-field__error" role="alert">First name is required.</div>
+          }
         </div>
         <div class="form-field">
           <label class="form-field__label" for="ln">Last name</label>
           <input class="form-field__control" id="ln" name="ln" required
+                 [class.form-field__control--invalid]="submitted() && !form().lastName.trim()"
                  [ngModel]="form().lastName" (ngModelChange)="patch('lastName', $event)">
+          @if (submitted() && !form().lastName.trim()) {
+            <div class="form-field__error" role="alert">Last name is required.</div>
+          }
         </div>
         <div class="form-field">
           <label class="form-field__label" for="gen">Gender</label>
-          <select class="form-field__control" id="gen" name="gen"
-                  [ngModel]="form().gender" (ngModelChange)="patch('gender', $event)">
-            <option value="">—</option>
-            <option value="M">Male</option>
-            <option value="F">Female</option>
-          </select>
+          <app-select id="gen" name="gen" [options]="genderOptions"
+                  [ngModel]="form().gender" (ngModelChange)="patch('gender', $event)"></app-select>
         </div>
       </div>
-      <button type="submit" class="btn btn--primary"
-              [disabled]="!form().admissionNo.trim() || !form().firstName.trim() || !form().lastName.trim()">
-        Save student
-      </button>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--tertiary" (click)="toggleForm()">Cancel</button>
+        <button type="submit" class="btn btn--primary"
+                [disabled]="!form().admissionNo.trim() || !form().firstName.trim() || !form().lastName.trim()">
+          Save student
+        </button>
+      </div>
     </form>
-  </div>
+  </app-modal>
 }
 
 @if (!canShowStudents()) {
-  <div class="empty-state">
-    <div class="empty-state__title">Pick a class and section</div>
-    <div class="empty-state__hint">Choose above to view the roster.</div>
-  </div>
+  <app-empty-state title="Pick a class and section" hint="Choose above to view the roster."></app-empty-state>
+} @else if (loading()) {
+  <app-skeleton variant="table"></app-skeleton>
 } @else if (students().length === 0) {
-  <div class="empty-state">
-    <div class="empty-state__title">No students in this section</div>
-    <div class="empty-state__hint">Click "Add student" to enrol the first one.</div>
-  </div>
+  <app-empty-state
+    title="No students in this section"
+    hint="Click &quot;Add student&quot; to enrol the first one."
+    actionLabel="Add student"
+    (action)="toggleForm()">
+  </app-empty-state>
 } @else {
   <div class="table-container">
     <table class="data-table">
@@ -102,69 +105,83 @@
       </thead>
       <tbody>
         @for (s of students(); track s.id) {
-          @if (editingId() === s.id) {
-            <tr>
-              <td colspan="5">
-                <form class="form-row" (ngSubmit)="saveEdit(s)">
-                  <div class="form-field">
-                    <label class="form-field__label" for="eroll-{{ s.id }}">Roll no.</label>
-                    <input class="form-field__control" id="eroll-{{ s.id }}" name="eroll-{{ s.id }}" type="number" min="0"
-                           [ngModel]="editForm().rollNo" (ngModelChange)="patchEdit('rollNo', $event)">
-                  </div>
-                  <div class="form-field">
-                    <label class="form-field__label" for="eadm-{{ s.id }}">Admission no.</label>
-                    <input class="form-field__control" id="eadm-{{ s.id }}" name="eadm-{{ s.id }}" required
-                           [ngModel]="editForm().admissionNo" (ngModelChange)="patchEdit('admissionNo', $event)">
-                  </div>
-                  <div class="form-field">
-                    <label class="form-field__label" for="efn-{{ s.id }}">First name</label>
-                    <input class="form-field__control" id="efn-{{ s.id }}" name="efn-{{ s.id }}" required
-                           [ngModel]="editForm().firstName" (ngModelChange)="patchEdit('firstName', $event)">
-                  </div>
-                  <div class="form-field">
-                    <label class="form-field__label" for="eln-{{ s.id }}">Last name</label>
-                    <input class="form-field__control" id="eln-{{ s.id }}" name="eln-{{ s.id }}" required
-                           [ngModel]="editForm().lastName" (ngModelChange)="patchEdit('lastName', $event)">
-                  </div>
-                  <div class="form-field">
-                    <label class="form-field__label" for="egen-{{ s.id }}">Gender</label>
-                    <select class="form-field__control" id="egen-{{ s.id }}" name="egen-{{ s.id }}"
-                            [ngModel]="editForm().gender" (ngModelChange)="patchEdit('gender', $event)">
-                      <option value="">—</option>
-                      <option value="M">Male</option>
-                      <option value="F">Female</option>
-                    </select>
-                  </div>
-                  <div class="form-field">
-                    <label class="form-field__label" for="edob-{{ s.id }}">Date of birth</label>
-                    <input class="form-field__control" id="edob-{{ s.id }}" name="edob-{{ s.id }}" type="date"
-                           [ngModel]="editForm().dob" (ngModelChange)="patchEdit('dob', $event)">
-                  </div>
-                  <div class="form-field">
-                    <label class="form-field__label">&nbsp;</label>
-                    <div>
-                      <button type="submit" class="btn btn--primary"
-                              [disabled]="!editForm().admissionNo.trim() || !editForm().firstName.trim() || !editForm().lastName.trim()">Save</button>
-                      <button type="button" class="btn btn--tertiary" (click)="cancelEdit()">Cancel</button>
-                    </div>
-                  </div>
-                </form>
-              </td>
-            </tr>
-          } @else {
-            <tr>
-              <td class="num">{{ s.rollNo ?? '—' }}</td>
-              <td>{{ s.firstName }} {{ s.lastName }}</td>
-              <td>{{ s.admissionNo }}</td>
-              <td>{{ s.gender ?? '—' }}</td>
-              <td class="actions">
-                <button type="button" class="btn btn--tertiary btn--sm" (click)="startEdit(s)">Edit</button>
-                <button type="button" class="btn btn--tertiary btn--sm" (click)="remove(s)">Remove</button>
-              </td>
-            </tr>
-          }
+          <tr>
+            <td class="num">{{ s.rollNo ?? '—' }}</td>
+            <td>
+              <button type="button" class="link-button" (click)="openProfile(s)">{{ s.firstName }} {{ s.lastName }}</button>
+            </td>
+            <td>{{ s.admissionNo }}</td>
+            <td>{{ s.gender ?? '—' }}</td>
+            <td class="actions">
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="openProfile(s)">Profile</button>
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="startEdit(s)">Edit</button>
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="remove(s)">Remove</button>
+            </td>
+          </tr>
         }
       </tbody>
     </table>
   </div>
+}
+
+@if (editingId(); as id) {
+  @if (studentById(id); as s) {
+    <app-modal [wide]="true" title="Edit student" (close)="cancelEdit()">
+      <form (ngSubmit)="saveEdit(s)">
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-field__label" for="eroll">Roll no.</label>
+            <input class="form-field__control" id="eroll" name="eroll" type="number" min="0"
+                   [ngModel]="editForm().rollNo" (ngModelChange)="patchEdit('rollNo', $event)">
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="eadm">Admission no.</label>
+            <input class="form-field__control" id="eadm" name="eadm" required
+                   [class.form-field__control--invalid]="editSubmitted() && !editForm().admissionNo.trim()"
+                   [ngModel]="editForm().admissionNo" (ngModelChange)="patchEdit('admissionNo', $event)">
+            @if (editSubmitted() && !editForm().admissionNo.trim()) {
+              <div class="form-field__error" role="alert">Required.</div>
+            }
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-field__label" for="efn">First name</label>
+            <input class="form-field__control" id="efn" name="efn" required
+                   [class.form-field__control--invalid]="editSubmitted() && !editForm().firstName.trim()"
+                   [ngModel]="editForm().firstName" (ngModelChange)="patchEdit('firstName', $event)">
+            @if (editSubmitted() && !editForm().firstName.trim()) {
+              <div class="form-field__error" role="alert">Required.</div>
+            }
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="eln">Last name</label>
+            <input class="form-field__control" id="eln" name="eln" required
+                   [class.form-field__control--invalid]="editSubmitted() && !editForm().lastName.trim()"
+                   [ngModel]="editForm().lastName" (ngModelChange)="patchEdit('lastName', $event)">
+            @if (editSubmitted() && !editForm().lastName.trim()) {
+              <div class="form-field__error" role="alert">Required.</div>
+            }
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-field__label" for="egen">Gender</label>
+            <app-select id="egen" name="egen" [options]="genderOptions"
+                    [ngModel]="editForm().gender" (ngModelChange)="patchEdit('gender', $event)"></app-select>
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="edob">Date of birth</label>
+            <input class="form-field__control" id="edob" name="edob" type="date"
+                   [ngModel]="editForm().dob" (ngModelChange)="patchEdit('dob', $event)">
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button type="button" class="btn btn--tertiary" (click)="cancelEdit()">Cancel</button>
+          <button type="submit" class="btn btn--primary"
+                  [disabled]="!editForm().admissionNo.trim() || !editForm().firstName.trim() || !editForm().lastName.trim()">Save</button>
+        </div>
+      </form>
+    </app-modal>
+  }
 }

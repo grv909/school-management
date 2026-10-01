@@ -6,6 +6,9 @@ import { apiErrorMessage } from '../../core/api/api-error';
 import { School } from '../../core/models';
 import { AuthService } from '../../core/auth/auth.service';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
+import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
+import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
+import { ModalComponent } from '../../shared/ui/modal/modal.component';
 import { ToastService } from '../../core/ui/toast.service';
 import { LoggerService } from '../../core/logging/logger.service';
 
@@ -18,7 +21,7 @@ import { LoggerService } from '../../core/logging/logger.service';
 @Component({
   selector: 'app-school-details',
   standalone: true,
-  imports: [FormsModule, PageHeaderComponent],
+  imports: [FormsModule, PageHeaderComponent, SkeletonComponent, EmptyStateComponent, ModalComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './school-details.component.html'
 })

@@ -5,39 +5,26 @@
   <div class="form-row">
     <div class="form-field">
       <label class="form-field__label" for="rc-class">Class</label>
-      <select class="form-field__control" id="rc-class"
-              [ngModel]="selectedClassId()" (ngModelChange)="onClassChange($event)">
-        <option [ngValue]="null">Select</option>
-        @for (c of classes(); track c.id) { <option [ngValue]="c.id">{{ c.name }}</option> }
-      </select>
+      <app-select id="rc-class" [options]="classOptions()"
+              [ngModel]="selectedClassId()" (ngModelChange)="onClassChange($event)"></app-select>
     </div>
     <div class="form-field">
       <label class="form-field__label" for="rc-sec">Section</label>
-      <select class="form-field__control" id="rc-sec"
+      <app-select id="rc-sec" [options]="sectionOptions()"
               [ngModel]="selectedSectionId()" (ngModelChange)="onSectionChange($event)"
-              [disabled]="!selectedClassId()">
-        <option [ngValue]="null">Select</option>
-        @for (s of sections(); track s.id) { <option [ngValue]="s.id">Section {{ s.name }}</option> }
-      </select>
+              [disabled]="!selectedClassId()"></app-select>
     </div>
     <div class="form-field">
       <label class="form-field__label" for="rc-stu">Student</label>
-      <select class="form-field__control" id="rc-stu"
+      <app-select id="rc-stu" [options]="studentOptions()"
               [ngModel]="selectedStudentId()" (ngModelChange)="selectedStudentId.set($event)"
-              [disabled]="!selectedSectionId()">
-        <option [ngValue]="null">Select</option>
-        @for (s of students(); track s.id) {
-          <option [ngValue]="s.id">{{ s.rollNo ?? '—' }} · {{ s.firstName }} {{ s.lastName }}</option>
-        }
-      </select>
+              [disabled]="!selectedSectionId()"></app-select>
     </div>
     <div class="form-field">
       <label class="form-field__label" for="rc-exam">Exam</label>
-      <select class="form-field__control" id="rc-exam"
-              [ngModel]="selectedExamId()" (ngModelChange)="selectedExamId.set($event)">
-        <option [ngValue]="null">Select</option>
-        @for (e of exams(); track e.id) { <option [ngValue]="e.id">{{ e.name }}</option> }
-      </select>
+      <app-select id="rc-exam" [options]="examOptions()"
+              [ngModel]="selectedExamId()" (ngModelChange)="selectedExamId.set($event)"
+              [disabled]="!selectedClassId()"></app-select>
     </div>
   </div>
 
@@ -46,4 +33,8 @@
           [disabled]="!selectedStudentId() || !selectedExamId()">
     Open report card
   </button>
+
+  @if (!selectedStudentId() || !selectedExamId()) {
+    <p class="form-field__hint">Select a class, section, student, and exam to generate a report card.</p>
+  }
 </div>

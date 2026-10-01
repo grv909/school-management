@@ -2,10 +2,12 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { LayoutService } from '../layout.service';
+import { AccountMenuComponent } from '../account-menu/account-menu.component';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
+  imports: [AccountMenuComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.scss'

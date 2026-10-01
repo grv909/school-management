@@ -1,17 +1,21 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { CLASS_API, SECTION_API, SUBJECT_API, TEACHER_API, TEACHER_ASSIGNMENT_API } from '../../../core/api/api.tokens';
 import { apiErrorMessage } from '../../../core/api/api-error';
 import { SchoolClass, Section, Subject, Teacher, TeacherAssignment } from '../../../core/models';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
+import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { ModalComponent } from '../../../shared/ui/modal/modal.component';
+import { SelectComponent, SelectOption } from '../../../shared/ui/select/select.component';
 import { ToastService } from '../../../core/ui/toast.service';
 import { LoggerService } from '../../../core/logging/logger.service';
 
 @Component({
   selector: 'app-teachers-page',
   standalone: true,
-  imports: [FormsModule, PageHeaderComponent],
+  imports: [FormsModule, PageHeaderComponent, SkeletonComponent, EmptyStateComponent, ModalComponent, SelectComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './teachers-page.component.html'
 })
@@ -29,6 +33,7 @@ export class TeachersPageComponent {
 
   readonly formOpen = signal(false);
   readonly form = signal({ firstName: '', lastName: '', employeeNo: '', username: '', password: '' });
+  readonly submitted = signal(false);
 
   // Teacher currently being edited, if any — drives the inline edit form below its row.
   readonly editingId = signal<number | null>(null);
@@ -77,6 +82,7 @@ export class TeachersPageComponent {
   toggleForm() {
     this.formOpen.update(o => !o);
     this.form.set({ firstName: '', lastName: '', employeeNo: '', username: '', password: '' });
+    this.submitted.set(false);
   }
 
   patch<K extends keyof ReturnType<typeof this.form>>(key: K, value: ReturnType<typeof this.form>[K]) {
@@ -84,6 +90,7 @@ export class TeachersPageComponent {
   }
 
   submit(): void {
+    this.submitted.set(true);
     const f = this.form();
     if (!f.firstName.trim() || !f.lastName.trim() || !f.username.trim() || !f.password) return;
     this.api.create({
@@ -114,6 +121,10 @@ export class TeachersPageComponent {
     this.editingId.set(null);
   }
 
+  teacherById(id: number): Teacher | undefined {
+    return this.teachers().find(t => t.id === id);
+  }
+
   patchEdit<K extends keyof ReturnType<typeof this.editForm>>(key: K, value: ReturnType<typeof this.editForm>[K]) {
     this.editForm.update(f => ({ ...f, [key]: value }));
   }
@@ -134,6 +145,19 @@ export class TeachersPageComponent {
       error: err => {
         this.logger.error('Failed to update teacher', { error: String(err) });
         this.toast.error(apiErrorMessage(err, 'Failed to update teacher'));
+      }
+    });
+  }
+
+  remove(t: Teacher): void {
+    this.api.remove(t.id).subscribe({
+      next: () => {
+        this.teachers.update(arr => arr.filter(x => x.id !== t.id));
+        this.toast.success(`Removed ${t.firstName} ${t.lastName}`);
+      },
+      error: err => {
+        this.logger.error('Failed to remove teacher', { error: String(err) });
+        this.toast.error(apiErrorMessage(err, 'Failed to remove teacher'));
       }
     });
   }
@@ -225,4 +249,19 @@ export class TeachersPageComponent {
     if (subjectId == null) return 'All subjects';
     return this.allSubjects().find(sub => sub.id === subjectId)?.name ?? `Subject #${subjectId}`;
   }
+
+  readonly assignClassOptions = computed<SelectOption<number | null>[]>(() => [
+    { value: null, label: 'Select class' },
+    ...this.classes().map(c => ({ value: c.id, label: c.name }))
+  ]);
+
+  readonly assignSectionOptions = computed<SelectOption<number | null>[]>(() => [
+    { value: null, label: 'Select section' },
+    ...this.sections().map(s => ({ value: s.id, label: `Section ${s.name}` }))
+  ]);
+
+  readonly assignSubjectOptions = computed<SelectOption<number | null>[]>(() => [
+    { value: null, label: 'Select subject' },
+    ...this.subjects().map(s => ({ value: s.id, label: s.name }))
+  ]);
 }

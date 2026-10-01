@@ -1,5 +1,14 @@
 @use '../abstracts' as *;
 
+// Without this, native form controls (the <select> popup in particular) render
+// using the OS dark-mode palette whenever the OS is in dark mode, regardless of
+// this app's own (always-light, for now) theme — the dark/mismatched dropdown
+// list bug. This app has no dark theme yet (see base/_root.scss's inert scaffold),
+// so pin light unconditionally rather than following prefers-color-scheme.
+:root {
+  color-scheme: light;
+}
+
 body {
   font-family: var(--font-body);
   font-size: $font-size-base;
@@ -9,13 +18,12 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-// h1 is the only Calistoga (display font) use by default — page titles, login/onboarding
-// headlines. Feature pages that need a "big dashboard number" opt into --font-display
-// explicitly rather than it cascading onto every heading.
+// Page titles, login/onboarding headlines — heavier weight than body text carries the
+// hierarchy (no serif display font pairing; see abstracts/_variables.scss).
 h1 {
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 1.2rem + 2.5vw, 3rem);
-  font-weight: $font-weight-regular;
+  font-size: $font-size-display-lg;
+  font-weight: $font-weight-semibold;
   line-height: 1.15;
   letter-spacing: -0.02em;
 }

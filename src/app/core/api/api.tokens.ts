@@ -37,6 +37,8 @@ export interface ClassApi {
   list(): Observable<SchoolClass[]>;
   create(input: { name: string }): Observable<SchoolClass>;
   update(id: number, input: { name: string }): Observable<SchoolClass>;
+  // Fails (409) server-side if the class still has sections — remove those first.
+  remove(id: number): Observable<void>;
   // Replaces the full set of subjects taught in this class. ADMIN only (enforced server-side).
   assignSubjects(id: number, subjectIds: number[]): Observable<void>;
 }
@@ -49,11 +51,17 @@ export interface SectionApi {
 export interface SubjectApi {
   list(classId?: number): Observable<Subject[]>;
   create(input: { name: string; code: string; maxMarks: number }): Observable<Subject>;
+  update(id: number, input: { name: string; code: string; maxMarks: number }): Observable<Subject>;
+  // Fails (409) server-side if the subject is still assigned to a class.
+  remove(id: number): Observable<void>;
 }
 
 export interface AcademicYearApi {
   list(): Observable<AcademicYear[]>;
   create(input: Omit<AcademicYear, 'id'>): Observable<AcademicYear>;
+  update(id: number, input: Omit<AcademicYear, 'id'>): Observable<AcademicYear>;
+  // Fails (409) server-side if the academic year still has sections.
+  remove(id: number): Observable<void>;
 }
 
 export interface StudentApi {
@@ -68,11 +76,16 @@ export interface TeacherApi {
   list(): Observable<Teacher[]>;
   create(input: { firstName: string; lastName: string; employeeNo: string; username: string; password: string }): Observable<Teacher>;
   update(id: number, input: { firstName: string; lastName: string; employeeNo: string }): Observable<Teacher>;
+  // Fails (409) server-side if the teacher still has active class/section assignments.
+  remove(id: number): Observable<void>;
 }
 
 export interface ExamApi {
   list(classId?: number): Observable<Exam[]>;
   create(input: Omit<Exam, 'id'>): Observable<Exam>;
+  update(id: number, input: Omit<Exam, 'id'>): Observable<Exam>;
+  // Fails (409) server-side if marks have already been entered for this exam.
+  remove(id: number): Observable<void>;
 }
 
 export interface MarksApi {

@@ -3,8 +3,14 @@
     <div class="toast" [class.toast--success]="toast.kind === 'success'"
                        [class.toast--danger]="toast.kind === 'danger'"
                        [class.toast--warning]="toast.kind === 'warning'"
+         [attr.role]="toast.kind === 'danger' || toast.kind === 'warning' ? 'alert' : 'status'"
+         aria-live="polite"
          (click)="service.dismiss(toast.id)">
-      {{ toast.message }}
+      <span class="toast__message">{{ toast.message }}</span>
+      <button type="button" class="toast__dismiss" aria-label="Dismiss notification"
+              (click)="service.dismiss(toast.id); $event.stopPropagation()">
+        <lucide-angular name="x" [size]="14" aria-hidden="true"></lucide-angular>
+      </button>
     </div>
   }
 </div>

@@ -13,7 +13,9 @@
 @use 'styles/components/badge';
 @use 'styles/components/toast';
 @use 'styles/components/modal';
-@use 'styles/components/analytics';
+@use 'styles/components/select';
+@use 'styles/components/analytics/index' as analytics;
+@use 'styles/components/skeleton';
 
 @use 'styles/layout/app-shell';
 @use 'styles/layout/sidebar';

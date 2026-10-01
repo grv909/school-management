@@ -3,7 +3,7 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.45);
+  background-color: var(--overlay);
   z-index: $z-modal;
   display: flex;
   align-items: center;
@@ -21,12 +21,19 @@
   max-width: 520px;
   max-height: 92vh;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   padding: $space-4;
 
   @include media-up($bp-sm) {
     max-height: 90vh;
     padding: $space-5;
+  }
+
+  // Opt-in wider variant for content with tables or 3+ column forms
+  // (e.g. class sections/subjects panels, teacher assignments).
+  &--wide {
+    max-width: 720px;
   }
 
   &__header {

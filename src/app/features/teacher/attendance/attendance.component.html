@@ -5,28 +5,18 @@
 
 <div class="card filters">
   <div class="form-field">
-    <label class="form-field__label">Class</label>
-    <select class="form-field__control"
+    <label class="form-field__label" for="att-class">Class</label>
+    <app-select id="att-class" [options]="classOptions()"
             [ngModel]="selectedClassId()"
-            (ngModelChange)="onClassChange($event)">
-      <option [ngValue]="null">Select class</option>
-      @for (c of classes(); track c.id) {
-        <option [ngValue]="c.id">{{ c.name }}</option>
-      }
-    </select>
+            (ngModelChange)="onClassChange($event)"></app-select>
   </div>
 
   <div class="form-field">
-    <label class="form-field__label">Section</label>
-    <select class="form-field__control"
+    <label class="form-field__label" for="att-sec">Section</label>
+    <app-select id="att-sec" [options]="sectionOptions()"
             [ngModel]="selectedSectionId()"
             (ngModelChange)="onSectionChange($event)"
-            [disabled]="!sections().length">
-      <option [ngValue]="null">Select section</option>
-      @for (s of sections(); track s.id) {
-        <option [ngValue]="s.id">Section {{ s.name }}</option>
-      }
-    </select>
+            [disabled]="!sections().length"></app-select>
   </div>
 
   <div class="form-field">
@@ -34,7 +24,8 @@
     <input class="form-field__control" type="date" [ngModel]="date()" (ngModelChange)="date.set($event)">
   </div>
 
-  <div class="filters__action">
+  <div class="form-field filters__action">
+    <label class="form-field__label">&nbsp;</label>
     <button type="button" class="btn btn--primary" (click)="load()"
             [disabled]="!selectedSectionId()">Load roster</button>
   </div>
@@ -69,9 +60,9 @@
     <table class="data-table">
       <thead>
         <tr>
-          <th style="width: 64px;">Roll</th>
+          <th class="data-table__col" style="--col-width: 64px">Roll</th>
           <th>Student</th>
-          <th style="width: 280px;">Status</th>
+          <th class="data-table__col" style="--col-width: 280px">Status</th>
         </tr>
       </thead>
       <tbody>

@@ -1,0 +1,28 @@
+@use '../../abstracts' as *;
+
+// Inline banner for teacher hints / read-only states.
+.banner {
+  padding: $space-3 $space-4;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  margin-bottom: $space-3;
+
+  &--warn {
+    background: var(--warning-bg);
+    border: 1px solid var(--warning);
+    color: var(--warning);
+  }
+
+  &--info {
+    background: var(--info-bg);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+  }
+}
+
+// Top-of-card bulk actions row.
+.bulk-actions {
+  display: flex;
+  gap: $space-2;
+  margin-bottom: $space-3;
+}

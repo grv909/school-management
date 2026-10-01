@@ -5,6 +5,22 @@
   flex-direction: column;
   gap: $space-1;
   margin-bottom: $space-4;
+
+  // Opt-in cap for a lone filter field in a .form-row — without it, flex:1
+  // stretches a single field (e.g. a page-level class filter) across the
+  // full row width, which makes a <select>'s native dropdown list (sized to
+  // its own option text) look mismatched/narrower than the long closed control.
+  &--constrained {
+    flex: 0 1 auto;
+
+    .form-field__control {
+      width: 100%;
+
+      @include media-up($bp-sm) {
+        width: 240px;
+      }
+    }
+  }
 }
 
 .form-field__label {
@@ -25,7 +41,7 @@
   font-size: $font-size-base;
   transition: border-color $transition-fast, box-shadow $transition-fast;
 
-  &:focus {
+  &:focus-visible {
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-soft);
@@ -41,6 +57,33 @@
     padding: $space-2 $space-3;
     resize: vertical;
   }
+
+  &--invalid {
+    border-color: var(--danger);
+
+    &:focus-visible {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px var(--danger-bg);
+    }
+  }
+}
+
+// Native <select> gets a custom chevron with real breathing room from the edge
+// (the browser-default arrow sits flush against the border) and a hover state
+// consistent with other controls; the open dropdown list itself is the OS/browser
+// native popup and can't be restyled via CSS.
+select.form-field__control {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: $space-7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%23475569' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $space-3 center;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--border-hover);
+  }
 }
 
 .form-field__hint {
@@ -48,24 +91,29 @@
   color: var(--muted-foreground);
 }
 
+// A single checkbox + its label text, e.g. "Current year" / "Class teacher for
+// this section" — kept on one line regardless of the column's width (the bug
+// this replaces: a checkbox nested inside .form-field__label with no explicit
+// layout wrapped the checkbox onto its own line in a narrow flex column).
+.form-field__checkbox {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+
+  input[type="checkbox"] {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+  }
+}
+
 .form-field__error {
   font-size: $font-size-xs;
   color: var(--danger);
-}
-
-// A wrapped list of checkbox options (e.g. "which subjects does this class take").
-.checkbox-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-2 $space-4;
-  margin-bottom: $space-4;
-
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: $space-1;
-    font-size: $font-size-sm;
-  }
 }
 
 .form-row {
@@ -75,11 +123,25 @@
 
   > .form-field {
     flex: 1;
+    // Let a field shrink below its content's natural width (e.g. a <select>
+    // with long option text) instead of forcing the whole row — and the
+    // modal around it — wider than the available space.
+    min-width: 0;
   }
 
   // Side-by-side only once there's horizontal room.
   @include media-up($bp-sm) {
     flex-direction: row;
     gap: $space-4;
+  }
+
+  // A row of non-form-field controls (e.g. a checkbox alongside a submit
+  // button) that should sit on one baseline rather than stack as columns.
+  &--align-center {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-4;
+    margin-bottom: $space-4;
   }
 }

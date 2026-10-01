@@ -12,15 +12,39 @@
 
 .toast {
   @include card;
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2;
   padding: $space-3 $space-4;
   min-width: 240px;
   font-size: $font-size-sm;
   border-left: 3px solid var(--accent);
   animation: toast-in $transition-base;
+  cursor: pointer;
 
   &--success { border-left-color: var(--success); }
   &--danger  { border-left-color: var(--danger); }
   &--warning { border-left-color: var(--warning); }
+}
+
+.toast__message {
+  flex: 1;
+}
+
+.toast__dismiss {
+  @include button-reset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: $radius-sm;
+  color: var(--muted-foreground);
+  flex-shrink: 0;
+  transition: background-color $transition-fast, color $transition-fast;
+
+  &:hover { background-color: var(--background); color: var(--foreground); }
+  &:focus-visible { @include focus-ring; }
 }
 
 @keyframes toast-in {

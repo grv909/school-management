@@ -1,0 +1,166 @@
+@use '../abstracts' as *;
+
+// app-select is a custom element — without this it defaults to display:inline,
+// which breaks every width:100%/width:auto rule targeting it from parent
+// layouts (form-row, marks-entry filters, etc.) exactly like a native <select>
+// (itself inline-block) would not.
+app-select {
+  display: block;
+  width: 100%;
+}
+
+.select {
+  position: relative;
+  width: 100%;
+}
+
+.select__trigger {
+  @include button-reset;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 44px;
+  padding: 0 $space-3;
+  border: 1px solid var(--border-strong);
+  border-radius: $radius-sm;
+  background-color: var(--card);
+  color: var(--foreground);
+  font-size: $font-size-base;
+  text-align: left;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  &:hover:not(:disabled) {
+    border-color: var(--border-hover);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &--invalid {
+    border-color: var(--danger);
+  }
+
+  .select--open > & {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+}
+
+.select__value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &--placeholder {
+    color: var(--faint-foreground);
+  }
+}
+
+.select__chevron {
+  flex-shrink: 0;
+  margin-left: $space-2;
+  color: var(--muted-foreground);
+  transition: transform $transition-fast;
+
+  .select--open & {
+    transform: rotate(180deg);
+  }
+}
+
+// Mobile-first default: a full-width bottom sheet. Large tap targets and a
+// backdrop are far easier to use accurately on a touchscreen than a small
+// anchored popover would be.
+.select__backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--overlay);
+  z-index: $z-modal;
+}
+
+.select__popover {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: $z-modal;
+  max-height: 60vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0;
+  padding: $space-2;
+  list-style: none;
+  background-color: var(--card);
+  border-radius: $radius-lg $radius-lg 0 0;
+  box-shadow: var(--shadow-dropdown);
+  // Safe-area padding so the sheet's last option isn't hidden behind a home
+  // indicator / gesture bar on notched phones.
+  padding-bottom: calc(#{$space-2} + env(safe-area-inset-bottom, 0px));
+}
+
+.select__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  // Generously sized for a thumb, not a cursor — this is the mobile default.
+  min-height: 48px;
+  padding: $space-3 $space-3;
+  border-radius: $radius-sm;
+  font-size: $font-size-base;
+  color: var(--foreground);
+  cursor: pointer;
+
+  &:hover,
+  &:active {
+    background-color: var(--accent-soft);
+  }
+
+  &--selected {
+    color: var(--accent);
+    font-weight: $font-weight-medium;
+  }
+
+  &--disabled {
+    color: var(--faint-foreground);
+    cursor: not-allowed;
+
+    &:hover { background-color: transparent; }
+  }
+}
+
+.select__check {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+// Desktop/tablet: a standard small anchored popover under the trigger instead
+// of a full-viewport bottom sheet, and no dimming backdrop (mouse users expect
+// click-outside-to-close, not a modal-style scrim).
+@include media-up($bp-sm) {
+  .select__backdrop {
+    display: none;
+  }
+
+  .select__popover {
+    position: absolute;
+    top: calc(100% + #{$space-1});
+    left: 0;
+    right: auto;
+    bottom: auto;
+    min-width: 100%;
+    width: max-content;
+    max-width: 360px;
+    max-height: 280px;
+    border-radius: $radius-md;
+    padding-bottom: $space-2;
+  }
+
+  .select__option {
+    min-height: 36px;
+    padding: $space-2 $space-3;
+    font-size: $font-size-sm;
+  }
+}

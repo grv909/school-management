@@ -9,11 +9,10 @@
       (click)="toggleMobileNav()">
       <span class="topbar__nav-icon" aria-hidden="true"></span>
     </button>
-    <div class="topbar__title">Welcome back</div>
   </div>
-  <div class="topbar__user">
-    <span class="topbar__username">{{ username() }}</span>
-    <span class="badge">{{ role() }}</span>
-    <button type="button" class="topbar__logout" (click)="logout()">Sign out</button>
-  </div>
+  <app-account-menu
+    [username]="username()"
+    [role]="role()"
+    (logout)="logout()">
+  </app-account-menu>
 </header>

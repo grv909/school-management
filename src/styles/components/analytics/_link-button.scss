@@ -1,0 +1,22 @@
+@use '../../abstracts' as *;
+
+// Form actions row at the bottom of a card.
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-2;
+  margin-top: $space-4;
+  padding-top: $space-4;
+  border-top: 1px solid var(--border);
+}
+
+// Subtle linkified button (used for clickable names in tables).
+.link-button {
+  @include button-reset;
+  color: var(--accent);
+  font-weight: $font-weight-medium;
+  text-decoration: none;
+
+  &:hover { text-decoration: underline; }
+  &:focus-visible { @include focus-ring; }
+}

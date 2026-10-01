@@ -1,0 +1,41 @@
+@use '../../abstracts' as *;
+
+// Search bar shared between students directory and other list pages.
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  margin-bottom: $space-4;
+
+  &__input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__meta {
+    color: var(--muted-foreground);
+    font-size: $font-size-sm;
+    white-space: nowrap;
+  }
+}
+
+// Generic filter row for index pages.
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: $space-4;
+
+  > .form-field {
+    flex: 1;
+    min-width: 160px;
+  }
+
+  // The action button's .form-field uses a "&nbsp;" label spacer (matching
+  // every labeled sibling's own label row) so its button sits on the same
+  // baseline as the adjacent inputs — this just stops that field from
+  // stretching to fill leftover row width the way the actual inputs do.
+  &__action {
+    flex: 0 0 auto;
+  }
+}

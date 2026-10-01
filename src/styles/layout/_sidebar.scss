@@ -112,3 +112,8 @@
     @include focus-ring;
   }
 }
+
+.sidebar__link-icon {
+  flex-shrink: 0;
+  stroke-width: 1.75;
+}

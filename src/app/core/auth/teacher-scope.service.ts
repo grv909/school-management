@@ -102,6 +102,32 @@ export class TeacherScopeService {
     );
   }
 
+  // Resolves which class a given section belongs to, by walking every class's
+  // sections (the API only supports listing sections per-class, not a direct
+  // section->class lookup). Used anywhere a page only has a sectionId (e.g. a
+  // student record) but needs the classId to scope a class-level list (exams).
+  classIdForSection(sectionId: number): Observable<number | null> {
+    return new Observable<number | null>(subscriber => {
+      this.classApi.list().subscribe(allClasses => {
+        let remaining = allClasses.length;
+        if (remaining === 0) { subscriber.next(null); subscriber.complete(); return; }
+        let found: number | null = null;
+        allClasses.forEach(c => {
+          this.sectionsForClass(c.id).subscribe(sections => {
+            if (found === null && sections.some(s => s.id === sectionId)) {
+              found = c.id;
+            }
+            remaining -= 1;
+            if (remaining === 0) {
+              subscriber.next(found);
+              subscriber.complete();
+            }
+          });
+        });
+      });
+    });
+  }
+
   // Subjects allowed for a particular section.
   // A class-teacher row (subjectId null) implies all subjects.
   allowedSubjectsFor(sectionId: number): Observable<Subject[]> {

@@ -119,6 +119,10 @@ export class ClassMockApi implements ClassApi {
     const updated = this.data().find(c => c.id === id);
     return updated ? wrap(updated) : throwError(() => new Error(`Class not found: ${id}`));
   }
+  remove(id: number) {
+    this.data.update(arr => arr.filter(c => c.id !== id));
+    return wrap<void>(undefined);
+  }
   assignSubjects(_id: number, _subjectIds: number[]) {
     return wrap(undefined as void);
   }
@@ -152,6 +156,15 @@ export class SubjectMockApi implements SubjectApi {
     this.data.update(arr => [...arr, next]);
     return wrap(next);
   }
+  update(id: number, input: { name: string; code: string; maxMarks: number }) {
+    this.data.update(arr => arr.map(s => s.id === id ? { ...s, ...input } : s));
+    const updated = this.data().find(s => s.id === id);
+    return updated ? wrap(updated) : throwError(() => new Error(`Subject not found: ${id}`));
+  }
+  remove(id: number) {
+    this.data.update(arr => arr.filter(s => s.id !== id));
+    return wrap<void>(undefined);
+  }
   private nextId() { return Math.max(0, ...this.data().map(s => s.id)) + 1; }
 }
 
@@ -163,6 +176,15 @@ export class AcademicYearMockApi implements AcademicYearApi {
     const next: AcademicYear = { id: this.nextId(), ...input };
     this.data.update(arr => [...arr, next]);
     return wrap(next);
+  }
+  update(id: number, input: Omit<AcademicYear, 'id'>) {
+    this.data.update(arr => arr.map(y => y.id === id ? { id, ...input } : y));
+    const updated = this.data().find(y => y.id === id);
+    return updated ? wrap(updated) : throwError(() => new Error(`Academic year not found: ${id}`));
+  }
+  remove(id: number) {
+    this.data.update(arr => arr.filter(y => y.id !== id));
+    return wrap<void>(undefined);
   }
   private nextId() { return Math.max(0, ...this.data().map(y => y.id)) + 1; }
 }
@@ -221,6 +243,10 @@ export class TeacherMockApi implements TeacherApi {
     this.data.update(arr => { const c = [...arr]; c[idx] = updated; return c; });
     return wrap(updated);
   }
+  remove(id: number) {
+    this.data.update(arr => arr.filter(t => t.id !== id));
+    return wrap<void>(undefined);
+  }
   private nextId() { return Math.max(0, ...this.data().map(t => t.id)) + 1; }
 }
 
@@ -235,6 +261,15 @@ export class ExamMockApi implements ExamApi {
     const next: Exam = { id: this.nextId(), ...input };
     this.data.update(arr => [...arr, next]);
     return wrap(next);
+  }
+  update(id: number, input: Omit<Exam, 'id'>) {
+    this.data.update(arr => arr.map(e => e.id === id ? { id, ...input } : e));
+    const updated = this.data().find(e => e.id === id);
+    return updated ? wrap(updated) : throwError(() => new Error(`Exam not found: ${id}`));
+  }
+  remove(id: number) {
+    this.data.update(arr => arr.filter(e => e.id !== id));
+    return wrap<void>(undefined);
   }
   private nextId() { return Math.max(0, ...this.data().map(e => e.id)) + 1; }
 }

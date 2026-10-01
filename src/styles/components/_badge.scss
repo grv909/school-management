@@ -1,5 +1,10 @@
 @use '../abstracts' as *;
 
+// Badge consistency rule: bare .badge (soft accent tint) = a neutral/secondary
+// role or category label; .badge--accent (solid gradient) is reserved for the one
+// "elevated/branded" label per view — e.g. the account-menu's role badge, or
+// "Class Teacher" vs. a bare .badge for "Subject Teacher" on the teacher dashboard.
+// .badge--success/--danger/--warning are for status, never role/category.
 .badge {
   display: inline-flex;
   align-items: center;

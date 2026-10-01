@@ -5,19 +5,26 @@
 </app-page-header>
 
 @if (formOpen()) {
-  <div class="card">
-    <div class="card__title">New teacher</div>
+  <app-modal [wide]="true" title="New teacher" (close)="toggleForm()">
     <form (ngSubmit)="submit()" autocomplete="off">
       <div class="form-row">
         <div class="form-field">
           <label class="form-field__label" for="fn">First name</label>
           <input class="form-field__control" id="fn" name="fn" required
+                 [class.form-field__control--invalid]="submitted() && !form().firstName.trim()"
                  [ngModel]="form().firstName" (ngModelChange)="patch('firstName', $event)">
+          @if (submitted() && !form().firstName.trim()) {
+            <div class="form-field__error" role="alert">First name is required.</div>
+          }
         </div>
         <div class="form-field">
           <label class="form-field__label" for="ln">Last name</label>
           <input class="form-field__control" id="ln" name="ln" required
+                 [class.form-field__control--invalid]="submitted() && !form().lastName.trim()"
                  [ngModel]="form().lastName" (ngModelChange)="patch('lastName', $event)">
+          @if (submitted() && !form().lastName.trim()) {
+            <div class="form-field__error" role="alert">Last name is required.</div>
+          }
         </div>
       </div>
       <div class="form-row">
@@ -29,29 +36,42 @@
         <div class="form-field">
           <label class="form-field__label" for="usr">Username</label>
           <input class="form-field__control" id="usr" name="usr" required
+                 [class.form-field__control--invalid]="submitted() && !form().username.trim()"
                  [ngModel]="form().username" (ngModelChange)="patch('username', $event)">
+          @if (submitted() && !form().username.trim()) {
+            <div class="form-field__error" role="alert">Username is required.</div>
+          }
         </div>
         <div class="form-field">
           <label class="form-field__label" for="pwd">Password</label>
           <input class="form-field__control" id="pwd" name="pwd" type="password" required
+                 [class.form-field__control--invalid]="submitted() && !form().password"
                  [ngModel]="form().password" (ngModelChange)="patch('password', $event)">
+          @if (submitted() && !form().password) {
+            <div class="form-field__error" role="alert">Password is required.</div>
+          }
         </div>
       </div>
-      <button type="submit" class="btn btn--primary"
-              [disabled]="!form().firstName.trim() || !form().lastName.trim() || !form().username.trim() || !form().password">
-        Save teacher
-      </button>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--tertiary" (click)="toggleForm()">Cancel</button>
+        <button type="submit" class="btn btn--primary"
+                [disabled]="!form().firstName.trim() || !form().lastName.trim() || !form().username.trim() || !form().password">
+          Save teacher
+        </button>
+      </div>
     </form>
-  </div>
+  </app-modal>
 }
 
 @if (loading()) {
-  <div class="empty-state">Loading teachers…</div>
+  <app-skeleton variant="table"></app-skeleton>
 } @else if (teachers().length === 0) {
-  <div class="empty-state">
-    <div class="empty-state__title">No teachers yet</div>
-    <div class="empty-state__hint">Add the first one to grant access.</div>
-  </div>
+  <app-empty-state
+    title="No teachers yet"
+    hint="Add the first one to grant access."
+    actionLabel="Add teacher"
+    (action)="toggleForm()">
+  </app-empty-state>
 } @else {
   <div class="table-container">
     <table class="data-table">
@@ -65,134 +85,115 @@
       </thead>
       <tbody>
         @for (t of teachers(); track t.id) {
-          @if (editingId() === t.id) {
-            <tr>
-              <td colspan="4">
-                <form class="form-row" (ngSubmit)="saveEdit(t.id)">
-                  <div class="form-field">
-                    <label class="form-field__label" for="efn-{{ t.id }}">First name</label>
-                    <input class="form-field__control" id="efn-{{ t.id }}" name="efn-{{ t.id }}" required
-                           [ngModel]="editForm().firstName" (ngModelChange)="patchEdit('firstName', $event)">
-                  </div>
-                  <div class="form-field">
-                    <label class="form-field__label" for="eln-{{ t.id }}">Last name</label>
-                    <input class="form-field__control" id="eln-{{ t.id }}" name="eln-{{ t.id }}" required
-                           [ngModel]="editForm().lastName" (ngModelChange)="patchEdit('lastName', $event)">
-                  </div>
-                  <div class="form-field">
-                    <label class="form-field__label" for="eemp-{{ t.id }}">Employee no.</label>
-                    <input class="form-field__control" id="eemp-{{ t.id }}" name="eemp-{{ t.id }}"
-                           [ngModel]="editForm().employeeNo" (ngModelChange)="patchEdit('employeeNo', $event)">
-                  </div>
-                  <div class="form-field">
-                    <label class="form-field__label">&nbsp;</label>
-                    <div>
-                      <button type="submit" class="btn btn--primary"
-                              [disabled]="!editForm().firstName.trim() || !editForm().lastName.trim()">Save</button>
-                      <button type="button" class="btn btn--tertiary" (click)="cancelEdit()">Cancel</button>
-                    </div>
-                  </div>
-                </form>
-              </td>
-            </tr>
-          } @else {
-            <tr>
-              <td>{{ t.firstName }} {{ t.lastName }}</td>
-              <td>{{ t.employeeNo ?? '—' }}</td>
-              <td>{{ t.username ?? '—' }}</td>
-              <td class="actions">
-                <button type="button" class="btn btn--tertiary btn--sm" (click)="startEdit(t)">Edit</button>
-                <button type="button" class="btn btn--tertiary btn--sm" (click)="toggleAssignments(t)">
-                  {{ assigningId() === t.id ? 'Hide assignments' : 'Assignments' }}
-                </button>
-              </td>
-            </tr>
-          }
-          @if (assigningId() === t.id) {
-            <tr>
-              <td colspan="4">
-                <div class="card">
-                  <div class="card__title">{{ t.firstName }} {{ t.lastName }} — class/section assignments</div>
-
-                  @if (assignments().length === 0) {
-                    <div class="empty-state">No assignments yet.</div>
-                  } @else {
-                    <table class="data-table">
-                      <thead>
-                        <tr>
-                          <th>Section</th>
-                          <th>Subject</th>
-                          <th>Role</th>
-                          <th class="actions"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @for (a of assignments(); track a.id) {
-                          <tr>
-                            <td>{{ sectionLabel(a.sectionId) }}</td>
-                            <td>{{ subjectLabel(a.subjectId) }}</td>
-                            <td>{{ a.isClassTeacher ? 'Class teacher' : 'Subject teacher' }}</td>
-                            <td class="actions">
-                              <button type="button" class="btn btn--tertiary btn--sm" (click)="removeAssignment(a.id)">Remove</button>
-                            </td>
-                          </tr>
-                        }
-                      </tbody>
-                    </table>
-                  }
-
-                  <form class="form-row" (ngSubmit)="addAssignment(t.id)">
-                    <div class="form-field">
-                      <label class="form-field__label" for="ac-{{ t.id }}">Class</label>
-                      <select class="form-field__control" id="ac-{{ t.id }}" name="ac-{{ t.id }}"
-                              [ngModel]="assignForm().classId" (ngModelChange)="onAssignClassChange($event)">
-                        <option [ngValue]="null">Select class</option>
-                        @for (c of classes(); track c.id) {
-                          <option [ngValue]="c.id">{{ c.name }}</option>
-                        }
-                      </select>
-                    </div>
-                    <div class="form-field">
-                      <label class="form-field__label" for="as-{{ t.id }}">Section</label>
-                      <select class="form-field__control" id="as-{{ t.id }}" name="as-{{ t.id }}"
-                              [ngModel]="assignForm().sectionId" (ngModelChange)="patchAssignForm('sectionId', $event)"
-                              [disabled]="!assignForm().classId">
-                        <option [ngValue]="null">Select section</option>
-                        @for (s of sections(); track s.id) {
-                          <option [ngValue]="s.id">Section {{ s.name }}</option>
-                        }
-                      </select>
-                    </div>
-                    <div class="form-field">
-                      <label class="form-field__label" for="asub-{{ t.id }}">Subject</label>
-                      <select class="form-field__control" id="asub-{{ t.id }}" name="asub-{{ t.id }}"
-                              [ngModel]="assignForm().subjectId" (ngModelChange)="patchAssignForm('subjectId', $event)"
-                              [disabled]="!assignForm().classId || assignForm().isClassTeacher">
-                        <option [ngValue]="null">Select subject</option>
-                        @for (sub of subjects(); track sub.id) {
-                          <option [ngValue]="sub.id">{{ sub.name }}</option>
-                        }
-                      </select>
-                    </div>
-                    <div class="form-field">
-                      <label class="form-field__label" for="act-{{ t.id }}">
-                        <input id="act-{{ t.id }}" name="act-{{ t.id }}" type="checkbox"
-                               [ngModel]="assignForm().isClassTeacher" (ngModelChange)="patchAssignForm('isClassTeacher', $event)">
-                        Class teacher for this section
-                      </label>
-                    </div>
-                    <div class="form-field">
-                      <label class="form-field__label">&nbsp;</label>
-                      <button type="submit" class="btn btn--primary"
-                              [disabled]="!assignForm().sectionId || (!assignForm().isClassTeacher && !assignForm().subjectId)">Add</button>
-                    </div>
-                  </form>
-                </div>
-              </td>
-            </tr>
-          }
+          <tr>
+            <td>{{ t.firstName }} {{ t.lastName }}</td>
+            <td>{{ t.employeeNo ?? '—' }}</td>
+            <td>{{ t.username ?? '—' }}</td>
+            <td class="actions">
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="startEdit(t)">Edit</button>
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="toggleAssignments(t)">Assignments</button>
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="remove(t)">Remove</button>
+            </td>
+          </tr>
         }
       </tbody>
     </table>
   </div>
+}
+
+@if (editingId(); as id) {
+  @if (teacherById(id); as t) {
+    <app-modal [wide]="true" title="Edit teacher" (close)="cancelEdit()">
+      <form (ngSubmit)="saveEdit(t.id)">
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-field__label" for="efn">First name</label>
+            <input class="form-field__control" id="efn" name="efn" required
+                   [ngModel]="editForm().firstName" (ngModelChange)="patchEdit('firstName', $event)">
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="eln">Last name</label>
+            <input class="form-field__control" id="eln" name="eln" required
+                   [ngModel]="editForm().lastName" (ngModelChange)="patchEdit('lastName', $event)">
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-field__label" for="eemp">Employee no.</label>
+          <input class="form-field__control" id="eemp" name="eemp"
+                 [ngModel]="editForm().employeeNo" (ngModelChange)="patchEdit('employeeNo', $event)">
+        </div>
+        <div class="modal__footer">
+          <button type="button" class="btn btn--tertiary" (click)="cancelEdit()">Cancel</button>
+          <button type="submit" class="btn btn--primary"
+                  [disabled]="!editForm().firstName.trim() || !editForm().lastName.trim()">Save</button>
+        </div>
+      </form>
+    </app-modal>
+  }
+}
+
+@if (assigningId(); as id) {
+  @if (teacherById(id); as t) {
+    <app-modal [wide]="true" [title]="t.firstName + ' ' + t.lastName + ' — class/section assignments'" (close)="toggleAssignments(t)">
+      @if (assignments().length === 0) {
+        <div class="empty-state">No assignments yet.</div>
+      } @else {
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Section</th>
+                <th>Subject</th>
+                <th>Role</th>
+                <th class="actions"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (a of assignments(); track a.id) {
+                <tr>
+                  <td>{{ sectionLabel(a.sectionId) }}</td>
+                  <td>{{ subjectLabel(a.subjectId) }}</td>
+                  <td>{{ a.isClassTeacher ? 'Class teacher' : 'Subject teacher' }}</td>
+                  <td class="actions">
+                    <button type="button" class="btn btn--tertiary btn--sm" (click)="removeAssignment(a.id)">Remove</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <form (ngSubmit)="addAssignment(t.id)">
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-field__label" for="ac">Class</label>
+            <app-select id="ac" name="ac" [options]="assignClassOptions()"
+                    [ngModel]="assignForm().classId" (ngModelChange)="onAssignClassChange($event)"></app-select>
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="as">Section</label>
+            <app-select id="as" name="as" [options]="assignSectionOptions()"
+                    [ngModel]="assignForm().sectionId" (ngModelChange)="patchAssignForm('sectionId', $event)"
+                    [disabled]="!assignForm().classId"></app-select>
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="asub">Subject</label>
+            <app-select id="asub" name="asub" [options]="assignSubjectOptions()"
+                    [ngModel]="assignForm().subjectId" (ngModelChange)="patchAssignForm('subjectId', $event)"
+                    [disabled]="!assignForm().classId || assignForm().isClassTeacher"></app-select>
+          </div>
+        </div>
+        <div class="form-row form-row--align-center">
+          <label class="form-field__checkbox" for="act">
+            <input id="act" name="act" type="checkbox"
+                   [ngModel]="assignForm().isClassTeacher" (ngModelChange)="patchAssignForm('isClassTeacher', $event)">
+            Class teacher for this section
+          </label>
+          <button type="submit" class="btn btn--primary"
+                  [disabled]="!assignForm().sectionId || (!assignForm().isClassTeacher && !assignForm().subjectId)">Add</button>
+        </div>
+      </form>
+    </app-modal>
+  }
 }

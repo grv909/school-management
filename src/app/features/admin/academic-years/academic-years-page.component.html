@@ -5,7 +5,7 @@
 </app-page-header>
 
 @if (formOpen()) {
-  <div class="card">
+  <app-modal [wide]="true" title="New academic year" (close)="toggleForm()">
     <form (ngSubmit)="submit()">
       <div class="form-row">
         <div class="form-field">
@@ -25,26 +25,32 @@
                  [ngModel]="form().endDate" (ngModelChange)="patch('endDate', $event)">
         </div>
         <div class="form-field">
-          <label class="form-field__label" for="ay-current">
+          <label class="form-field__label">&nbsp;</label>
+          <label class="form-field__checkbox" for="ay-current">
             <input id="ay-current" name="ay-current" type="checkbox"
                    [ngModel]="form().current" (ngModelChange)="patch('current', $event)">
             Current year
           </label>
         </div>
       </div>
-      <button type="submit" class="btn btn--primary"
-              [disabled]="!form().name.trim() || !form().startDate || !form().endDate">Save academic year</button>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--tertiary" (click)="toggleForm()">Cancel</button>
+        <button type="submit" class="btn btn--primary"
+                [disabled]="!form().name.trim() || !form().startDate || !form().endDate">Save academic year</button>
+      </div>
     </form>
-  </div>
+  </app-modal>
 }
 
 @if (loading()) {
-  <div class="empty-state">Loading academic years…</div>
+  <app-skeleton variant="table"></app-skeleton>
 } @else if (years().length === 0) {
-  <div class="empty-state">
-    <div class="empty-state__title">No academic years yet</div>
-    <div class="empty-state__hint">Add one before creating sections — every section belongs to an academic year.</div>
-  </div>
+  <app-empty-state
+    title="No academic years yet"
+    hint="Add one before creating sections — every section belongs to an academic year."
+    actionLabel="Add academic year"
+    (action)="toggleForm()">
+  </app-empty-state>
 } @else {
   <div class="table-container">
     <table class="data-table">
@@ -54,6 +60,7 @@
           <th>Start date</th>
           <th>End date</th>
           <th>Current</th>
+          <th class="actions">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -63,9 +70,52 @@
             <td>{{ y.startDate }}</td>
             <td>{{ y.endDate }}</td>
             <td>{{ y.current ? 'Yes' : '—' }}</td>
+            <td class="actions">
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="startEdit(y)">Edit</button>
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="remove(y)">Remove</button>
+            </td>
           </tr>
         }
       </tbody>
     </table>
   </div>
+}
+
+@if (editingId(); as id) {
+  @if (yearById(id); as y) {
+    <app-modal [wide]="true" title="Edit academic year" (close)="cancelEdit()">
+      <form (ngSubmit)="saveEdit(y.id)">
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-field__label" for="eay-name">Name</label>
+            <input class="form-field__control" id="eay-name" name="eay-name" required
+                   [ngModel]="editForm().name" (ngModelChange)="patchEdit('name', $event)">
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="eay-start">Start date</label>
+            <input class="form-field__control" id="eay-start" name="eay-start" type="date" required
+                   [ngModel]="editForm().startDate" (ngModelChange)="patchEdit('startDate', $event)">
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="eay-end">End date</label>
+            <input class="form-field__control" id="eay-end" name="eay-end" type="date" required
+                   [ngModel]="editForm().endDate" (ngModelChange)="patchEdit('endDate', $event)">
+          </div>
+          <div class="form-field">
+            <label class="form-field__label">&nbsp;</label>
+            <label class="form-field__checkbox" for="eay-current">
+              <input id="eay-current" name="eay-current" type="checkbox"
+                     [ngModel]="editForm().current" (ngModelChange)="patchEdit('current', $event)">
+              Current year
+            </label>
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button type="button" class="btn btn--tertiary" (click)="cancelEdit()">Cancel</button>
+          <button type="submit" class="btn btn--primary"
+                  [disabled]="!editForm().name.trim() || !editForm().startDate || !editForm().endDate">Save</button>
+        </div>
+      </form>
+    </app-modal>
+  }
 }

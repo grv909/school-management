@@ -25,6 +25,40 @@
   }
 }
 
+// Transient loading state — CSS-only spinner (no extra icon-library surface for
+// what's a momentary state). Toggle alongside [disabled] while a request is in flight.
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+// --btn-fg mirrors each variant's normal text color, captured *before* .btn--loading
+// hides the real text — the spinner then borrows it via var(), so it stays legible
+// on every variant (light-on-dark for primary/danger, dark-on-light for the rest)
+// without needing currentColor (which .btn--loading's own `color: transparent`
+// would otherwise poison).
+.btn--primary, .btn--danger { --btn-fg: #{$color-accent-foreground}; }
+.btn--secondary, .btn--tertiary, .btn--ghost { --btn-fg: #{$color-text}; }
+
+.btn--loading {
+  position: relative;
+  color: transparent !important;
+
+  &::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--btn-fg, var(--foreground));
+    border-top-color: transparent;
+    animation: btn-spin 0.6s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::after { animation-duration: 1.2s; }
+  }
+}
+
 .btn--primary {
   background: var(--gradient-accent);
   color: var(--accent-foreground);

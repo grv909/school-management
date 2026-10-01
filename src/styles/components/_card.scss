@@ -37,4 +37,9 @@
     font-size: $font-size-sm;
     margin-bottom: $space-4;
   }
+
+  &__icon {
+    color: var(--faint-foreground);
+    margin-bottom: $space-3;
+  }
 }

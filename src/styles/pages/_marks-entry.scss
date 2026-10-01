@@ -24,22 +24,14 @@
   }
 
   select,
+  app-select,
   .btn {
     width: 100%;
 
     @include media-up($bp-sm) {
       width: auto;
+      min-width: 180px;
     }
-  }
-
-  select {
-    height: 40px;
-    min-width: 180px;
-    padding: 0 $space-3;
-    border: 1px solid var(--border-strong);
-    border-radius: $radius-sm;
-    background-color: var(--card);
-    font-size: $font-size-base;
   }
 }
 

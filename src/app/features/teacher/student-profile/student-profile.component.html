@@ -1,32 +1,26 @@
 <app-page-header
   [title]="student() ? (student()!.firstName + ' ' + student()!.lastName) : 'Student profile'"
-  [subtitle]="student() ? ('Admission #' + student()!.admissionNo + ' · Roll ' + (student()!.rollNo ?? '—')) : 'Loading…'">
+  [subtitle]="student() ? ('Admission #' + student()!.admissionNo + ' · Roll ' + (student()!.rollNo ?? '—')) : ''">
   <button type="button" class="btn btn--ghost" (click)="back()">← Back</button>
 </app-page-header>
 
 @if (loading()) {
-  <div class="card empty-state">Loading analytics…</div>
+  <app-skeleton variant="kpi-row" [rows]="4"></app-skeleton>
+  <app-skeleton variant="card"></app-skeleton>
 } @else if (!student() || !analytics()) {
-  <div class="card empty-state">Student not found.</div>
+  <app-empty-state
+    title="Student not found"
+    hint="This student may have been removed or the link is out of date."
+    actionLabel="Back to students"
+    (action)="back()">
+  </app-empty-state>
 } @else {
   <!-- KPI strip -->
   <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-card__label">Overall %</div>
-      <div class="kpi-card__value">{{ analytics()!.overallPercentage }}%</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-card__label">Attendance</div>
-      <div class="kpi-card__value">{{ analytics()!.attendancePercentage }}%</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-card__label">Rank in section</div>
-      <div class="kpi-card__value">{{ analytics()!.rankInSection }} <span class="kpi-card__suffix">/ {{ analytics()!.sectionSize }}</span></div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-card__label">Subjects tracked</div>
-      <div class="kpi-card__value">{{ analytics()!.bySubject.length }}</div>
-    </div>
+    <app-stat-card label="Overall %" [value]="analytics()!.overallPercentage" suffix="%"></app-stat-card>
+    <app-stat-card label="Attendance" [value]="analytics()!.attendancePercentage" suffix="%"></app-stat-card>
+    <app-stat-card label="Rank in section" [value]="analytics()!.rankInSection" [suffix]="' / ' + analytics()!.sectionSize"></app-stat-card>
+    <app-stat-card label="Subjects tracked" [value]="analytics()!.bySubject.length"></app-stat-card>
   </div>
 
   <!-- Charts -->
@@ -70,8 +64,8 @@
       <thead>
         <tr>
           <th>Subject</th>
-          <th style="width: 140px;">Average %</th>
-          <th style="width: 100px;">Grade</th>
+          <th class="data-table__col" style="--col-width: 140px">Average %</th>
+          <th class="data-table__col" style="--col-width: 100px">Grade</th>
         </tr>
       </thead>
       <tbody>
@@ -79,7 +73,7 @@
           <tr>
             <td>{{ s.subjectName }}</td>
             <td>{{ s.percentage }}%</td>
-            <td><span class="grade grade--{{ s.grade.toLowerCase().replace('+','plus') }}">{{ s.grade }}</span></td>
+            <td><app-grade-badge [grade]="s.grade"></app-grade-badge></td>
           </tr>
         }
       </tbody>

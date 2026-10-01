@@ -1,6 +1,27 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import {
+  LucideAngularModule,
+  LayoutDashboard,
+  CalendarRange,
+  GraduationCap,
+  Users,
+  UserRound,
+  BookOpen,
+  ClipboardList,
+  FileText,
+  School,
+  CalendarCheck,
+  PencilLine,
+  ChevronDown,
+  LogOut,
+  X,
+  Inbox,
+  FileQuestion,
+  Check
+} from 'lucide-angular';
 
 import { routes } from './app.routes';
 import { jwtInterceptor } from './core/auth/jwt.interceptor';
@@ -43,6 +64,12 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(withInterceptors([jwtInterceptor])),
+    provideAnimationsAsync(),
+    importProvidersFrom(LucideAngularModule.pick({
+      LayoutDashboard, CalendarRange, GraduationCap, Users, UserRound,
+      BookOpen, ClipboardList, FileText, School, CalendarCheck, PencilLine,
+      ChevronDown, LogOut, X, Inbox, FileQuestion, Check
+    })),
 
     { provide: AUTH_API,           useClass: AuthHttpApi },
     { provide: CLASS_API,          useClass: ClassHttpApi },

@@ -1,0 +1,24 @@
+@use '../../abstracts' as *;
+
+// Letter-grade chips.
+.grade {
+  display: inline-block;
+  min-width: 28px;
+  padding: 2px 8px;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  background: var(--muted);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+
+  &--aplus { background: var(--success-bg); color: var(--success); border-color: var(--success); }
+  &--a     { background: var(--success-bg); color: var(--success); border-color: var(--success); }
+  &--b     { background: var(--accent-soft); color: var(--accent);  border-color: var(--accent); }
+  &--c     { background: var(--warning-bg); color: var(--warning); border-color: var(--warning); }
+  &--d     { background: var(--warning-bg); color: var(--warning); border-color: var(--warning); }
+  &--e,
+  &--f     { background: var(--danger-bg);  color: var(--danger);  border-color: var(--danger); }
+}
