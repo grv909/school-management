@@ -27,6 +27,8 @@ export const routes: Routes = [
           { path: 'academic-years', loadComponent: () => import('./features/admin/academic-years/academic-years-page.component').then(m => m.AcademicYearsPageComponent) },
           { path: 'classes',  loadComponent: () => import('./features/admin/classes/classes-page.component').then(m => m.ClassesPageComponent) },
           { path: 'students', loadComponent: () => import('./features/admin/students/students-page.component').then(m => m.StudentsPageComponent) },
+          { path: 'students/:id', loadComponent: () => import('./features/teacher/student-profile/student-profile.component').then(m => m.StudentProfileComponent) },
+          { path: 'students/:id/report-card/:examId', loadComponent: () => import('./features/teacher/report-card/report-card.component').then(m => m.ReportCardComponent) },
           { path: 'teachers', loadComponent: () => import('./features/admin/teachers/teachers-page.component').then(m => m.TeachersPageComponent) },
           { path: 'subjects', loadComponent: () => import('./features/admin/subjects/subjects-page.component').then(m => m.SubjectsPageComponent) },
           { path: 'exams',    loadComponent: () => import('./features/admin/exams/exams-page.component').then(m => m.ExamsPageComponent) },

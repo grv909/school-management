@@ -65,6 +65,9 @@ export class ClassHttpApi implements ClassApi {
   update(id: number, input: { name: string }) {
     return this.http.put<SchoolClass>(`${BASE()}/api/classes/${id}`, input);
   }
+  remove(id: number) {
+    return this.http.delete<void>(`${BASE()}/api/classes/${id}`);
+  }
   assignSubjects(id: number, subjectIds: number[]) {
     return this.http.post<void>(`${BASE()}/api/classes/${id}/subjects`, { subjectIds });
   }
@@ -90,6 +93,12 @@ export class SubjectHttpApi implements SubjectApi {
   create(input: { name: string; code: string; maxMarks: number }) {
     return this.http.post<Subject>(`${BASE()}/api/subjects`, input);
   }
+  update(id: number, input: { name: string; code: string; maxMarks: number }) {
+    return this.http.put<Subject>(`${BASE()}/api/subjects/${id}`, input);
+  }
+  remove(id: number) {
+    return this.http.delete<void>(`${BASE()}/api/subjects/${id}`);
+  }
 }
 
 @Injectable({ providedIn: 'root' })
@@ -98,6 +107,12 @@ export class AcademicYearHttpApi implements AcademicYearApi {
   list() { return this.http.get<AcademicYear[]>(`${BASE()}/api/academic-years`); }
   create(input: Omit<AcademicYear, 'id'>) {
     return this.http.post<AcademicYear>(`${BASE()}/api/academic-years`, input);
+  }
+  update(id: number, input: Omit<AcademicYear, 'id'>) {
+    return this.http.put<AcademicYear>(`${BASE()}/api/academic-years/${id}`, input);
+  }
+  remove(id: number) {
+    return this.http.delete<void>(`${BASE()}/api/academic-years/${id}`);
   }
 }
 
@@ -131,6 +146,9 @@ export class TeacherHttpApi implements TeacherApi {
   update(id: number, input: { firstName: string; lastName: string; employeeNo: string }) {
     return this.http.put<Teacher>(`${BASE()}/api/teachers/${id}`, input);
   }
+  remove(id: number) {
+    return this.http.delete<void>(`${BASE()}/api/teachers/${id}`);
+  }
 }
 
 @Injectable({ providedIn: 'root' })
@@ -141,6 +159,12 @@ export class ExamHttpApi implements ExamApi {
   }
   create(input: Omit<Exam, 'id'>) {
     return this.http.post<Exam>(`${BASE()}/api/exams`, input);
+  }
+  update(id: number, input: Omit<Exam, 'id'>) {
+    return this.http.put<Exam>(`${BASE()}/api/exams/${id}`, input);
+  }
+  remove(id: number) {
+    return this.http.delete<void>(`${BASE()}/api/exams/${id}`);
   }
 }
 

@@ -1,33 +1,25 @@
 <app-page-header title="Dashboard" subtitle="At a glance — manage your school's records and reports."></app-page-header>
 
-<div class="dashboard-grid">
-  <button type="button" class="card dashboard-card" (click)="go('/admin/classes')">
-    <div class="dashboard-card__label">Classes</div>
-    <div class="dashboard-card__value">{{ stats().classes }}</div>
-  </button>
-  <button type="button" class="card dashboard-card" (click)="go('/admin/students')">
-    <div class="dashboard-card__label">Students</div>
-    <div class="dashboard-card__value">{{ stats().students }}</div>
-  </button>
-  <button type="button" class="card dashboard-card" (click)="go('/admin/teachers')">
-    <div class="dashboard-card__label">Teachers</div>
-    <div class="dashboard-card__value">{{ stats().teachers }}</div>
-  </button>
-  <button type="button" class="card dashboard-card" (click)="go('/admin/subjects')">
-    <div class="dashboard-card__label">Subjects</div>
-    <div class="dashboard-card__value">{{ stats().subjects }}</div>
-  </button>
-  <button type="button" class="card dashboard-card" (click)="go('/admin/exams')">
-    <div class="dashboard-card__label">Exams</div>
-    <div class="dashboard-card__value">{{ stats().exams }}</div>
-  </button>
-  <button type="button" class="card dashboard-card" (click)="go('/admin/reports')">
-    <div class="dashboard-card__label">Reports</div>
-    <div class="dashboard-card__value">PDF</div>
-  </button>
-</div>
+@if (loading()) {
+  <app-skeleton variant="kpi-row" [rows]="6"></app-skeleton>
+  <app-skeleton variant="card"></app-skeleton>
+} @else if (isEmpty()) {
+  <app-empty-state
+    title="Nothing set up yet"
+    hint="Start by adding your first class."
+    actionLabel="Add a class"
+    (action)="go('/admin/classes')">
+  </app-empty-state>
+} @else {
+  <div class="kpi-grid">
+    <app-stat-card label="Classes" [value]="stats().classes" [clickable]="true" (action)="go('/admin/classes')"></app-stat-card>
+    <app-stat-card label="Students" [value]="stats().students" [clickable]="true" (action)="go('/admin/students')"></app-stat-card>
+    <app-stat-card label="Teachers" [value]="stats().teachers" [clickable]="true" (action)="go('/admin/teachers')"></app-stat-card>
+    <app-stat-card label="Subjects" [value]="stats().subjects" [clickable]="true" (action)="go('/admin/subjects')"></app-stat-card>
+    <app-stat-card label="Exams" [value]="stats().exams" [clickable]="true" (action)="go('/admin/exams')"></app-stat-card>
+    <app-stat-card label="Reports" value="PDF" [clickable]="true" (action)="go('/admin/reports')"></app-stat-card>
+  </div>
 
-@if (!loading()) {
   <div class="analytics-grid">
     <div class="card">
       <div class="card__title">Enrolment by class</div>

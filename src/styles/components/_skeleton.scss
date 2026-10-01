@@ -1,0 +1,58 @@
+@use '../abstracts' as *;
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+.skeleton-pulse {
+  display: block;
+  height: 14px;
+  border-radius: $radius-sm;
+  background-color: var(--muted);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+
+  &--xs   { width: 72px; height: 11px; }
+  &--sm   { width: 48px; }
+  &--md   { width: 30%; }
+  &--lg   { width: 55%; }
+  &--full { width: 100%; }
+  &--tall { height: 28px; margin-top: $space-2; }
+}
+
+.skeleton-block {
+  &--card {
+    @include card;
+    padding: $space-5;
+  }
+}
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  padding: $space-3 0;
+  border-bottom: 1px solid var(--border);
+
+  &:last-child { border-bottom: none; }
+}
+
+.skeleton-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  gap: $space-4;
+  margin-bottom: $space-5;
+}
+
+.skeleton-kpi-tile {
+  padding: $space-5;
+}
+
+// Reduced motion: keep the placeholder shapes visible but stop the pulse, per
+// the accessibility guardrail against relying on decorative animation.
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-pulse {
+    animation: none;
+    opacity: 0.7;
+  }
+}

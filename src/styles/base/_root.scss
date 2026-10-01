@@ -13,9 +13,12 @@
   --faint-foreground: #{$color-text-faint};
   --border: #{$color-border};
   --border-strong: #{$color-border-strong};
+  --border-hover: #{$color-border-hover};
+  --overlay: #{$color-overlay};
 
   --accent: #{$color-accent};
   --accent-secondary: #{$color-accent-secondary};
+  --accent-tertiary: #{$color-accent-tertiary};
   --accent-hover: #{$color-accent-hover};
   --accent-soft: #{$color-accent-soft};
   --accent-foreground: #{$color-accent-foreground};
@@ -31,7 +34,11 @@
   --info: #{$color-info};
   --info-bg: #{$color-info-bg};
 
-  --font-display: #{$font-family-display};
+  // Single font family app-wide (see abstracts/_variables.scss) — --font-display is
+  // kept as an alias (not removed) so the ~12 existing consumers (h1, card/modal
+  // titles, KPI values, sidebar brand, etc.) don't all need touching at once; it now
+  // just resolves to the same value as --font-body.
+  --font-display: #{$font-family-body};
   --font-body: #{$font-family-body};
   --font-mono: #{$font-family-mono};
 
@@ -51,5 +58,51 @@
 
   --shadow-sm: #{$shadow-sm};
   --shadow-md: #{$shadow-md};
-  --shadow-lg: #{$shadow-lg};
+  --shadow-dropdown: #{$shadow-dropdown};
+  --neo-shadow-dark: #{$neo-shadow-dark};
+  --neo-shadow-light: #{$neo-shadow-light};
+  --neo-hover-bg: #{$neo-hover-bg};
+  --kpi-bg: #{$kpi-bg};
+}
+
+// Dark-mode scaffold — inert. No toggle sets [data-theme="dark"] yet; this block exists
+// only to document every token a real dark-mode pass will need to re-derive, so that
+// work is additive (new values under this selector) rather than a from-scratch audit.
+// Values below are currently identical to :root — placeholders, not real dark colors.
+:root[data-theme="dark"] {
+  --background: #{$color-bg};
+  --foreground: #{$color-text};
+  --card: #{$color-surface};
+  --muted: #{$color-muted};
+  --muted-foreground: #{$color-text-muted};
+  --faint-foreground: #{$color-text-faint};
+  --border: #{$color-border};
+  --border-strong: #{$color-border-strong};
+  --border-hover: #{$color-border-hover};
+  --overlay: #{$color-overlay};
+
+  --accent: #{$color-accent};
+  --accent-secondary: #{$color-accent-secondary};
+  --accent-tertiary: #{$color-accent-tertiary};
+  --accent-hover: #{$color-accent-hover};
+  --accent-soft: #{$color-accent-soft};
+  --accent-foreground: #{$color-accent-foreground};
+  --ring: #{$color-ring};
+
+  --success: #{$color-success};
+  --success-bg: #{$color-success-bg};
+  --danger: #{$color-danger};
+  --danger-bg: #{$color-danger-bg};
+  --warning: #{$color-warning};
+  --warning-bg: #{$color-warning-bg};
+  --info: #{$color-info};
+  --info-bg: #{$color-info-bg};
+
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-dropdown: #{$shadow-dropdown};
+  --neo-shadow-dark: #{$neo-shadow-dark};
+  --neo-shadow-light: #{$neo-shadow-light};
+  --neo-hover-bg: #{$neo-hover-bg};
+  --kpi-bg: #{$kpi-bg};
 }

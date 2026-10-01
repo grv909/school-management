@@ -1,17 +1,21 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { ACADEMIC_YEAR_API, CLASS_API, SECTION_API, SUBJECT_API } from '../../../core/api/api.tokens';
 import { apiErrorMessage } from '../../../core/api/api-error';
 import { AcademicYear, SchoolClass, Section, Subject } from '../../../core/models';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
+import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
+import { ModalComponent } from '../../../shared/ui/modal/modal.component';
+import { SelectComponent, SelectOption } from '../../../shared/ui/select/select.component';
 import { ToastService } from '../../../core/ui/toast.service';
 import { LoggerService } from '../../../core/logging/logger.service';
 
 @Component({
   selector: 'app-classes-page',
   standalone: true,
-  imports: [FormsModule, PageHeaderComponent],
+  imports: [FormsModule, PageHeaderComponent, SkeletonComponent, EmptyStateComponent, ModalComponent, SelectComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './classes-page.component.html'
 })
@@ -135,6 +139,14 @@ export class ClassesPageComponent {
     return this.academicYears().find(y => y.id === id)?.name ?? `Year #${id}`;
   }
 
+  readonly academicYearOptions = computed<SelectOption<number | null>[]>(() =>
+    this.academicYears().map(y => ({ value: y.id, label: y.name }))
+  );
+
+  classById(id: number): SchoolClass | undefined {
+    return this.classes().find(c => c.id === id);
+  }
+
   startEdit(c: SchoolClass): void {
     this.editingId.set(c.id);
     this.editName.set(c.name);
@@ -158,6 +170,19 @@ export class ClassesPageComponent {
       error: err => {
         this.logger.error('Failed to update class', { error: String(err) });
         this.toast.error(apiErrorMessage(err, 'Failed to update class'));
+      }
+    });
+  }
+
+  remove(c: SchoolClass): void {
+    this.api.remove(c.id).subscribe({
+      next: () => {
+        this.classes.update(arr => arr.filter(x => x.id !== c.id));
+        this.toast.success(`Removed class "${c.name}"`);
+      },
+      error: err => {
+        this.logger.error('Failed to remove class', { error: String(err) });
+        this.toast.error(apiErrorMessage(err, 'Failed to remove class'));
       }
     });
   }

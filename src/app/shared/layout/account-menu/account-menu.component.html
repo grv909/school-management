@@ -1,0 +1,25 @@
+<div class="account-menu">
+  <button
+    type="button"
+    class="account-menu__trigger"
+    [attr.aria-expanded]="open()"
+    aria-haspopup="menu"
+    (click)="toggle()">
+    <span class="account-menu__avatar">{{ initials() }}</span>
+    <span class="account-menu__username">{{ username }}</span>
+    <lucide-angular name="chevron-down" [size]="16" class="account-menu__chevron" aria-hidden="true"></lucide-angular>
+  </button>
+
+  @if (open()) {
+    <div class="account-menu__dropdown" role="menu">
+      <div class="account-menu__dropdown-header">
+        <span class="account-menu__dropdown-name">{{ username }}</span>
+        <span class="badge badge--accent">{{ role }}</span>
+      </div>
+      <button type="button" class="account-menu__dropdown-item" role="menuitem" (click)="onLogout()">
+        <lucide-angular name="log-out" [size]="16" aria-hidden="true"></lucide-angular>
+        <span>Sign out</span>
+      </button>
+    </div>
+  }
+</div>

@@ -5,14 +5,36 @@
 </app-page-header>
 
 @if (loading()) {
-  <div class="empty-state">Loading school details…</div>
+  <app-skeleton variant="card"></app-skeleton>
 } @else if (!school()) {
-  <div class="empty-state">
-    <div class="empty-state__title">School details unavailable</div>
-  </div>
-} @else if (editing()) {
+  <app-empty-state title="School details unavailable"></app-empty-state>
+} @else {
   <div class="card">
-    <div class="card__title">Edit school details</div>
+    <div class="card__title">{{ school()!.name }}</div>
+    <div class="card__subtitle">School code: {{ school()!.code }}</div>
+    <div class="table-container">
+      <table class="data-table">
+        <tbody>
+          <tr>
+            <td>Principal</td>
+            <td>{{ school()!.principalName || '—' }}</td>
+          </tr>
+          <tr>
+            <td>Phone</td>
+            <td>{{ school()!.phone || '—' }}</td>
+          </tr>
+          <tr>
+            <td>Address</td>
+            <td>{{ school()!.address || '—' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+}
+
+@if (editing()) {
+  <app-modal title="Edit school details" (close)="cancelEdit()">
     <form (ngSubmit)="save()" autocomplete="off">
       <div class="form-row">
         <div class="form-field">
@@ -38,40 +60,17 @@
                  [ngModel]="form().logoUrl" (ngModelChange)="patch('logoUrl', $event)">
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-field">
-          <label class="form-field__label" for="sd-address">Address</label>
-          <input class="form-field__control" id="sd-address" name="sd-address"
-                 [ngModel]="form().address" (ngModelChange)="patch('address', $event)">
-        </div>
+      <div class="form-field">
+        <label class="form-field__label" for="sd-address">Address</label>
+        <input class="form-field__control" id="sd-address" name="sd-address"
+               [ngModel]="form().address" (ngModelChange)="patch('address', $event)">
       </div>
-      <button type="submit" class="btn btn--primary" [disabled]="!form().name.trim() || saving()">
-        {{ saving() ? 'Saving…' : 'Save changes' }}
-      </button>
-      <button type="button" class="btn btn--tertiary" (click)="cancelEdit()" [disabled]="saving()">Cancel</button>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--tertiary" (click)="cancelEdit()" [disabled]="saving()">Cancel</button>
+        <button type="submit" class="btn btn--primary" [disabled]="!form().name.trim() || saving()">
+          {{ saving() ? 'Saving…' : 'Save changes' }}
+        </button>
+      </div>
     </form>
-  </div>
-} @else {
-  <div class="card">
-    <div class="card__title">{{ school()!.name }}</div>
-    <div class="card__subtitle">School code: {{ school()!.code }}</div>
-    <div class="table-container">
-      <table class="data-table">
-        <tbody>
-          <tr>
-            <td>Principal</td>
-            <td>{{ school()!.principalName || '—' }}</td>
-          </tr>
-          <tr>
-            <td>Phone</td>
-            <td>{{ school()!.phone || '—' }}</td>
-          </tr>
-          <tr>
-            <td>Address</td>
-            <td>{{ school()!.address || '—' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  </app-modal>
 }

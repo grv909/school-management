@@ -6,6 +6,9 @@ import { ATTENDANCE_API, STUDENT_API } from '../../../core/api/api.tokens';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
 import { BarChartComponent } from '../../../shared/ui/chart/bar-chart.component';
 import { LineChartComponent } from '../../../shared/ui/chart/line-chart.component';
+import { StatCardComponent } from '../../../shared/ui/stat-card/stat-card.component';
+import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TeacherScopeService } from '../../../core/auth/teacher-scope.service';
 
@@ -26,7 +29,7 @@ interface SectionTile {
 @Component({
   selector: 'app-teacher-dashboard',
   standalone: true,
-  imports: [PageHeaderComponent, BarChartComponent, LineChartComponent],
+  imports: [PageHeaderComponent, BarChartComponent, LineChartComponent, StatCardComponent, SkeletonComponent, EmptyStateComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './teacher-dashboard.component.html'
 })

@@ -12,6 +12,7 @@ import {
   Subject
 } from '../../../core/models';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
+import { SelectComponent, SelectOption } from '../../../shared/ui/select/select.component';
 import { ToastService } from '../../../core/ui/toast.service';
 import { LoggerService } from '../../../core/logging/logger.service';
 
@@ -26,7 +27,7 @@ import { LoggerService } from '../../../core/logging/logger.service';
 @Component({
   selector: 'app-marks-entry',
   standalone: true,
-  imports: [FormsModule, PageHeaderComponent],
+  imports: [FormsModule, PageHeaderComponent, SelectComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './marks-entry.component.html'
 })
@@ -56,6 +57,26 @@ export class MarksEntryComponent {
     !!this.selectedSectionId() && !!this.selectedSubjectId() && !!this.selectedExamId()
   );
 
+  readonly classOptions = computed<SelectOption<number | null>[]>(() => [
+    { value: null, label: 'Select' },
+    ...this.classes().map(c => ({ value: c.id, label: c.name }))
+  ]);
+
+  readonly sectionOptions = computed<SelectOption<number | null>[]>(() => [
+    { value: null, label: 'Select' },
+    ...this.sections().map(s => ({ value: s.id, label: `Section ${s.name}` }))
+  ]);
+
+  readonly subjectOptions = computed<SelectOption<number | null>[]>(() => [
+    { value: null, label: 'Select' },
+    ...this.subjects().map(s => ({ value: s.id, label: s.name }))
+  ]);
+
+  readonly examOptions = computed<SelectOption<number | null>[]>(() => [
+    { value: null, label: 'Select' },
+    ...this.exams().map(e => ({ value: e.id, label: e.name }))
+  ]);
+
   readonly maxMarks = computed(() => {
     const id = this.selectedSubjectId();
     return id ? (this.subjects().find(s => s.id === id)?.maxMarks ?? 100) : 100;
@@ -66,16 +87,20 @@ export class MarksEntryComponent {
     this.scope.load().subscribe(() => {
       this.scope.allowedClasses().subscribe(r => this.classes.set(r));
     });
-    this.examApi.list().subscribe(r => this.exams.set(r));
   }
 
   onClassChange(id: number) {
     this.selectedClassId.set(id);
     this.selectedSectionId.set(null);
     this.selectedSubjectId.set(null);
+    this.selectedExamId.set(null);
     this.subjects.set([]);
+    this.exams.set([]);
     this.rows.set([]);
-    if (id) this.scope.allowedSectionsFor(id).subscribe(s => this.sections.set(s));
+    if (id) {
+      this.scope.allowedSectionsFor(id).subscribe(s => this.sections.set(s));
+      this.examApi.list(id).subscribe(r => this.exams.set(r));
+    }
   }
 
   onSectionChange(id: number) {

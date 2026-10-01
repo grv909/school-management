@@ -5,30 +5,34 @@
 </app-page-header>
 
 <div class="form-row">
-  <div class="form-field">
+  <div class="form-field form-field--constrained">
     <label class="form-field__label" for="classFilter">Class</label>
-    <select class="form-field__control" id="classFilter" name="classFilter"
-            [ngModel]="selectedClassId()" (ngModelChange)="onClassChange($event)">
-      @for (c of classes(); track c.id) {
-        <option [ngValue]="c.id">{{ c.name }}</option>
-      }
-    </select>
+    <app-select id="classFilter" name="classFilter" [options]="classOptions()"
+            [ngModel]="selectedClassId()" (ngModelChange)="onClassChange($event)"></app-select>
   </div>
 </div>
 
 @if (formOpen()) {
-  <div class="card">
+  <app-modal title="New subject" (close)="toggleForm()">
     <form (ngSubmit)="submit()">
       <div class="form-row">
         <div class="form-field">
           <label class="form-field__label" for="sn">Name</label>
           <input class="form-field__control" id="sn" name="sn" required
+                 [class.form-field__control--invalid]="submitted() && !form().name.trim()"
                  [ngModel]="form().name" (ngModelChange)="patch('name', $event)">
+          @if (submitted() && !form().name.trim()) {
+            <div class="form-field__error" role="alert">Name is required.</div>
+          }
         </div>
         <div class="form-field">
           <label class="form-field__label" for="sc">Code</label>
           <input class="form-field__control" id="sc" name="sc" required maxlength="32"
+                 [class.form-field__control--invalid]="submitted() && !form().code.trim()"
                  [ngModel]="form().code" (ngModelChange)="patch('code', $event)">
+          @if (submitted() && !form().code.trim()) {
+            <div class="form-field__error" role="alert">Code is required.</div>
+          }
         </div>
         <div class="form-field">
           <label class="form-field__label" for="sm">Max marks</label>
@@ -36,19 +40,24 @@
                  [ngModel]="form().maxMarks" (ngModelChange)="patch('maxMarks', $event)">
         </div>
       </div>
-      <button type="submit" class="btn btn--primary"
-              [disabled]="!form().name.trim() || !form().code.trim()">Save subject</button>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--tertiary" (click)="toggleForm()">Cancel</button>
+        <button type="submit" class="btn btn--primary"
+                [disabled]="!form().name.trim() || !form().code.trim()">Save subject</button>
+      </div>
     </form>
-  </div>
+  </app-modal>
 }
 
 @if (loading()) {
-  <div class="empty-state">Loading subjects…</div>
+  <app-skeleton variant="table"></app-skeleton>
 } @else if (subjects().length === 0) {
-  <div class="empty-state">
-    <div class="empty-state__title">No subjects assigned to this class yet</div>
-    <div class="empty-state__hint">Add a subject, then assign it to this class from the Classes page.</div>
-  </div>
+  <app-empty-state
+    title="No subjects assigned to this class yet"
+    hint="Add a subject, then assign it to this class from the Classes page."
+    actionLabel="Add subject"
+    (action)="toggleForm()">
+  </app-empty-state>
 } @else {
   <div class="table-container">
     <table class="data-table">
@@ -57,6 +66,7 @@
           <th>Name</th>
           <th>Code</th>
           <th class="num">Max marks</th>
+          <th class="actions"></th>
         </tr>
       </thead>
       <tbody>
@@ -65,9 +75,52 @@
             <td>{{ s.name }}</td>
             <td>{{ s.code }}</td>
             <td class="num">{{ s.maxMarks }}</td>
+            <td class="actions">
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="startEdit(s)">Edit</button>
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="remove(s)">Remove</button>
+            </td>
           </tr>
         }
       </tbody>
     </table>
   </div>
+}
+
+@if (editingId(); as id) {
+  @if (subjectById(id); as s) {
+    <app-modal title="Edit subject" (close)="cancelEdit()">
+      <form (ngSubmit)="saveEdit(s.id)">
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-field__label" for="esn">Name</label>
+            <input class="form-field__control" id="esn" name="esn" required
+                   [class.form-field__control--invalid]="editSubmitted() && !editForm().name.trim()"
+                   [ngModel]="editForm().name" (ngModelChange)="patchEdit('name', $event)">
+            @if (editSubmitted() && !editForm().name.trim()) {
+              <div class="form-field__error" role="alert">Name is required.</div>
+            }
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="esc">Code</label>
+            <input class="form-field__control" id="esc" name="esc" required maxlength="32"
+                   [class.form-field__control--invalid]="editSubmitted() && !editForm().code.trim()"
+                   [ngModel]="editForm().code" (ngModelChange)="patchEdit('code', $event)">
+            @if (editSubmitted() && !editForm().code.trim()) {
+              <div class="form-field__error" role="alert">Code is required.</div>
+            }
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="esm">Max marks</label>
+            <input class="form-field__control" id="esm" name="esm" type="number" min="1" max="1000"
+                   [ngModel]="editForm().maxMarks" (ngModelChange)="patchEdit('maxMarks', $event)">
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button type="button" class="btn btn--tertiary" (click)="cancelEdit()">Cancel</button>
+          <button type="submit" class="btn btn--primary"
+                  [disabled]="!editForm().name.trim() || !editForm().code.trim()">Save</button>
+        </div>
+      </form>
+    </app-modal>
+  }
 }

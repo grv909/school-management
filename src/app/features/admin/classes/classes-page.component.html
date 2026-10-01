@@ -5,7 +5,7 @@
 </app-page-header>
 
 @if (formOpen()) {
-  <div class="card">
+  <app-modal title="New class" (close)="toggleForm()">
     <form (ngSubmit)="submit()">
       <div class="form-row">
         <div class="form-field">
@@ -15,18 +15,23 @@
                  [ngModel]="newName()" (ngModelChange)="newName.set($event)" required>
         </div>
       </div>
-      <button type="submit" class="btn btn--primary" [disabled]="!newName().trim()">Save class</button>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--tertiary" (click)="toggleForm()">Cancel</button>
+        <button type="submit" class="btn btn--primary" [disabled]="!newName().trim()">Save class</button>
+      </div>
     </form>
-  </div>
+  </app-modal>
 }
 
 @if (loading()) {
-  <div class="empty-state">Loading classes…</div>
+  <app-skeleton variant="table"></app-skeleton>
 } @else if (classes().length === 0) {
-  <div class="empty-state">
-    <div class="empty-state__title">No classes yet</div>
-    <div class="empty-state__hint">Add the first class to get started.</div>
-  </div>
+  <app-empty-state
+    title="No classes yet"
+    hint="Add the first class to get started."
+    actionLabel="Add class"
+    (action)="toggleForm()">
+  </app-empty-state>
 } @else {
   <div class="table-container">
     <table class="data-table">
@@ -40,129 +45,142 @@
       </thead>
       <tbody>
         @for (c of classes(); track c.id) {
-          @if (editingId() === c.id) {
-            <tr>
-              <td colspan="4">
-                <form class="form-row" (ngSubmit)="saveEdit(c.id)">
-                  <div class="form-field">
-                    <label class="form-field__label" for="ecn-{{ c.id }}">Class name</label>
-                    <input class="form-field__control" id="ecn-{{ c.id }}" name="ecn-{{ c.id }}" required
-                           [ngModel]="editName()" (ngModelChange)="editName.set($event)">
-                  </div>
-                  <div class="form-field">
-                    <label class="form-field__label">&nbsp;</label>
-                    <div>
-                      <button type="submit" class="btn btn--primary" [disabled]="!editName().trim()">Save</button>
-                      <button type="button" class="btn btn--tertiary" (click)="cancelEdit()">Cancel</button>
-                    </div>
-                  </div>
-                </form>
-              </td>
-            </tr>
-          } @else {
-            <tr>
-              <td>{{ c.name }}</td>
-              <td>{{ c.classTeacherName ?? '—' }}</td>
-              <td class="num">{{ c.studentCount }}</td>
-              <td class="actions">
-                <button type="button" class="btn btn--tertiary btn--sm" (click)="startEdit(c)">Edit</button>
-                <button type="button" class="btn btn--tertiary btn--sm" (click)="toggleSubjects(c)">
-                  {{ subjectsClassId() === c.id ? 'Hide subjects' : 'Subjects' }}
-                </button>
-                <button type="button" class="btn btn--tertiary btn--sm" (click)="toggleSections(c)">
-                  {{ sectionsClassId() === c.id ? 'Hide sections' : 'Sections' }}
-                </button>
-              </td>
-            </tr>
-          }
-          @if (subjectsClassId() === c.id) {
-            <tr>
-              <td colspan="4">
-                <div class="card">
-                  <div class="card__title">{{ c.name }} — subjects taught</div>
-
-                  @if (allSubjects().length === 0) {
-                    <div class="empty-state__hint">No subjects exist yet — add some from the Subjects page first.</div>
-                  } @else {
-                    <div class="checkbox-list">
-                      @for (s of allSubjects(); track s.id) {
-                        <label class="checkbox-list__item">
-                          <input type="checkbox"
-                                 [checked]="selectedSubjectIds().has(s.id)"
-                                 (change)="toggleSubjectSelection(s.id, $any($event.target).checked)">
-                          {{ s.name }} ({{ s.code }})
-                        </label>
-                      }
-                    </div>
-                    <button type="button" class="btn btn--primary" [disabled]="savingSubjects()" (click)="saveSubjects(c.id)">
-                      {{ savingSubjects() ? 'Saving…' : 'Save subjects' }}
-                    </button>
-                  }
-                </div>
-              </td>
-            </tr>
-          }
-          @if (sectionsClassId() === c.id) {
-            <tr>
-              <td colspan="4">
-                <div class="card">
-                  <div class="card__title">{{ c.name }} — sections</div>
-
-                  @if (sections().length === 0) {
-                    <div class="empty-state">No sections yet.</div>
-                  } @else {
-                    <table class="data-table">
-                      <thead>
-                        <tr>
-                          <th>Section</th>
-                          <th>Academic year</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @for (s of sections(); track s.id) {
-                          <tr>
-                            <td>Section {{ s.name }}</td>
-                            <td>{{ academicYearLabel(s.academicYearId) }}</td>
-                          </tr>
-                        }
-                      </tbody>
-                    </table>
-                  }
-
-                  @if (academicYears().length === 0) {
-                    <div class="empty-state__hint">
-                      Add an academic year first — every section belongs to one.
-                    </div>
-                  } @else {
-                    <form class="form-row" (ngSubmit)="addSection(c.id)">
-                      <div class="form-field">
-                        <label class="form-field__label" for="say-{{ c.id }}">Academic year</label>
-                        <select class="form-field__control" id="say-{{ c.id }}" name="say-{{ c.id }}"
-                                [ngModel]="sectionForm().academicYearId" (ngModelChange)="patchSectionForm('academicYearId', $event)">
-                          @for (y of academicYears(); track y.id) {
-                            <option [ngValue]="y.id">{{ y.name }}</option>
-                          }
-                        </select>
-                      </div>
-                      <div class="form-field">
-                        <label class="form-field__label" for="sname-{{ c.id }}">Section name</label>
-                        <input class="form-field__control" id="sname-{{ c.id }}" name="sname-{{ c.id }}"
-                               placeholder="e.g. A" required
-                               [ngModel]="sectionForm().name" (ngModelChange)="patchSectionForm('name', $event)">
-                      </div>
-                      <div class="form-field">
-                        <label class="form-field__label">&nbsp;</label>
-                        <button type="submit" class="btn btn--primary"
-                                [disabled]="!sectionForm().academicYearId || !sectionForm().name.trim()">Add</button>
-                      </div>
-                    </form>
-                  }
-                </div>
-              </td>
-            </tr>
-          }
+          <tr>
+            <td>{{ c.name }}</td>
+            <td>{{ c.classTeacherName ?? '—' }}</td>
+            <td class="num">{{ c.studentCount }}</td>
+            <td class="actions">
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="startEdit(c)">Edit</button>
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="toggleSubjects(c)">Subjects</button>
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="toggleSections(c)">Sections</button>
+              <button type="button" class="btn btn--tertiary btn--sm" (click)="remove(c)">Remove</button>
+            </td>
+          </tr>
         }
       </tbody>
     </table>
   </div>
+}
+
+@if (editingId(); as id) {
+  @if (classById(id); as c) {
+    <app-modal title="Rename class" (close)="cancelEdit()">
+      <form (ngSubmit)="saveEdit(c.id)">
+        <div class="form-field">
+          <label class="form-field__label" for="ecn">Class name</label>
+          <input class="form-field__control" id="ecn" name="ecn" required
+                 [ngModel]="editName()" (ngModelChange)="editName.set($event)">
+        </div>
+        <div class="modal__footer">
+          <button type="button" class="btn btn--tertiary" (click)="cancelEdit()">Cancel</button>
+          <button type="submit" class="btn btn--primary" [disabled]="!editName().trim()">Save</button>
+        </div>
+      </form>
+    </app-modal>
+  }
+}
+
+@if (subjectsClassId(); as id) {
+  @if (classById(id); as c) {
+    <app-modal [wide]="true" [title]="c.name + ' — subjects taught'" (close)="toggleSubjects(c)">
+      @if (allSubjects().length === 0) {
+        <div class="empty-state__hint">No subjects exist yet — add some from the Subjects page first.</div>
+      } @else {
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="data-table__col" style="--col-width: 40px"></th>
+                <th>Name</th>
+                <th>Code</th>
+                <th class="num">Max marks</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of allSubjects(); track s.id) {
+                <tr>
+                  <td>
+                    <input type="checkbox"
+                           [id]="'subj-' + s.id"
+                           [checked]="selectedSubjectIds().has(s.id)"
+                           (change)="toggleSubjectSelection(s.id, $any($event.target).checked)">
+                  </td>
+                  <td>
+                    <label [for]="'subj-' + s.id">{{ s.name }}</label>
+                  </td>
+                  <td><span class="mono">{{ s.code }}</span></td>
+                  <td class="num">{{ s.maxMarks }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="modal__footer">
+          <button type="button" class="btn btn--tertiary" (click)="toggleSubjects(c)">Close</button>
+          <button type="button" class="btn btn--primary" [disabled]="savingSubjects()" (click)="saveSubjects(c.id)">
+            {{ savingSubjects() ? 'Saving…' : 'Save subjects' }}
+          </button>
+        </div>
+      }
+    </app-modal>
+  }
+}
+
+@if (sectionsClassId(); as id) {
+  @if (classById(id); as c) {
+    <app-modal [wide]="true" [title]="c.name + ' — sections'" (close)="toggleSections(c)">
+      @if (sections().length === 0) {
+        <div class="empty-state">No sections yet.</div>
+      } @else {
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Section</th>
+                <th>Academic year</th>
+                <th class="actions"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of sections(); track s.id) {
+                <tr>
+                  <td>Section {{ s.name }}</td>
+                  <td>{{ academicYearLabel(s.academicYearId) }}</td>
+                  <td class="actions">
+                    <button type="button" class="btn btn--tertiary btn--sm" disabled title="Coming soon">Edit</button>
+                    <button type="button" class="btn btn--tertiary btn--sm" disabled title="Coming soon">Remove</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      @if (academicYears().length === 0) {
+        <div class="empty-state__hint">
+          Add an academic year first — every section belongs to one.
+        </div>
+      } @else {
+        <form class="form-row" (ngSubmit)="addSection(c.id)">
+          <div class="form-field">
+            <label class="form-field__label" for="say">Academic year</label>
+            <app-select id="say" name="say" [options]="academicYearOptions()"
+                    [ngModel]="sectionForm().academicYearId" (ngModelChange)="patchSectionForm('academicYearId', $event)"></app-select>
+          </div>
+          <div class="form-field">
+            <label class="form-field__label" for="sname">Section name</label>
+            <input class="form-field__control" id="sname" name="sname"
+                   placeholder="e.g. A" required
+                   [ngModel]="sectionForm().name" (ngModelChange)="patchSectionForm('name', $event)">
+          </div>
+          <div class="form-field">
+            <label class="form-field__label">&nbsp;</label>
+            <button type="submit" class="btn btn--primary"
+                    [disabled]="!sectionForm().academicYearId || !sectionForm().name.trim()">Add</button>
+          </div>
+        </form>
+      }
+    </app-modal>
+  }
 }

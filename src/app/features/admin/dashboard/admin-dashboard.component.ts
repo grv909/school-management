@@ -14,12 +14,18 @@ import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.
 import { BarChartComponent } from '../../../shared/ui/chart/bar-chart.component';
 import { LineChartComponent } from '../../../shared/ui/chart/line-chart.component';
 import { DonutChartComponent } from '../../../shared/ui/chart/donut-chart.component';
+import { StatCardComponent } from '../../../shared/ui/stat-card/stat-card.component';
+import { SkeletonComponent } from '../../../shared/ui/skeleton/skeleton.component';
+import { EmptyStateComponent } from '../../../shared/ui/empty-state/empty-state.component';
 import { MOCK_SECTIONS } from '../../../core/mocks/mock-data';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [PageHeaderComponent, BarChartComponent, LineChartComponent, DonutChartComponent],
+  imports: [
+    PageHeaderComponent, BarChartComponent, LineChartComponent, DonutChartComponent,
+    StatCardComponent, SkeletonComponent, EmptyStateComponent
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './admin-dashboard.component.html'
 })
@@ -70,6 +76,11 @@ export class AdminDashboardComponent {
       this.loading.set(false);
     });
   }
+
+  readonly isEmpty = computed(() => {
+    const s = this.stats();
+    return s.classes === 0 && s.students === 0 && s.teachers === 0;
+  });
 
   go(path: string) { this.router.navigate([path]); }
 }

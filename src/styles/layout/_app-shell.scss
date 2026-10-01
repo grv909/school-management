@@ -40,7 +40,7 @@
   display: none;
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.45);
+  background-color: var(--overlay);
   z-index: $z-sidebar - 1;
   cursor: pointer;
 }
@@ -63,10 +63,10 @@
 
   &__title {
     // Overrides the global h1 clamp() — this is an in-page section title, not a
-    // full hero headline, but keeps the Calistoga display font for character.
+    // full hero headline.
     font-family: var(--font-display);
-    font-size: clamp(1.375rem, 1.1rem + 1vw, 1.75rem);
-    font-weight: $font-weight-regular;
+    font-size: $font-size-display-md;
+    font-weight: $font-weight-semibold;
     line-height: $line-height-tight;
     letter-spacing: -0.01em;
     color: var(--foreground);

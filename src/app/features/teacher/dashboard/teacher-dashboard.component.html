@@ -6,31 +6,20 @@
 </app-page-header>
 
 @if (loading()) {
-  <div class="card empty-state">Loading your sections…</div>
+  <app-skeleton variant="kpi-row" [rows]="4"></app-skeleton>
+  <app-skeleton variant="card"></app-skeleton>
 } @else if (tiles().length === 0) {
-  <div class="card empty-state">
-    <div class="empty-state__title">No sections assigned yet</div>
-    <div class="empty-state__hint">Ask an admin to assign you to a class on the Teachers page.</div>
-  </div>
+  <app-empty-state
+    title="No sections assigned yet"
+    hint="Ask an admin to assign you to a class on the Teachers page.">
+  </app-empty-state>
 } @else {
   <!-- KPI tiles -->
   <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-card__label">Sections</div>
-      <div class="kpi-card__value">{{ tiles().length }}</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-card__label">Class-teacher of</div>
-      <div class="kpi-card__value">{{ classTeacherSections().length }}</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-card__label">Total students</div>
-      <div class="kpi-card__value">{{ totalStudents() }}</div>
-    </div>
-    <button type="button" class="kpi-card kpi-card--action" (click)="goStudents()">
-      <div class="kpi-card__label">Students directory</div>
-      <div class="kpi-card__value">Open →</div>
-    </button>
+    <app-stat-card label="Sections" [value]="tiles().length"></app-stat-card>
+    <app-stat-card label="Class-teacher of" [value]="classTeacherSections().length"></app-stat-card>
+    <app-stat-card label="Total students" [value]="totalStudents()"></app-stat-card>
+    <app-stat-card label="Students directory" value="Open →" [clickable]="true" (action)="goStudents()"></app-stat-card>
   </div>
 
   <div class="analytics-grid">
@@ -63,8 +52,8 @@
       <thead>
         <tr>
           <th>Section</th>
-          <th style="width: 140px;">Students</th>
-          <th style="width: 160px;">Role</th>
+          <th class="data-table__col" style="--col-width: 140px">Students</th>
+          <th class="data-table__col" style="--col-width: 160px">Role</th>
         </tr>
       </thead>
       <tbody>

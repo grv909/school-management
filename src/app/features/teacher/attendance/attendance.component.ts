@@ -10,6 +10,7 @@ import {
   Section
 } from '../../../core/models';
 import { PageHeaderComponent } from '../../../shared/ui/page-header/page-header.component';
+import { SelectComponent, SelectOption } from '../../../shared/ui/select/select.component';
 import { TeacherScopeService } from '../../../core/auth/teacher-scope.service';
 import { ToastService } from '../../../core/ui/toast.service';
 import { LoggerService } from '../../../core/logging/logger.service';
@@ -34,7 +35,7 @@ function toLocalIsoDate(d: Date): string {
 @Component({
   selector: 'app-attendance',
   standalone: true,
-  imports: [FormsModule, PageHeaderComponent],
+  imports: [FormsModule, PageHeaderComponent, SelectComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './attendance.component.html'
 })
@@ -64,6 +65,16 @@ export class AttendanceComponent {
     const d = this.date();
     return d >= this.minDate && d <= this.maxDate;
   });
+
+  readonly classOptions = computed<SelectOption<number | null>[]>(() => [
+    { value: null, label: 'Select class' },
+    ...this.classes().map(c => ({ value: c.id, label: c.name }))
+  ]);
+
+  readonly sectionOptions = computed<SelectOption<number | null>[]>(() => [
+    { value: null, label: 'Select section' },
+    ...this.sections().map(s => ({ value: s.id, label: `Section ${s.name}` }))
+  ]);
 
   readonly isClassTeacher = computed(() => {
     const sec = this.selectedSectionId();

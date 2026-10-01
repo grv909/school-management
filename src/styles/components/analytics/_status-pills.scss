@@ -1,0 +1,46 @@
+@use '../../abstracts' as *;
+
+// Attendance status pills.
+.status-pills {
+  display: inline-flex;
+  gap: $space-1;
+
+  .pill {
+    @include button-reset;
+    padding: 4px 12px;
+    border-radius: $radius-full;
+    background: var(--muted);
+    color: var(--muted-foreground);
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    border: 1px solid var(--border);
+    transition: all $transition-fast;
+
+    &:hover:not(:disabled) {
+      border-color: var(--border-strong);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+
+    &--present {
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    &--absent {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+
+    &--late {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border-color: var(--warning);
+    }
+  }
+}

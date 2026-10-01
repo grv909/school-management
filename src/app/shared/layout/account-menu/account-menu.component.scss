@@ -1,0 +1,96 @@
+@use '../../../../styles/abstracts' as *;
+
+.account-menu {
+  position: relative;
+}
+
+.account-menu__trigger {
+  @include button-reset;
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-1 $space-2;
+  border-radius: $radius-md;
+  transition: background-color $transition-fast;
+
+  &:hover { background-color: var(--background); }
+  &:focus-visible { @include focus-ring; }
+}
+
+.account-menu__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-full;
+  background: var(--gradient-accent);
+  color: var(--accent-foreground);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  flex-shrink: 0;
+}
+
+.account-menu__username {
+  @include truncate;
+  max-width: 30vw;
+  font-size: $font-size-sm;
+  color: var(--foreground);
+  display: none;
+
+  @include media-up($bp-sm) {
+    display: inline;
+  }
+}
+
+.account-menu__chevron {
+  color: var(--muted-foreground);
+  flex-shrink: 0;
+}
+
+.account-menu__dropdown {
+  position: absolute;
+  top: calc(100% + #{$space-2});
+  right: 0;
+  min-width: 200px;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: $radius-md;
+  box-shadow: var(--shadow-dropdown);
+  padding: $space-2;
+  z-index: $z-topbar + 1;
+}
+
+.account-menu__dropdown-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-1;
+  padding: $space-2 $space-3 $space-3;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: $space-1;
+}
+
+.account-menu__dropdown-name {
+  @include truncate;
+  max-width: 100%;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--foreground);
+}
+
+.account-menu__dropdown-item {
+  @include button-reset;
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  width: 100%;
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  color: var(--foreground);
+  transition: background-color $transition-fast;
+
+  &:hover { background-color: var(--background); }
+  &:focus-visible { @include focus-ring; }
+}

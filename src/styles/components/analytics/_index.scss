@@ -1,0 +1,11 @@
+// Split from a single 270+ line _analytics.scss catch-all into named partials —
+// pure reorganization, zero class renames, same @use order as the original file
+// so the cascade is identical.
+@forward 'kpi';
+@forward 'status-pills';
+@forward 'grade-chips';
+@forward 'search-filters';
+@forward 'banners';
+@forward 'link-button';
+@forward 'report-card-pill';
+@forward 'inline-edit';

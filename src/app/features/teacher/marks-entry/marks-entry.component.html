@@ -10,37 +10,25 @@
   <div class="marks-entry__filters">
     <div class="marks-entry__filter">
       <label for="me-class">Class</label>
-      <select id="me-class" [ngModel]="selectedClassId()" (ngModelChange)="onClassChange($event)">
-        <option [ngValue]="null">Select</option>
-        @for (c of classes(); track c.id) { <option [ngValue]="c.id">{{ c.name }}</option> }
-      </select>
+      <app-select id="me-class" [options]="classOptions()" [ngModel]="selectedClassId()" (ngModelChange)="onClassChange($event)"></app-select>
     </div>
     <div class="marks-entry__filter">
       <label for="me-sec">Section</label>
-      <select id="me-sec" [disabled]="!selectedClassId()"
-              [ngModel]="selectedSectionId()" (ngModelChange)="onSectionChange($event)">
-        <option [ngValue]="null">Select</option>
-        @for (s of sections(); track s.id) { <option [ngValue]="s.id">Section {{ s.name }}</option> }
-      </select>
+      <app-select id="me-sec" [options]="sectionOptions()" [disabled]="!selectedClassId()"
+              [ngModel]="selectedSectionId()" (ngModelChange)="onSectionChange($event)"></app-select>
     </div>
     <div class="marks-entry__filter">
       <label for="me-sub">Subject</label>
-      <select id="me-sub" [disabled]="!selectedSectionId()"
-              [ngModel]="selectedSubjectId()" (ngModelChange)="selectedSubjectId.set($event)">
-        <option [ngValue]="null">Select</option>
-        @for (s of subjects(); track s.id) { <option [ngValue]="s.id">{{ s.name }}</option> }
-      </select>
+      <app-select id="me-sub" [options]="subjectOptions()" [disabled]="!selectedSectionId()"
+              [ngModel]="selectedSubjectId()" (ngModelChange)="selectedSubjectId.set($event)"></app-select>
     </div>
     <div class="marks-entry__filter">
       <label for="me-exam">Exam</label>
-      <select id="me-exam" [ngModel]="selectedExamId()" (ngModelChange)="selectedExamId.set($event)">
-        <option [ngValue]="null">Select</option>
-        @for (e of exams(); track e.id) { <option [ngValue]="e.id">{{ e.name }}</option> }
-      </select>
+      <app-select id="me-exam" [options]="examOptions()" [ngModel]="selectedExamId()" (ngModelChange)="selectedExamId.set($event)"></app-select>
     </div>
     <div class="marks-entry__filter">
       <label>&nbsp;</label>
-      <button type="button" class="btn btn--secondary" (click)="loadGrid()" [disabled]="!canLoad()">Load students</button>
+      <button type="button" class="btn btn--primary" (click)="loadGrid()" [disabled]="!canLoad()">Load students</button>
     </div>
   </div>
 </div>

@@ -1,0 +1,20 @@
+@use '../../abstracts' as *;
+
+// Compact form control variant for inline-edit table rows.
+.form-field__control--compact {
+  padding: 4px 8px;
+  font-size: $font-size-table-cell;
+  height: 32px;
+}
+
+// Editing row highlight.
+.data-table__row--editing {
+  background: var(--accent-soft);
+}
+
+.card__title-meta {
+  margin-left: $space-3;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
+  color: var(--muted-foreground);
+}

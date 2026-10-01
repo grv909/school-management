@@ -14,7 +14,8 @@
           [routerLinkActiveOptions]="{ exact: item.path === '/admin' || item.path === '/teacher' }"
           routerLinkActive="active"
           (click)="onNavigate()">
-          {{ item.label }}
+          <lucide-angular [name]="item.icon" [size]="18" class="sidebar__link-icon" aria-hidden="true"></lucide-angular>
+          <span>{{ item.label }}</span>
         </a>
       }
     </nav>

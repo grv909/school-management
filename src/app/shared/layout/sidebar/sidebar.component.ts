@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { LucideAngularModule } from 'lucide-angular';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { SCHOOL_API } from '../../../core/api/api.tokens';
@@ -8,6 +9,7 @@ import { LayoutService } from '../layout.service';
 interface NavItem {
   label: string;
   path: string;
+  icon: string;
 }
 
 interface NavGroup {
@@ -18,7 +20,7 @@ interface NavGroup {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, LucideAngularModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
@@ -48,22 +50,22 @@ export class SidebarComponent {
         {
           label: 'Manage',
           items: [
-            { label: 'Dashboard', path: '/admin' },
-            { label: 'Academic Years', path: '/admin/academic-years' },
-            { label: 'Classes',   path: '/admin/classes' },
-            { label: 'Students',  path: '/admin/students' },
-            { label: 'Teachers',  path: '/admin/teachers' },
-            { label: 'Subjects',  path: '/admin/subjects' },
-            { label: 'Exams',     path: '/admin/exams' }
+            { label: 'Dashboard', path: '/admin', icon: 'layout-dashboard' },
+            { label: 'Academic Years', path: '/admin/academic-years', icon: 'calendar-range' },
+            { label: 'Classes',   path: '/admin/classes', icon: 'graduation-cap' },
+            { label: 'Students',  path: '/admin/students', icon: 'users' },
+            { label: 'Teachers',  path: '/admin/teachers', icon: 'user-round' },
+            { label: 'Subjects',  path: '/admin/subjects', icon: 'book-open' },
+            { label: 'Exams',     path: '/admin/exams', icon: 'clipboard-list' }
           ]
         },
         {
           label: 'Output',
-          items: [{ label: 'Report Cards', path: '/admin/reports' }]
+          items: [{ label: 'Report Cards', path: '/admin/reports', icon: 'file-text' }]
         },
         {
           label: 'Settings',
-          items: [{ label: 'School Details', path: '/admin/school' }]
+          items: [{ label: 'School Details', path: '/admin/school', icon: 'school' }]
         }
       ];
     }
@@ -71,11 +73,11 @@ export class SidebarComponent {
       {
         label: 'Teach',
         items: [
-          { label: 'Dashboard',   path: '/teacher' },
-          { label: 'Attendance',  path: '/teacher/attendance' },
-          { label: 'Marks Entry', path: '/teacher/marks' },
-          { label: 'Students',    path: '/teacher/students' },
-          { label: 'School Details', path: '/teacher/school' }
+          { label: 'Dashboard',   path: '/teacher', icon: 'layout-dashboard' },
+          { label: 'Attendance',  path: '/teacher/attendance', icon: 'calendar-check' },
+          { label: 'Marks Entry', path: '/teacher/marks', icon: 'pencil-line' },
+          { label: 'Students',    path: '/teacher/students', icon: 'users' },
+          { label: 'School Details', path: '/teacher/school', icon: 'school' }
         ]
       }
     ];

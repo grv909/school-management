@@ -1,0 +1,38 @@
+@use '../../abstracts' as *;
+
+// Pill-style report card opener on the student profile.
+.report-card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+}
+
+.report-card-pill {
+  @include button-reset;
+  @include card;
+  padding: $space-3 $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  min-width: 200px;
+  text-align: left;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:focus-visible { @include focus-ring; }
+
+  &__label {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: var(--foreground);
+  }
+
+  &__cta {
+    font-size: $font-size-sm;
+    color: var(--accent);
+  }
+}

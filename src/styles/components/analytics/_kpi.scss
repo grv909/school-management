@@ -1,0 +1,107 @@
+@use '../../abstracts' as *;
+
+// Grid for chart cards. Two columns on desktop, one on mobile.
+// min() keeps a single column from forcing horizontal overflow on narrow
+// phones (where 100% < 320px) while still preferring ~320px tracks otherwise.
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  gap: $space-4;
+  margin-top: $space-5;
+
+  &__wide {
+    grid-column: 1 / -1;
+  }
+
+  // Grid items default to a content-based min-width, which lets a fixed-size
+  // chart SVG push its .card wider than the track and overflow the grid.
+  // min-width: 0 lets the card shrink to the track's actual width instead.
+  > .card {
+    min-width: 0;
+    overflow: hidden;
+    // Subtle lift on hover so the chart card itself feels interactive, not
+    // just the data points inside it — mirrors the KPI tile's own hover cue.
+    transition: box-shadow $transition-base, transform $transition-base, border-color $transition-base;
+
+    &:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// KPI tiles — used by admin dashboard, teacher dashboard, and student profile.
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  gap: $space-4;
+  margin-bottom: $space-5;
+}
+
+// Neomorphic "soft UI" tile: a dual light/dark shadow off the shared card
+// background gives a subtle raised/embossed look instead of the flat
+// bordered-card look used elsewhere — derived from --card/--background so it
+// still sits comfortably within the app's existing (non-neomorphic) palette.
+.kpi-card {
+  // --card is only ~1.5% lighter than --background, so neither the shadow
+  // pair nor a border alone read as a clearly distinct surface at rest — a
+  // dedicated --kpi-bg tone gives real, immediately visible contrast against
+  // the page.
+  border: 1px solid var(--border-strong);
+  border-radius: $radius-lg;
+  background-color: var(--kpi-bg);
+  padding: $space-5;
+  box-shadow:
+    6px 6px 14px var(--neo-shadow-dark),
+    -6px -6px 14px var(--neo-shadow-light);
+  transition: box-shadow $transition-base, background-color $transition-base, border-color $transition-base;
+
+  &:hover {
+    background-color: var(--border);
+    border-color: var(--border-hover);
+  }
+
+  &__label {
+    font-family: var(--font-mono);
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: $space-2;
+  }
+
+  &__value {
+    font-family: var(--font-display);
+    font-size: $font-size-xl;
+    font-weight: $font-weight-regular;
+    color: var(--foreground);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__suffix {
+    font-size: $font-size-md;
+    font-weight: $font-weight-regular;
+    color: var(--muted-foreground);
+  }
+
+  &--action {
+    @include button-reset;
+    // button-reset's `background: none` shorthand overrides .kpi-card's own
+    // background-color (same specificity, declared later) — re-assert it so
+    // clickable tiles (admin dashboard) don't lose the tint that non-clickable
+    // tiles (student profile) keep.
+    background-color: var(--kpi-bg);
+    border-radius: $radius-lg;
+    // button-reset zeroes padding for a generic reset button — restore the
+    // tile's own padding so clickable (most) tiles don't end up cramped
+    // relative to non-clickable ones.
+    padding: $space-5;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+
+    &:focus-visible { @include focus-ring; }
+  }
+}
